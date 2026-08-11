@@ -1,0 +1,15 @@
+{
+  "brand": {
+    "brand_name": "CodeCora",
+    "brand_handle": "@codecoradev",
+    "bg_color": "#1e1e2e",
+    "accent_color": "#cba6f7"
+  },
+  "slides": [
+    {
+      "quote": "Build things that solve real problems. Everything else is just noise.",
+      "author": "Anaz",
+      "author_title": "Founder, CodeCora"
+    }
+  ]
+}

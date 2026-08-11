@@ -4,15 +4,27 @@
 //! Pipeline: JSON input → minijinja token replacement → SVG → resvg render → PNG
 
 mod cli;
-mod schema;
 mod render;
+mod schema;
 mod template;
 mod text;
 
 use clap::Parser;
 use cli::Cli;
 
-fn main() -> anyhow::Result<()> {
+fn main() -> std::process::ExitCode {
+    // Initialize logger (RUST_LOG=cosy=debug for verbose output)
+    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("warn"))
+        .format_timestamp(None)
+        .init();
+
     let cli = Cli::parse();
-    cli.run()
+
+    match cli.run() {
+        Ok(code) => code,
+        Err(e) => {
+            eprintln!("✗ Fatal: {:#}", e);
+            std::process::ExitCode::from(2)
+        }
+    }
 }

@@ -1,0 +1,49 @@
+{
+  "id": "social-quote",
+  "name": "Social Quote",
+  "dimensions": {
+    "width": 1080,
+    "height": 1350
+  },
+  "fonts": ["Inter"],
+  "brand_fields": {
+    "brand_name": {
+      "type": "text",
+      "required": true,
+      "max": 30
+    },
+    "brand_handle": {
+      "type": "text",
+      "required": true,
+      "max": 30
+    },
+    "bg_color": {
+      "type": "bg",
+      "required": false,
+      "default": "#1e1e2e"
+    },
+    "accent_color": {
+      "type": "text",
+      "required": false,
+      "default": "#cba6f7"
+    }
+  },
+  "slide_fields": {
+    "quote": {
+      "type": "text",
+      "required": true,
+      "max": 280,
+      "wrap_width": 35
+    },
+    "author": {
+      "type": "text",
+      "required": true,
+      "max": 50
+    },
+    "author_title": {
+      "type": "text",
+      "required": false,
+      "max": 50
+    }
+  }
+}
