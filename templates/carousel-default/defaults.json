@@ -1,0 +1,37 @@
+{
+  "brand": {
+    "brand_name": "CodeCora",
+    "brand_handle": "@codecoradev",
+    "bg_color": "#1e1e2e",
+    "accent_color": "#cba6f7"
+  },
+  "slides": [
+    {
+      "eyebrow": "Slide 01 of 05",
+      "headline": "Stop wasting time on repetitive design tasks",
+      "body": "Cosy lets you generate branded visuals from JSON input. No more manual Photoshop edits for every post.",
+      "cta": "Get Started"
+    },
+    {
+      "eyebrow": "Slide 02 of 05",
+      "headline": "Templates that adapt to your brand",
+      "body": "Define your brand colors, fonts, and logo once. Every template uses them automatically."
+    },
+    {
+      "eyebrow": "Slide 03 of 05",
+      "headline": "From JSON to PNG in milliseconds",
+      "body": "Feed data, get pixels. Perfect for batch generation and automated content pipelines."
+    },
+    {
+      "eyebrow": "Slide 04 of 05",
+      "headline": "Built for developers, loved by marketers",
+      "body": "CLI-first, API-ready. Integrate into your existing workflow without learning new tools."
+    },
+    {
+      "eyebrow": "Slide 05 of 05",
+      "headline": "Open source. Self-hosted. Yours.",
+      "body": "No subscription, no vendor lock-in. Run it on your infrastructure.",
+      "cta": "Try Cosy Today"
+    }
+  ]
+}

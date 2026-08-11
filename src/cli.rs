@@ -6,6 +6,7 @@
 //! - `cosy validate`   — validate input data against template schema
 
 use clap::{Parser, Subcommand};
+use std::io::Read;
 use std::path::PathBuf;
 use std::process::ExitCode;
 
@@ -26,8 +27,16 @@ pub enum Command {
         template: String,
 
         /// Input data: path to JSON file.
-        #[arg(short, long)]
-        data: String,
+        #[arg(short, long, conflicts_with_all = ["stdin", "json"])]
+        data: Option<String>,
+
+        /// Read input JSON from stdin.
+        #[arg(long, conflicts_with_all = ["data", "json"])]
+        stdin: bool,
+
+        /// Inline JSON input string.
+        #[arg(long, conflicts_with_all = ["data", "stdin"])]
+        json: Option<String>,
 
         /// Output file (single slide) or directory (multi-slide).
         #[arg(short, long)]
@@ -44,6 +53,10 @@ pub enum Command {
         /// Dump the processed SVG to stdout instead of rendering PNG.
         #[arg(long)]
         dump_svg: bool,
+
+        /// Output machine-readable JSON result to stdout (logging goes to stderr).
+        #[arg(long)]
+        json_output: bool,
     },
 
     /// List available templates.
@@ -75,24 +88,52 @@ impl Cli {
             Command::Render {
                 template,
                 data,
+                stdin,
+                json,
                 output,
                 scale,
                 font_dir,
                 dump_svg,
+                json_output,
             } => {
+                // Resolve input data source
+                let resolved_data = match Self::resolve_input(data, stdin, json)? {
+                    Some(d) => d,
+                    None => {
+                        eprintln!("✗ Error: must provide one of --data, --stdin, or --json");
+                        return Ok(ExitCode::from(2));
+                    }
+                };
+
                 if dump_svg {
-                    return dump_processed_svg(&template, &data);
+                    return dump_processed_svg(&template, &resolved_data);
                 }
+
                 match crate::render::render_template(
                     &template,
-                    &data,
+                    &resolved_data,
                     &output,
                     scale,
                     font_dir.as_deref(),
                 ) {
-                    Ok(()) => Ok(ExitCode::SUCCESS),
+                    Ok(result) => {
+                        if json_output {
+                            // Machine-readable output to stdout
+                            let json_out = serde_json::to_string_pretty(&result)?;
+                            println!("{}", json_out);
+                        }
+                        Ok(ExitCode::SUCCESS)
+                    }
                     Err(e) => {
-                        eprintln!("✗ Render error: {:#}", e);
+                        if json_output {
+                            let err = serde_json::json!({
+                                "error": format!("{:#}", e),
+                                "code": 1
+                            });
+                            println!("{}", serde_json::to_string_pretty(&err)?);
+                        } else {
+                            eprintln!("✗ Render error: {:#}", e);
+                        }
                         Ok(ExitCode::from(2))
                     }
                 }
@@ -156,14 +197,41 @@ impl Cli {
             }
         }
     }
+
+    /// Resolve input data from --data (file), --stdin, or --json (inline string).
+    /// Returns Some(json_string) or None if no source provided.
+    fn resolve_input(
+        data: Option<String>,
+        stdin: bool,
+        json: Option<String>,
+    ) -> anyhow::Result<Option<String>> {
+        if let Some(path) = data {
+            // --data: treat as file path
+            Ok(Some(path))
+        } else if stdin {
+            // --stdin: read from stdin, write to temp file for from_file compatibility
+            let mut buffer = String::new();
+            std::io::stdin().read_to_string(&mut buffer)?;
+            let tmp = std::env::temp_dir().join("cosy-stdin-input.json");
+            std::fs::write(&tmp, &buffer)?;
+            Ok(Some(tmp.to_string_lossy().to_string()))
+        } else if let Some(json_str) = json {
+            // --json: write inline JSON to temp file
+            let tmp = std::env::temp_dir().join("cosy-json-input.json");
+            std::fs::write(&tmp, &json_str)?;
+            Ok(Some(tmp.to_string_lossy().to_string()))
+        } else {
+            Ok(None)
+        }
+    }
 }
 
 /// Debug helper: dump the processed SVG after minijinja rendering.
-fn dump_processed_svg(template_name: &str, data_path: &str) -> anyhow::Result<std::process::ExitCode> {
+fn dump_processed_svg(template_name: &str, data_path: &str) -> anyhow::Result<ExitCode> {
     let template = crate::template::load_template(template_name)?;
     let dir = crate::template::find_template_dir_for(template_name)?;
     let data = crate::schema::InputData::from_file(data_path)?;
     let svg = crate::template::process_template(&template, &dir, &data.brand, &data.slides[0])?;
     println!("{}", svg);
-    Ok(std::process::ExitCode::SUCCESS)
+    Ok(ExitCode::SUCCESS)
 }
