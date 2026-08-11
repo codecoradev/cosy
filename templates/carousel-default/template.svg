@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350" viewBox="0 0 1080 1350">
+  <!-- Background -->
+  <rect width="1080" height="1350" fill="{{ brand.bg_color | default('#1e1e2e') }}"/>
+
+  <!-- Brand header -->
+  <rect x="80" y="60" width="6" height="36" rx="3" fill="{{ brand.accent_color | default('#cba6f7') }}"/>
+  <text x="100" y="88" font-family="Inter, sans-serif" font-size="28" font-weight="600" fill="#cdd6f4">
+    {{ brand.brand_name | default('') }}
+  </text>
+
+  <!-- Eyebrow -->
+  {% if slide.eyebrow %}
+  <text x="80" y="220" font-family="JetBrains Mono, monospace" font-size="22" font-weight="400" fill="{{ brand.accent_color | default('#cba6f7') }}" letter-spacing="2">
+    {{ slide.eyebrow | upper }}
+  </text>
+  {% endif %}
+
+  <!-- Accent bar -->
+  <rect x="80" y="260" width="60" height="6" rx="3" fill="{{ brand.accent_color | default('#cba6f7') }}"/>
+
+  <!-- Headline (wrapped) -->
+  <text x="80" y="360" font-family="Inter, sans-serif" font-size="56" font-weight="800" fill="#cdd6f4">
+    {% for line in headline_lines %}
+    <tspan x="80" dy="{% if loop.first %}0{% else %}68{% endif %}">{{ line }}</tspan>
+    {% endfor %}
+    {% if not headline_lines %}
+    <tspan x="80" dy="0">{{ slide.headline }}</tspan>
+    {% endif %}
+  </text>
+
+  <!-- Body text (wrapped) -->
+  {% if slide.body %}
+  <text x="80" y="700" font-family="Inter, sans-serif" font-size="32" font-weight="400" fill="#a6adc8">
+    {% for line in body_lines %}
+    <tspan x="80" dy="{% if loop.first %}0{% else %}44{% endif %}">{{ line }}</tspan>
+    {% endfor %}
+    {% if not body_lines %}
+    <tspan x="80" dy="0">{{ slide.body }}</tspan>
+    {% endif %}
+  </text>
+  {% endif %}
+
+  <!-- CTA -->
+  {% if slide.cta %}
+  <rect x="80" y="1150" width="360" height="64" rx="32" fill="{{ brand.accent_color | default('#cba6f7') }}"/>
+  <text x="260" y="1190" font-family="Inter, sans-serif" font-size="26" font-weight="600" fill="#1e1e2e" text-anchor="middle">
+    {{ slide.cta }}
+  </text>
+  {% endif %}
+
+  <!-- Brand footer -->
+  <text x="80" y="1290" font-family="Inter, sans-serif" font-size="22" font-weight="400" fill="#7f849c">
+    {{ brand.brand_name | default('') }} · {{ brand.brand_handle | default('') }}
+  </text>
+</svg>

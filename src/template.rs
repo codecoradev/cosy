@@ -5,8 +5,8 @@
 //! - `template.svg`  — minijinja-powered SVG template
 //! - `defaults.json` — optional sample data for testing
 
+use crate::schema::{FieldType, InputData, TemplateDef};
 use std::path::{Path, PathBuf};
-use crate::schema::{TemplateDef, InputData, FieldType};
 
 // ─── Template Discovery ─────────────────────────────────────────────
 
@@ -36,7 +36,8 @@ pub fn find_template_dir_for(name: &str) -> anyhow::Result<PathBuf> {
 
     anyhow::bail!(
         "Template '{}' not found. Looked in ./templates/{}",
-        name, name
+        name,
+        name
     )
 }
 
@@ -130,10 +131,7 @@ pub fn process_template(
         if !logo_path.is_empty() {
             match crate::text::image_to_data_uri(logo_path) {
                 Ok(data_uri) => {
-                    context.insert(
-                        "logo_data_uri".into(),
-                        serde_json::Value::String(data_uri),
-                    );
+                    context.insert("logo_data_uri".into(), serde_json::Value::String(data_uri));
                 }
                 Err(e) => {
                     log::warn!("Failed to load logo '{}': {}", logo_path, e);
