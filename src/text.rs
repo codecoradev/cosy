@@ -3,7 +3,8 @@
 use std::path::Path;
 use base64::Engine;
 
-/// Wrap text to fit within a max character width per line
+/// Wrap text to fit within a max character width per line.
+/// Returns a list of lines.
 pub fn wrap_text(text: &str, max_chars: usize) -> Vec<String> {
     textwrap::wrap(text, max_chars)
         .into_iter()
@@ -11,7 +12,7 @@ pub fn wrap_text(text: &str, max_chars: usize) -> Vec<String> {
         .collect()
 }
 
-/// Convert an image file to a base64 data URI for SVG embedding
+/// Convert an image file to a base64 data URI for SVG embedding.
 pub fn image_to_data_uri(path: &str) -> anyhow::Result<String> {
     let ext = Path::new(path)
         .extension()

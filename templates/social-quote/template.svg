@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350" viewBox="0 0 1080 1350">
+  <!-- Background -->
+  <rect width="1080" height="1350" fill="{{ brand.bg_color | default('#1e1e2e') }}"/>
+
+  <!-- Accent bar -->
+  <rect x="80" y="200" width="8" height="120" rx="4" fill="{{ brand.accent_color | default('#cba6f7') }}"/>
+
+  <!-- Decorative quote mark -->
+  <text x="80" y="180" font-family="Inter, sans-serif" font-size="120" font-weight="900" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.3">"</text>
+
+  <!-- Quote text (wrapped via pre-computed quote_lines) -->
+  <text x="120" y="300" font-family="Inter, sans-serif" font-size="52" font-weight="700" fill="#cdd6f4">
+    {% for line in quote_lines %}
+    <tspan x="120" dy="{% if loop.first %}0{% else %}68{% endif %}">{{ line }}</tspan>
+    {% endfor %}
+    {% if not quote_lines %}
+    <tspan x="120" dy="0">{{ slide.quote }}</tspan>
+    {% endif %}
+  </text>
+
+  <!-- Divider line -->
+  <line x1="120" y1="1050" x2="280" y2="1050" stroke="{{ brand.accent_color | default('#cba6f7') }}" stroke-width="3"/>
+
+  <!-- Author -->
+  <text x="120" y="1120" font-family="Inter, sans-serif" font-size="36" font-weight="600" fill="#cdd6f4">
+    {{ slide.author }}
+  </text>
+  <text x="120" y="1170" font-family="Inter, sans-serif" font-size="28" font-weight="400" fill="#a6adc8">
+    {{ slide.author_title }}
+  </text>
+
+  <!-- Brand footer -->
+  <text x="120" y="1270" font-family="Inter, sans-serif" font-size="24" font-weight="500" fill="#7f849c">
+    {{ brand.brand_name }} · {{ brand.brand_handle }}
+  </text>
+</svg>
