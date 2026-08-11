@@ -1,0 +1,26 @@
+[package]
+name = "cosy"
+version = "0.1.0"
+edition = "2021"
+description = "Content Easy — Lightning-fast template-based image generation in Rust"
+license = "BSL-1.1"
+authors = ["PT Azfirazka Digital Kreatif"]
+
+[dependencies]
+resvg = "0.48"
+usvg = "0.48"
+tiny-skia = "0.12"
+minijinja = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+textwrap = "0.16"
+image = "0.25"
+clap = { version = "4", features = ["derive"] }
+base64 = "0.22"
+anyhow = "1"
+log = "0.4"
+
+[profile.release]
+opt-level = 3
+lto = true
+strip = true

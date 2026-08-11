@@ -1,0 +1,7 @@
+/target
+/templates/*/output/
+*.png
+!docs/**/*.png
+.DS_Store
+.env
+.env.*
