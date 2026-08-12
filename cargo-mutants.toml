@@ -1,0 +1,21 @@
+# cargo-mutants configuration
+# https://github.com/sourcefrog/cargo-mutants
+
+# Exclude server.rs from mutation testing — it's a thin HTTP wrapper
+# around the core modules, and mutating it mainly tests axum's internals.
+exclude = ["src/server.rs"]
+
+# Exclude main.rs — just dispatches CLI commands, no business logic.
+# exclude = ["src/main.rs"]  # not in lib, auto-excluded
+
+# Use all available CPUs for faster mutation testing
+jobs = 0
+
+# Timeout multiplier — some mutants may cause infinite loops
+timeout_multiplier = 3.0
+
+# Minimum test timeout per mutant
+test_timeout_seconds = 120
+
+# Generate copy of output to cargo-mutants/ directory
+git_clean_required = false

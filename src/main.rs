@@ -1,20 +1,9 @@
-//! Cosy — Content Easy
-//! Template-based image generation in Rust.
-//!
-//! Pipeline: JSON input → minijinja token replacement → SVG → resvg render → PNG
-
-mod cli;
-mod render;
-mod schema;
-mod server;
-mod template;
-mod text;
+//! Cosy — Content Easy binary entry point.
 
 use clap::Parser;
-use cli::Cli;
+use cosy::cli::Cli;
 
 fn main() -> std::process::ExitCode {
-    // Initialize logger (RUST_LOG=cosy=debug for verbose output)
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("warn"))
         .format_timestamp(None)
         .init();
