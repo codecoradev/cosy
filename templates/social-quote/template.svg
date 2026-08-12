@@ -21,6 +21,9 @@
   <rect width="1080" height="1350" fill="url(#bg-gradient)"/>
   <rect width="1080" height="1350" fill="url(#glow)"/>
   <rect width="1080" height="1350" fill="url(#dots)"/>
+  {% if bg_image_data_uri %}
+  <image href="{{ bg_image_data_uri }}" width="1080" height="1350" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
+  {% endif %}
 
   <!-- Accent bar -->
   <rect x="80" y="120" width="8" height="80" rx="4" fill="url(#accent-gradient)"/>
@@ -47,4 +50,7 @@
     {{ brand.brand_name | default('') }} · {{ brand.brand_handle | default('') }}
   </text>
   <circle cx="1000" cy="80" r="180" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
+  {% if logo_data_uri %}
+  <image href="{{ logo_data_uri }}" x="952" y="1222" height="48" preserveAspectRatio="xMidYMid meet"/>
+  {% endif %}
 </svg>

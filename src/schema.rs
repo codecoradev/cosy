@@ -52,6 +52,8 @@ pub enum FieldType {
     Image,
     /// Background: solid, gradient, or image
     Bg,
+    Number,
+    Color,
 }
 
 /// Input data — what the user fills in.

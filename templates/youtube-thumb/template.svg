@@ -19,6 +19,9 @@
   <rect width="1280" height="720" fill="url(#bg-grad)"/>
   <rect width="1280" height="720" fill="url(#glow)"/>
   <rect width="1280" height="720" fill="url(#dots)"/>
+  {% if bg_image_data_uri %}
+  <image href="{{ bg_image_data_uri }}" width="1280" height="720" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
+  {% endif %}
   {% if slide.episode %}
   <text x="80" y="120" font-family="JetBrains Mono,monospace" font-size="36" font-weight="700" fill="{{ brand.accent_color | default('#cba6f7') }}">{{ slide.episode }}</text>
   {% endif %}
@@ -32,4 +35,7 @@
   {% endif %}
   <text x="80" y="630" font-family="Inter,sans-serif" font-size="24" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   <circle cx="1200" cy="80" r="120" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
+  {% if logo_data_uri %}
+  <image href="{{ logo_data_uri }}" x="1152" y="592" height="48" preserveAspectRatio="xMidYMid meet"/>
+  {% endif %}
 </svg>

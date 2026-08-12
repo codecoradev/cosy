@@ -19,6 +19,9 @@
   <rect width="1200" height="400" fill="url(#bg-grad)"/>
   <rect width="1200" height="400" fill="url(#glow)"/>
   <rect width="1200" height="400" fill="url(#dots)"/>
+  {% if bg_image_data_uri %}
+  <image href="{{ bg_image_data_uri }}" width="1200" height="400" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
+  {% endif %}
   {% if slide.issue_number %}
   <text x="80" y="80" font-family="JetBrains Mono,monospace" font-size="22" font-weight="600" fill="{{ brand.accent_color | default('#cba6f7') }}">{{ slide.issue_number }}</text>
   {% endif %}
@@ -28,4 +31,7 @@
   </text>
   <text x="1120" y="360" text-anchor="end" font-family="Inter,sans-serif" font-size="20" font-weight="400" fill="#7f849c">{{ slide.date | default('') }}</text>
   <circle cx="1120" cy="80" r="66" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
+  {% if logo_data_uri %}
+  <image href="{{ logo_data_uri }}" x="1072" y="272" height="48" preserveAspectRatio="xMidYMid meet"/>
+  {% endif %}
 </svg>

@@ -6,7 +6,9 @@
     "width": 1080,
     "height": 1350
   },
-  "fonts": ["Inter"],
+  "fonts": [
+    "Inter"
+  ],
   "brand_fields": {
     "brand_name": {
       "type": "text",
@@ -37,6 +39,22 @@
       "type": "bg",
       "required": false,
       "default": "#89b4fa"
+    },
+    "bg_image": {
+      "type": "image",
+      "required": false,
+      "description": "Background image path (PNG/JPG/WebP). Rendered with configurable opacity behind gradient overlay."
+    },
+    "bg_image_opacity": {
+      "type": "number",
+      "required": false,
+      "default": 0.15,
+      "description": "Opacity of background image (0.0-1.0). Lower = more subtle."
+    },
+    "logo": {
+      "type": "image",
+      "required": false,
+      "description": "Brand logo path (PNG/SVG). Rendered at bottom-right corner."
     }
   },
   "slide_fields": {

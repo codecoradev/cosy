@@ -19,6 +19,9 @@
   <rect width="1920" height="1080" fill="url(#bg-grad)"/>
   <rect width="1920" height="1080" fill="url(#glow)"/>
   <rect width="1920" height="1080" fill="url(#dots)"/>
+  {% if bg_image_data_uri %}
+  <image href="{{ bg_image_data_uri }}" width="1920" height="1080" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
+  {% endif %}
   <rect x="120" y="200" width="8" height="80" rx="4" fill="url(#acc-grad)"/>
   <text x="120" y="500" font-family="Space Grotesk,sans-serif" font-size="90" font-weight="800" fill="#cdd6f4">
     {% for line in event_name_lines %}<tspan x="120" dy="{% if loop.first %}0{% else %}110{% endif %}">{{ line }}</tspan>{% endfor %}
@@ -32,4 +35,7 @@
   {% endif %}
   <text x="1800" y="1000" text-anchor="end" font-family="Inter,sans-serif" font-size="28" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   <circle cx="1840" cy="80" r="180" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
+  {% if logo_data_uri %}
+  <image href="{{ logo_data_uri }}" x="1792" y="952" height="48" preserveAspectRatio="xMidYMid meet"/>
+  {% endif %}
 </svg>

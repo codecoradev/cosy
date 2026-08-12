@@ -19,6 +19,9 @@
   <rect width="1200" height="627" fill="url(#bg-grad)"/>
   <rect width="1200" height="627" fill="url(#glow)"/>
   <rect width="1200" height="627" fill="url(#dots)"/>
+  {% if bg_image_data_uri %}
+  <image href="{{ bg_image_data_uri }}" width="1200" height="627" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
+  {% endif %}
   <rect x="80" y="60" width="6" height="60" rx="3" fill="url(#acc-grad)"/>
   <text x="110" y="95" font-family="Inter,sans-serif" font-size="24" font-weight="600" fill="{{ brand.accent_color | default('#cba6f7') }}">{{ brand.brand_name | default('') }}</text>
   <text x="80" y="220" font-family="Space Grotesk,sans-serif" font-size="44" font-weight="700" fill="#cdd6f4">
@@ -32,4 +35,7 @@
   {% endif %}
   <text x="80" y="560" font-family="Inter,sans-serif" font-size="22" font-weight="600" fill="#bac2de">{{ slide.author | default('') }}{% if slide.role %} · {% endif %}{{ slide.role | default('') }}</text>
   <circle cx="1120" cy="80" r="104" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
+  {% if logo_data_uri %}
+  <image href="{{ logo_data_uri }}" x="1072" y="499" height="48" preserveAspectRatio="xMidYMid meet"/>
+  {% endif %}
 </svg>

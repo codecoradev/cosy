@@ -140,6 +140,24 @@ pub fn process_template(
         }
     }
 
+    // Convert bg_image path to data URI if present (brand-level or slide-level)
+    let bg_image = brand
+        .get("bg_image")
+        .or_else(|| slide.get("bg_image"))
+        .and_then(|v| v.as_str());
+    if let Some(bg_path) = bg_image {
+        if !bg_path.is_empty() {
+            match crate::text::image_to_data_uri(bg_path) {
+                Ok(data_uri) => {
+                    context.insert("bg_image_data_uri".into(), serde_json::Value::String(data_uri));
+                }
+                Err(e) => {
+                    log::warn!("Failed to load bg_image '{}': {}", bg_path, e);
+                }
+            }
+        }
+    }
+
     // Render
     let tmpl = env.get_template("slide")?;
     let rendered = tmpl.render(serde_json::Value::Object(context))?;

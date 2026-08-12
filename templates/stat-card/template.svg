@@ -19,6 +19,9 @@
   <rect width="1080" height="1080" fill="url(#bg-grad)"/>
   <rect width="1080" height="1080" fill="url(#glow)"/>
   <rect width="1080" height="1080" fill="url(#dots)"/>
+  {% if bg_image_data_uri %}
+  <image href="{{ bg_image_data_uri }}" width="1080" height="1080" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
+  {% endif %}
   <text x="540" y="450" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="220" font-weight="900" fill="url(#acc-grad)">{{ slide.stat_number }}</text>
   <text x="540" y="620" text-anchor="middle" font-family="Inter,sans-serif" font-size="36" font-weight="600" fill="#cdd6f4">
     {% for line in stat_label_lines %}<tspan x="540" dy="{% if loop.first %}0{% else %}48{% endif %}">{{ line }}</tspan>{% endfor %}
@@ -29,4 +32,7 @@
   {% endif %}
   <text x="540" y="1000" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   <circle cx="1000" cy="80" r="180" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
+  {% if logo_data_uri %}
+  <image href="{{ logo_data_uri }}" x="952" y="952" height="48" preserveAspectRatio="xMidYMid meet"/>
+  {% endif %}
 </svg>

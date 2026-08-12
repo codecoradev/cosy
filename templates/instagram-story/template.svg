@@ -19,6 +19,9 @@
   <rect width="1080" height="1920" fill="url(#bg-grad)"/>
   <rect width="1080" height="1920" fill="url(#glow)"/>
   <rect width="1080" height="1920" fill="url(#dots)"/>
+  {% if bg_image_data_uri %}
+  <image href="{{ bg_image_data_uri }}" width="1080" height="1920" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
+  {% endif %}
   {% if slide.tag %}
   <rect x="80" y="160" width="300" height="60" rx="30" fill="url(#acc-grad)" opacity="0.2"/>
   <text x="230" y="198" text-anchor="middle" font-family="Inter,sans-serif" font-size="24" font-weight="600" fill="{{ brand.accent_color | default('#cba6f7') }}">{{ slide.tag }}</text>
@@ -34,4 +37,7 @@
   {% endif %}
   <text x="540" y="1780" text-anchor="middle" font-family="Inter,sans-serif" font-size="28" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }} · {{ brand.brand_handle | default('') }}</text>
   <circle cx="1000" cy="80" r="180" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
+  {% if logo_data_uri %}
+  <image href="{{ logo_data_uri }}" x="952" y="1792" height="48" preserveAspectRatio="xMidYMid meet"/>
+  {% endif %}
 </svg>

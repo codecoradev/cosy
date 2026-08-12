@@ -19,6 +19,9 @@
   <rect width="1080" height="1080" fill="url(#bg-grad)"/>
   <rect width="1080" height="1080" fill="url(#glow)"/>
   <rect width="1080" height="1080" fill="url(#dots)"/>
+  {% if bg_image_data_uri %}
+  <image href="{{ bg_image_data_uri }}" width="1080" height="1080" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
+  {% endif %}
   <rect x="60" y="120" width="960" height="820" rx="16" fill="#181825" opacity="0.8"/>
   <rect x="60" y="120" width="960" height="60" rx="16" fill="#11111b"/>
   <rect x="60" y="150" width="960" height="30" fill="#11111b"/>
@@ -33,4 +36,7 @@
   <text x="150" y="968" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="20" font-weight="600" fill="{{ brand.accent_color | default('#cba6f7') }}">{{ slide.language | default('Rust') }}</text>
   <text x="940" y="968" text-anchor="end" font-family="Inter,sans-serif" font-size="22" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   <circle cx="1000" cy="80" r="180" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
+  {% if logo_data_uri %}
+  <image href="{{ logo_data_uri }}" x="952" y="952" height="48" preserveAspectRatio="xMidYMid meet"/>
+  {% endif %}
 </svg>

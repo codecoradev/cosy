@@ -19,6 +19,9 @@
   <rect width="1080" height="1200" fill="url(#bg-grad)"/>
   <rect width="1080" height="1200" fill="url(#glow)"/>
   <rect width="1080" height="1200" fill="url(#dots)"/>
+  {% if bg_image_data_uri %}
+  <image href="{{ bg_image_data_uri }}" width="1080" height="1200" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
+  {% endif %}
   <text x="80" y="200" font-family="Space Grotesk,sans-serif" font-size="120" font-weight="800" fill="url(#acc-grad)" opacity="0.3">"</text>
   <text x="100" y="480" font-family="Inter,sans-serif" font-size="36" font-weight="500" fill="#cdd6f4">
     {% for line in quote_lines %}<tspan x="100" dy="{% if loop.first %}0{% else %}50{% endif %}">{{ line }}</tspan>{% endfor %}
@@ -29,4 +32,7 @@
   <text x="100" y="1010" font-family="Inter,sans-serif" font-size="22" font-weight="400" fill="#a6adc8">{{ slide.author_role | default('') }}{% if slide.author_company %} · {% endif %}{{ slide.author_company | default('') }}</text>
   <text x="100" y="1130" font-family="Inter,sans-serif" font-size="20" font-weight="400" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   <circle cx="1000" cy="80" r="180" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
+  {% if logo_data_uri %}
+  <image href="{{ logo_data_uri }}" x="952" y="1072" height="48" preserveAspectRatio="xMidYMid meet"/>
+  {% endif %}
 </svg>

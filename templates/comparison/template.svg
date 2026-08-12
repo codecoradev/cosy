@@ -19,6 +19,9 @@
   <rect width="1080" height="1350" fill="url(#bg-grad)"/>
   <rect width="1080" height="1350" fill="url(#glow)"/>
   <rect width="1080" height="1350" fill="url(#dots)"/>
+  {% if bg_image_data_uri %}
+  <image href="{{ bg_image_data_uri }}" width="1080" height="1350" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
+  {% endif %}
   <text x="540" y="130" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="44" font-weight="700" fill="#cdd6f4">
     {% for line in title_lines %}<tspan x="540" dy="{% if loop.first %}0{% else %}54{% endif %}">{{ line }}</tspan>{% endfor %}
     {% if not title_lines %}<tspan x="540" dy="0">{{ slide.title }}</tspan>{% endif %}
@@ -37,4 +40,7 @@
   </text>
   <text x="540" y="1280" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="400" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   <circle cx="1000" cy="80" r="180" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
+  {% if logo_data_uri %}
+  <image href="{{ logo_data_uri }}" x="952" y="1222" height="48" preserveAspectRatio="xMidYMid meet"/>
+  {% endif %}
 </svg>
