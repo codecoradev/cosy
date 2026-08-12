@@ -2,40 +2,44 @@
 
 Square podcast/album cover
 
+![Podcast Cover sample](/samples/podcast-cover.png)
+
 ## Dimensions
 
 | Property | Value |
 |----------|-------|
 | Width | 1080px |
 | Height | 1080px |
+| Aspect | 1080:1080 |
 | Fonts | Inter, JetBrains Mono |
 
 ## Slide Fields
 
 | Field | Type | Required | Max | Description |
 |-------|------|----------|-----|-------------|
-| `episode_num` | text | No | 20 |  |
-| `title` | text | Yes | 150 | Wraps at 22 chars |
-| `guest` | text | No | 50 |  |
+| `episode_num` | text | No | 20 | Episode number label (e.g. "EP 03") |
+| `title` | text | Yes | 150 | Main title or heading |
+| `guest` | text | No | 50 | Guest name for podcasts |
 
-## Example
+## Example JSON
 
 ```json
 {
   "brand": {
     "brand_name": "Your Brand",
-    "bg_color": "#1e1e2e",
-    "bg_color_end": "#11111b",
-    "accent_color": "#cba6f7",
-    "accent_color_end": "#89b4fa"
+    "brand_handle": "@yourbrand"
   },
   "slides": [
     {
-      "title": "Sample title"
+      "episode_num": "EP 03",
+      "title": "Why Rust?",
+      "guest": "w/ Ajian"
     }
   ]
 }
 ```
+
+## Render
 
 ```bash
 cosy render --template podcast-cover --data input.json --output output.png

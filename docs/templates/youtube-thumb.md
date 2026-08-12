@@ -1,6 +1,8 @@
-# Youtube Thumb
+# YouTube Thumbnail
 
 Eye-catching YouTube thumbnail
+
+![YouTube Thumbnail sample](/samples/youtube-thumb.png)
 
 ## Dimensions
 
@@ -8,34 +10,36 @@ Eye-catching YouTube thumbnail
 |----------|-------|
 | Width | 1280px |
 | Height | 720px |
+| Aspect | 1280:720 |
 | Fonts | Inter, JetBrains Mono |
 
 ## Slide Fields
 
 | Field | Type | Required | Max | Description |
 |-------|------|----------|-----|-------------|
-| `title` | text | Yes | 120 | Wraps at 30 chars |
-| `episode` | text | No | 20 |  |
-| `tag` | text | No | 30 |  |
+| `title` | text | Yes | 120 | Main title or heading |
+| `episode` | text | No | 20 | Episode identifier (e.g. "EP 01") |
+| `tag` | text | No | 30 | Small label/badge (e.g. "NEW", "UPDATE") |
 
-## Example
+## Example JSON
 
 ```json
 {
   "brand": {
     "brand_name": "Your Brand",
-    "bg_color": "#1e1e2e",
-    "bg_color_end": "#11111b",
-    "accent_color": "#cba6f7",
-    "accent_color_end": "#89b4fa"
+    "brand_handle": "@yourbrand"
   },
   "slides": [
     {
-      "title": "Sample title"
+      "title": "Why Rust?",
+      "episode": "EP 01",
+      "tag": "NEW"
     }
   ]
 }
 ```
+
+## Render
 
 ```bash
 cosy render --template youtube-thumb --data input.json --output output.png

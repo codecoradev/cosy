@@ -1,6 +1,8 @@
-# Og Image
+# OG Image
 
 Open Graph image (1200×630) for blog posts and social previews
+
+![OG Image sample](/samples/og-image.png)
 
 ## Dimensions
 
@@ -8,35 +10,38 @@ Open Graph image (1200×630) for blog posts and social previews
 |----------|-------|
 | Width | 1200px |
 | Height | 630px |
+| Aspect | 1200:630 |
 | Fonts | Inter |
 
 ## Slide Fields
 
 | Field | Type | Required | Max | Description |
 |-------|------|----------|-----|-------------|
-| `title` | text | Yes | 200 | Wraps at 38 chars |
-| `subtitle` | text | No | 150 | Wraps at 50 chars |
-| `author` | text | No | 50 |  |
-| `url` | text | No | 100 |  |
+| `title` | text | Yes | 200 | Main title or heading |
+| `subtitle` | text | No | 150 | Secondary descriptive text |
+| `author` | text | No | 50 | Author or attributed person |
+| `url` | text | No | 100 | URL or domain (e.g. "codecora.dev") |
 
-## Example
+## Example JSON
 
 ```json
 {
   "brand": {
     "brand_name": "Your Brand",
-    "bg_color": "#1e1e2e",
-    "bg_color_end": "#11111b",
-    "accent_color": "#cba6f7",
-    "accent_color_end": "#89b4fa"
+    "brand_handle": "@yourbrand"
   },
   "slides": [
     {
-      "title": "Sample title"
+      "title": "Why Rust?",
+      "subtitle": "JSON in, PNG out \u2014 no design skills needed",
+      "author": "Linus Torvalds",
+      "url": "codecora.dev"
     }
   ]
 }
 ```
+
+## Render
 
 ```bash
 cosy render --template og-image --data input.json --output output.png

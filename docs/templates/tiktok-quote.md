@@ -1,6 +1,8 @@
-# Tiktok Quote
+# TikTok Quote
 
 Quote overlay for TikTok/Reels
+
+![TikTok Quote sample](/samples/tiktok-quote.png)
 
 ## Dimensions
 
@@ -8,34 +10,34 @@ Quote overlay for TikTok/Reels
 |----------|-------|
 | Width | 1080px |
 | Height | 1350px |
+| Aspect | 1080:1350 |
 | Fonts | Inter, JetBrains Mono |
 
 ## Slide Fields
 
 | Field | Type | Required | Max | Description |
 |-------|------|----------|-----|-------------|
-| `quote` | text | Yes | 200 | Wraps at 25 chars |
-| `author` | text | Yes | 50 |  |
+| `quote` | text | Yes | 200 | The quote text |
+| `author` | text | Yes | 50 | Author or attributed person |
 
-## Example
+## Example JSON
 
 ```json
 {
   "brand": {
     "brand_name": "Your Brand",
-    "bg_color": "#1e1e2e",
-    "bg_color_end": "#11111b",
-    "accent_color": "#cba6f7",
-    "accent_color_end": "#89b4fa"
+    "brand_handle": "@yourbrand"
   },
   "slides": [
     {
-      "quote": "Sample quote",
-      "author": "Sample author"
+      "quote": "The best time to ship was yesterday. The second best is now.",
+      "author": "Linus Torvalds"
     }
   ]
 }
 ```
+
+## Render
 
 ```bash
 cosy render --template tiktok-quote --data input.json --output output.png
