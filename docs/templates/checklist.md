@@ -2,43 +2,50 @@
 
 Tips/checklist carousel slide
 
+![Checklist sample](/samples/checklist.png)
+
 ## Dimensions
 
 | Property | Value |
 |----------|-------|
 | Width | 1080px |
 | Height | 1350px |
+| Aspect | 1080:1350 |
 | Fonts | Inter, JetBrains Mono |
 
 ## Slide Fields
 
 | Field | Type | Required | Max | Description |
 |-------|------|----------|-----|-------------|
-| `title` | text | Yes | 100 | Wraps at 30 chars |
-| `item1` | text | No | 80 |  |
-| `item2` | text | No | 80 |  |
-| `item3` | text | No | 80 |  |
-| `item4` | text | No | 80 |  |
-| `item5` | text | No | 80 |  |
+| `title` | text | Yes | 100 | Main title or heading |
+| `item1` | text | No | 80 | Checklist item 1 |
+| `item2` | text | No | 80 | Checklist item 2 |
+| `item3` | text | No | 80 | Checklist item 3 |
+| `item4` | text | No | 80 | Checklist item 4 |
+| `item5` | text | No | 80 | Checklist item 5 |
 
-## Example
+## Example JSON
 
 ```json
 {
   "brand": {
     "brand_name": "Your Brand",
-    "bg_color": "#1e1e2e",
-    "bg_color_end": "#11111b",
-    "accent_color": "#cba6f7",
-    "accent_color_end": "#89b4fa"
+    "brand_handle": "@yourbrand"
   },
   "slides": [
     {
-      "title": "Sample title"
+      "title": "Why Rust?",
+      "item1": "Write tests",
+      "item2": "Run clippy",
+      "item3": "Update changelog",
+      "item4": "Tag release",
+      "item5": "Publish"
     }
   ]
 }
 ```
+
+## Render
 
 ```bash
 cosy render --template checklist --data input.json --output output.png

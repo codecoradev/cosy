@@ -1,6 +1,8 @@
-# Github Readme
+# GitHub README Banner
 
 README banner for repos
+
+![GitHub README Banner sample](/samples/github-readme.png)
 
 ## Dimensions
 
@@ -8,34 +10,36 @@ README banner for repos
 |----------|-------|
 | Width | 1280px |
 | Height | 640px |
+| Aspect | 1280:640 |
 | Fonts | Inter, JetBrains Mono |
 
 ## Slide Fields
 
 | Field | Type | Required | Max | Description |
 |-------|------|----------|-----|-------------|
-| `title` | text | Yes | 100 | Wraps at 35 chars |
-| `description` | text | No | 300 | Wraps at 60 chars |
-| `tech_stack` | text | No | 100 |  |
+| `title` | text | Yes | 100 | Main title or heading |
+| `description` | text | No | 300 | Brief description |
+| `tech_stack` | text | No | 100 | Comma-separated tech list |
 
-## Example
+## Example JSON
 
 ```json
 {
   "brand": {
     "brand_name": "Your Brand",
-    "bg_color": "#1e1e2e",
-    "bg_color_end": "#11111b",
-    "accent_color": "#cba6f7",
-    "accent_color_end": "#89b4fa"
+    "brand_handle": "@yourbrand"
   },
   "slides": [
     {
-      "title": "Sample title"
+      "title": "Why Rust?",
+      "description": "Template-based image generation in Rust.",
+      "tech_stack": "Rust, resvg, axum"
     }
   ]
 }
 ```
+
+## Render
 
 ```bash
 cosy render --template github-readme --data input.json --output output.png

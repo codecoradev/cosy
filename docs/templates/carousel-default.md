@@ -2,40 +2,44 @@
 
 5-slide carousel with eyebrow, headline, body, CTA per slide
 
+![Carousel sample](/samples/carousel-default.png)
+
 ## Dimensions
 
 | Property | Value |
 |----------|-------|
 | Width | 1080px |
 | Height | 1350px |
+| Aspect | 1080:1350 |
 | Fonts | Inter |
 
 ## Slide Fields
 
 | Field | Type | Required | Max | Description |
 |-------|------|----------|-----|-------------|
-| `eyebrow` | text | No | 50 |  |
-| `headline` | text | Yes | 200 | Wraps at 32 chars |
-| `body` | text | No | 400 | Wraps at 45 chars |
+| `eyebrow` | text | No | 50 | Small text above headline (section label) |
+| `headline` | text | Yes | 200 | Primary headline text |
+| `body` | text | No | 400 | Longer body text or description |
 
-## Example
+## Example JSON
 
 ```json
 {
   "brand": {
     "brand_name": "Your Brand",
-    "bg_color": "#1e1e2e",
-    "bg_color_end": "#181825",
-    "accent_color": "#cba6f7",
-    "accent_color_end": "#89b4fa"
+    "brand_handle": "@yourbrand"
   },
   "slides": [
     {
-      "headline": "Sample headline"
+      "eyebrow": "Chapter 1",
+      "headline": "Ship faster with templates",
+      "body": "Consistent branding across every post without manual design work."
     }
   ]
 }
 ```
+
+## Render
 
 ```bash
 cosy render --template carousel-default --data input.json --output output.png

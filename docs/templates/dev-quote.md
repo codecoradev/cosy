@@ -2,40 +2,44 @@
 
 Code-style quote card, square
 
+![Dev Quote sample](/samples/dev-quote.png)
+
 ## Dimensions
 
 | Property | Value |
 |----------|-------|
 | Width | 1080px |
 | Height | 1080px |
+| Aspect | 1080:1080 |
 | Fonts | Inter, JetBrains Mono |
 
 ## Slide Fields
 
 | Field | Type | Required | Max | Description |
 |-------|------|----------|-----|-------------|
-| `code_snippet` | text | Yes | 500 | Wraps at 45 chars |
-| `language` | text | No | 20 |  |
-| `filename` | text | No | 30 |  |
+| `code_snippet` | text | Yes | 500 | Code block content |
+| `language` | text | No | 20 | Programming language label |
+| `filename` | text | No | 30 | Filename for code display |
 
-## Example
+## Example JSON
 
 ```json
 {
   "brand": {
     "brand_name": "Your Brand",
-    "bg_color": "#1e1e2e",
-    "bg_color_end": "#11111b",
-    "accent_color": "#cba6f7",
-    "accent_color_end": "#89b4fa"
+    "brand_handle": "@yourbrand"
   },
   "slides": [
     {
-      "code_snippet": "Sample code snippet"
+      "code_snippet": "fn main() { }",
+      "language": "rust",
+      "filename": "main.rs"
     }
   ]
 }
 ```
+
+## Render
 
 ```bash
 cosy render --template dev-quote --data input.json --output output.png
