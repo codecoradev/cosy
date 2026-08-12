@@ -86,6 +86,11 @@ pub enum Command {
         /// Port to listen on.
         #[arg(short, long, default_value = "3000")]
         port: u16,
+
+        /// API key for bearer token auth. If not set, reads COSY_API_KEY env var.
+        /// When neither is set, auth is disabled (dev mode).
+        #[arg(short, long)]
+        token: Option<String>,
     },
 }
 
@@ -203,11 +208,19 @@ impl Cli {
                 }
             }
 
-            Command::Serve { port } => {
+            Command::Serve { port, token } => {
+                // Resolve API key: --token flag takes priority, then COSY_API_KEY env
+                let api_key = token.or_else(|| std::env::var("COSY_API_KEY").ok());
+
+                if api_key.is_some() {
+                    println!("🔒 Auth enabled — bearer token required");
+                } else {
+                    eprintln!("⚠️  Auth disabled — set --token or COSY_API_KEY to secure the API");
+                }
                 println!("Starting Cosy API server on port {}...", port);
                 // Tokio runtime for async server
                 let runtime = tokio::runtime::Runtime::new()?;
-                runtime.block_on(crate::server::run(port))?;
+                runtime.block_on(crate::server::run(port, api_key))?;
                 Ok(ExitCode::SUCCESS)
             }
         }

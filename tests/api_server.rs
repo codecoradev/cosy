@@ -10,8 +10,14 @@ use std::thread;
 use std::time::Duration;
 
 /// Start the API server on an available port in a background thread.
+/// Auth disabled (no API key) — for testing endpoint behavior.
 /// Returns the base URL (e.g. "http://127.0.0.1:XXXXX").
 fn start_server() -> String {
+    start_server_with_key(None)
+}
+
+/// Start the API server with an optional API key for auth testing.
+fn start_server_with_key(api_key: Option<String>) -> String {
     // Find a free port by binding a temporary listener
     let listener = TcpListener::bind("127.0.0.1:0").unwrap();
     let port = listener.local_addr().unwrap().port();
@@ -19,7 +25,7 @@ fn start_server() -> String {
 
     thread::spawn(move || {
         let runtime = tokio::runtime::Runtime::new().unwrap();
-        runtime.block_on(server::run(port)).unwrap();
+        runtime.block_on(server::run(port, api_key)).unwrap();
     });
 
     // Wait for server to be ready (poll health endpoint)
@@ -74,9 +80,24 @@ fn test_health_response_body() {
         json["templates"].as_u64().unwrap() >= 18,
         "Expected >= 18 templates"
     );
+    assert_eq!(
+        json["auth_enabled"], false,
+        "auth should be disabled when no key set"
+    );
 }
 
-// ─── GET /api/templates ─────────────────────────────────────────────
+#[test]
+fn test_health_shows_auth_enabled() {
+    let url = start_server_with_key(Some("secret123".into()));
+    let resp = http_client()
+        .get(format!("{}/api/health", url))
+        .send()
+        .unwrap();
+    let json: serde_json::Value = resp.json().unwrap();
+    assert_eq!(json["auth_enabled"], true);
+}
+
+// ─── GET /api/templates (no auth) ───────────────────────────────────
 
 #[test]
 fn test_templates_returns_list() {
@@ -121,7 +142,7 @@ fn test_templates_each_has_dimensions() {
     }
 }
 
-// ─── POST /api/render ───────────────────────────────────────────────
+// ─── POST /api/render (no auth) ─────────────────────────────────────
 
 #[test]
 fn test_render_returns_png() {
@@ -160,7 +181,7 @@ fn test_render_different_template() {
         "scale": 1.0,
         "data": {
             "brand": {"brand_name": "Test"},
-            "slides": [{"title": "OG Image Test", "description": "A test OG image"}]
+            "slides": [{"title": "OG Image Test", "subtitle": "A test"}]
         }
     });
     let resp = http_client()
@@ -254,6 +275,93 @@ fn test_render_missing_template_field() {
         .send()
         .unwrap();
     assert!(resp.status().is_client_error());
+}
+
+// ─── Auth tests ─────────────────────────────────────────────────────
+
+#[test]
+fn test_auth_health_public_with_key() {
+    // Health should always be accessible, even with auth enabled
+    let url = start_server_with_key(Some("mysecret".into()));
+    let resp = http_client()
+        .get(format!("{}/api/health", url))
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 200);
+}
+
+#[test]
+fn test_auth_templates_rejected_without_token() {
+    let url = start_server_with_key(Some("mysecret".into()));
+    let resp = http_client()
+        .get(format!("{}/api/templates", url))
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 401);
+}
+
+#[test]
+fn test_auth_templates_rejected_wrong_token() {
+    let url = start_server_with_key(Some("mysecret".into()));
+    let resp = http_client()
+        .get(format!("{}/api/templates", url))
+        .header("Authorization", "Bearer wrongtoken")
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 401);
+}
+
+#[test]
+fn test_auth_templates_accepted_correct_token() {
+    let url = start_server_with_key(Some("mysecret".into()));
+    let resp = http_client()
+        .get(format!("{}/api/templates", url))
+        .header("Authorization", "Bearer mysecret")
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 200);
+    let json: serde_json::Value = resp.json().unwrap();
+    assert!(json.as_array().unwrap().len() >= 18);
+}
+
+#[test]
+fn test_auth_render_rejected_without_token() {
+    let url = start_server_with_key(Some("mysecret".into()));
+    let body = serde_json::json!({
+        "template": "stat-card",
+        "scale": 1.0,
+        "data": {
+            "brand": {"brand_name": "Test"},
+            "slides": [{"stat_number": "50%", "stat_label": "test", "source": "x"}]
+        }
+    });
+    let resp = http_client()
+        .post(format!("{}/api/render", url))
+        .json(&body)
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 401);
+}
+
+#[test]
+fn test_auth_render_accepted_correct_token() {
+    let url = start_server_with_key(Some("mysecret".into()));
+    let body = serde_json::json!({
+        "template": "stat-card",
+        "scale": 1.0,
+        "data": {
+            "brand": {"brand_name": "Test"},
+            "slides": [{"stat_number": "50%", "stat_label": "test", "source": "x"}]
+        }
+    });
+    let resp = http_client()
+        .post(format!("{}/api/render", url))
+        .header("Authorization", "Bearer mysecret")
+        .json(&body)
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 200);
+    assert_eq!(resp.headers().get("content-type").unwrap(), "image/png");
 }
 
 // ─── Unknown routes ─────────────────────────────────────────────────

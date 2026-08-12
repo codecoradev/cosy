@@ -1,0 +1,20 @@
+services:
+  cosy:
+    build: .
+    # Use pre-built image instead:
+    # image: ghcr.io/codecoradev/cosy:0.1.0
+    ports:
+      - "3000:3000"
+    environment:
+      # Set your API key here or via .env file
+      - COSY_API_KEY=${COSY_API_KEY:-}
+      - RUST_LOG=${RUST_LOG:-info}
+    # Or pass token directly:
+    # command: serve --port 3000 --token your-secret-key
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s

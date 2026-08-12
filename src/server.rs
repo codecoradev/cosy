@@ -1,16 +1,20 @@
 //! HTTP API server for Cosy.
 //!
 //! Endpoints:
-//! - GET  /api/health     — health check
-//! - GET  /api/templates  — list all templates
-//! - POST /api/render     — render template with JSON data → PNG
+//! - GET  /api/health     — health check (public, no auth)
+//! - GET  /api/templates  — list all templates (auth required)
+//! - POST /api/render     — render template with JSON data → PNG (auth required)
+//!
+//! Authentication: Bearer token via `Authorization: Bearer <token>` header.
+//! Set COSY_API_KEY env var or pass --token flag. If not set, auth is disabled (dev mode).
 
 use crate::render;
 use crate::schema::InputData;
 use crate::template;
 use axum::{
-    extract::State,
+    extract::{Request, State},
     http::{header, StatusCode},
+    middleware::Next,
     response::{IntoResponse, Json, Response},
     routing::{get, post},
     Router,
@@ -23,6 +27,7 @@ use tower_http::cors::CorsLayer;
 /// Shared server state — font DB built once at startup.
 struct AppState {
     font_db: usvg::fontdb::Database,
+    api_key: Option<String>,
 }
 
 /// Request body for POST /api/render.
@@ -47,6 +52,7 @@ pub struct HealthResponse {
     pub status: &'static str,
     pub version: &'static str,
     pub templates: usize,
+    pub auth_enabled: bool,
 }
 
 /// Response wrapper for errors.
@@ -56,17 +62,39 @@ pub struct ErrorResponse {
 }
 
 /// Start the HTTP server.
-pub async fn run(port: u16) -> anyhow::Result<()> {
+///
+/// If `api_key` is Some, all endpoints except /api/health require
+/// `Authorization: Bearer <api_key>` header.
+pub async fn run(port: u16, api_key: Option<String>) -> anyhow::Result<()> {
     let font_db = render::build_font_db(None)?;
 
     let template_count = template::list_templates(std::path::Path::new("./templates")).len();
 
-    let state = Arc::new(AppState { font_db });
+    let auth_enabled = api_key.is_some();
+    if auth_enabled {
+        log::info!("Authentication enabled (bearer token required)");
+    } else {
+        log::warn!("Authentication disabled — set COSY_API_KEY to secure the API");
+    }
 
-    let app = Router::new()
-        .route("/api/health", get(health))
+    let state = Arc::new(AppState {
+        font_db,
+        api_key: api_key.clone(),
+    });
+
+    // Protected routes require auth
+    let protected = Router::new()
         .route("/api/templates", get(list_templates))
         .route("/api/render", post(render_handler))
+        .layer(axum::middleware::from_fn_with_state(
+            api_key,
+            auth_middleware,
+        ));
+
+    let app = Router::new()
+        // Health is always public (for Docker healthcheck)
+        .route("/api/health", get(health))
+        .merge(protected)
         .layer(CorsLayer::permissive())
         .with_state(state);
 
@@ -80,6 +108,55 @@ pub async fn run(port: u16) -> anyhow::Result<()> {
     Ok(())
 }
 
+// ─── Auth Middleware ───────────────────────────────────────────────
+
+/// Middleware that checks `Authorization: Bearer <token>` header.
+/// If no API key is configured, the middleware passes through (dev mode).
+async fn auth_middleware(
+    State(expected_key): State<Option<String>>,
+    req: Request,
+    next: Next,
+) -> Response {
+    let Some(expected) = expected_key else {
+        // No API key configured — auth disabled
+        return next.run(req).await;
+    };
+
+    let auth_header = req
+        .headers()
+        .get(header::AUTHORIZATION)
+        .and_then(|v| v.to_str().ok());
+
+    match auth_header {
+        Some(header_val) if header_val.starts_with("Bearer ") => {
+            let token = &header_val[7..];
+            // Constant-time comparison to prevent timing attacks
+            if constant_time_eq(token.as_bytes(), expected.as_bytes()) {
+                next.run(req).await
+            } else {
+                error_response(StatusCode::UNAUTHORIZED, "Invalid API key".into())
+            }
+        }
+        _ => error_response(
+            StatusCode::UNAUTHORIZED,
+            "Missing or invalid Authorization header. Expected: Bearer <token>".into(),
+        ),
+    }
+}
+
+/// Constant-time byte comparison to prevent timing side-channel attacks.
+/// Compares all bytes regardless of match position, accumulating differences.
+fn constant_time_eq(a: &[u8], b: &[u8]) -> bool {
+    if a.len() != b.len() {
+        return false;
+    }
+    let mut diff = 0u8;
+    for (x, y) in a.iter().zip(b.iter()) {
+        diff |= x ^ y;
+    }
+    diff == 0
+}
+
 // ─── Handlers ──────────────────────────────────────────────────────
 
 async fn health(State(state): State<Arc<AppState>>) -> Json<HealthResponse> {
@@ -89,6 +166,7 @@ async fn health(State(state): State<Arc<AppState>>) -> Json<HealthResponse> {
         status: "ok",
         version: env!("CARGO_PKG_VERSION"),
         templates: templates.len(),
+        auth_enabled: state.api_key.is_some(),
     })
 }
 

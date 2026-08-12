@@ -1,0 +1,37 @@
+# Build artifacts
+target/
+**/*.rs.bk
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+docker-compose.*.yml
+
+# Git
+.git/
+.gitignore
+.gitattributes
+.github/
+.githooks/
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# CI / docs
+CHANGELOG.md
+*.md
+!templates/**/*.md
+cargo-mutants.toml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Testing
+tests/
+.cora.yaml
