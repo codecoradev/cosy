@@ -6,6 +6,7 @@
 mod cli;
 mod render;
 mod schema;
+mod server;
 mod template;
 mod text;
 

@@ -80,6 +80,13 @@ pub enum Command {
         #[arg(short, long)]
         data: String,
     },
+
+    /// Start HTTP API server.
+    Serve {
+        /// Port to listen on.
+        #[arg(short, long, default_value = "3000")]
+        port: u16,
+    },
 }
 
 impl Cli {
@@ -194,6 +201,14 @@ impl Cli {
                     }
                     Ok(ExitCode::from(1))
                 }
+            }
+
+            Command::Serve { port } => {
+                println!("Starting Cosy API server on port {}...", port);
+                // Tokio runtime for async server
+                let runtime = tokio::runtime::Runtime::new()?;
+                runtime.block_on(crate::server::run(port))?;
+                Ok(ExitCode::SUCCESS)
             }
         }
     }

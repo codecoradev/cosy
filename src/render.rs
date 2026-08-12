@@ -112,6 +112,18 @@ fn render_slide(
     scale: f32,
     font_db: &usvg::fontdb::Database,
 ) -> anyhow::Result<Vec<u8>> {
+    render_slide_to_png(template, template_dir, data, slide_index, scale, font_db)
+}
+
+/// Render a single slide to PNG bytes (public API for server).
+pub fn render_slide_to_png(
+    template: &TemplateDef,
+    template_dir: &Path,
+    data: &InputData,
+    slide_index: usize,
+    scale: f32,
+    font_db: &usvg::fontdb::Database,
+) -> anyhow::Result<Vec<u8>> {
     let slide_data = &data.slides[slide_index];
 
     // 1. Process minijinja template → SVG string
@@ -154,7 +166,7 @@ fn render_slide(
 /// 1. Bundled fonts (Inter Regular/Bold/SemiBold, JetBrains Mono Regular)
 /// 2. System fonts
 /// 3. User-specified --font-dir
-fn build_font_db(custom_dir: Option<&Path>) -> anyhow::Result<usvg::fontdb::Database> {
+pub fn build_font_db(custom_dir: Option<&Path>) -> anyhow::Result<usvg::fontdb::Database> {
     let mut db = usvg::fontdb::Database::new();
 
     // 1. Load bundled fonts (embedded at compile time)
