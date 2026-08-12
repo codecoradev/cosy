@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **HTTP API server** (`cosy serve --port 3000`): RESTful endpoints for rendering images via HTTP
+  - `GET /api/health` — health check with version and template count
+  - `GET /api/templates` — list all available templates with dimensions
+  - `POST /api/render` — render template with JSON data, returns PNG directly
 - **15 new templates**: twitter-quote, linkedin-card, dev-quote, instagram-story, youtube-thumb, github-readme, tiktok-quote, newsletter-header, podcast-cover, event-banner, testimonial, stat-card, checklist, comparison, announcement
 - **Gradient backgrounds** with customizable `bg_color`, `bg_color_end`, `accent_color`, `accent_color_end`
 - **Image support**: `bg_image` (background texture/photo) and `logo` (brand watermark) fields
