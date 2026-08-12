@@ -1,0 +1,121 @@
+#!/usr/bin/env bash
+# Universal pre-commit hook — adaptive language detection
+# Detects staged file types and runs appropriate checks.
+# Bypass: git commit --no-verify (ONLY for cora false positives)
+#
+# Install: git config core.hooksPath .githooks
+
+set -euo pipefail
+
+STAGED=$(git diff --cached --name-only --diff-filter=ACM | head -200)
+if [ -z "$STAGED" ]; then
+    exit 0
+fi
+
+# ─── Detect languages from staged files ─────────────────────
+HAS_RUST=$(echo "$STAGED" | grep -c '\.rs$' || true)
+HAS_TS=$(echo "$STAGED" | grep -cE '\.(ts|js|svelte|vue)$' || true)
+HAS_GO=$(echo "$STAGED" | grep -c '\.go$' || true)
+HAS_PY=$(echo "$STAGED" | grep -c '\.py$' || true)
+
+FAILED=0
+
+# ─── Rust: cargo fmt + clippy ───────────────────────────────
+if [ "$HAS_RUST" -gt 0 ] && [ -f Cargo.toml ]; then
+    echo "🎨 Checking Rust formatting..."
+    if ! cargo fmt --all -- --check 2>&1; then
+        echo "❌ cargo fmt found issues. Run: cargo fmt --all"
+        FAILED=1
+    else
+        echo "✅ Rust formatting clean."
+    fi
+
+    echo "🔍 Running clippy..."
+    if ! cargo clippy --all-targets -- -D warnings 2>&1; then
+        echo "❌ clippy found warnings."
+        FAILED=1
+    else
+        echo "✅ Clippy clean."
+    fi
+fi
+
+# ─── JS/TS: biome or prettier ───────────────────────────────
+if [ "$HAS_TS" -gt 0 ]; then
+    if [ -f biome.json ] || [ -f biome.jsonc ]; then
+        echo "🎨 Checking JS/TS with biome..."
+        if command -v biome &>/dev/null; then
+            if ! biome check --staged 2>&1; then
+                echo "❌ biome found issues."
+                FAILED=1
+            else
+                echo "✅ Biome clean."
+            fi
+        fi
+    elif [ -f .prettierrc ] || [ -f .prettierrc.json ] || [ -f .prettierrc.js ]; then
+        echo "🎨 Checking JS/TS with prettier..."
+        if command -v prettier &>/dev/null; then
+            if ! prettier --check $(echo "$STAGED" | grep -E '\.(ts|js|svelte|vue)$'); then
+                echo "❌ prettier found issues."
+                FAILED=1
+            else
+                echo "✅ Prettier clean."
+            fi
+        fi
+    fi
+fi
+
+# ─── Go: gofmt + go vet ─────────────────────────────────────
+if [ "$HAS_GO" -gt 0 ] && [ -f go.mod ]; then
+    echo "🎨 Checking Go formatting..."
+    GOFILES=$(echo "$STAGED" | grep '\.go$')
+    if [ -n "$GOFILES" ]; then
+        FMTIssues=$(gofmt -l $GOFILES 2>/dev/null || true)
+        if [ -n "$FMTIssues" ]; then
+            echo "❌ gofmt found issues in: $FMTIssues"
+            FAILED=1
+        else
+            echo "✅ Go formatting clean."
+        fi
+    fi
+fi
+
+# ─── Python: ruff ───────────────────────────────────────────
+if [ "$HAS_PY" -gt 0 ]; then
+    if command -v ruff &>/dev/null; then
+        echo "🎨 Checking Python with ruff..."
+        if ! ruff check $(echo "$STAGED" | grep '\.py$') 2>&1; then
+            echo "❌ ruff found issues."
+            FAILED=1
+        else
+            echo "✅ Ruff clean."
+        fi
+    fi
+fi
+
+# ─── Cora review (always, if cora binary exists) ────────────
+CORA_BIN="${CORA_BIN:-cora}"
+if command -v "$CORA_BIN" &>/dev/null; then
+    echo "🔍 Running cora code review..."
+    if "$CORA_BIN" review --staged --format compact 2>/dev/null; then
+        echo "✅ cora review passed."
+    else
+        EXIT_CODE=$?
+        if [ $EXIT_CODE -eq 2 ]; then
+            echo "❌ cora review found blocking issues. Commit denied."
+            FAILED=1
+        elif [ $EXIT_CODE -eq 1 ]; then
+            echo "⚠️  cora review encountered an error (commit will proceed)."
+        else
+            echo "⚠️  cora exited with code $EXIT_CODE (commit will proceed)."
+        fi
+    fi
+fi
+
+if [ $FAILED -ne 0 ]; then
+    echo ""
+    echo "🚫 Pre-commit checks failed. Fix issues above and re-commit."
+    echo "   Or use --no-verify ONLY if cora false positive (fmt/clippy MUST pass)."
+    exit 1
+fi
+
+exit 0

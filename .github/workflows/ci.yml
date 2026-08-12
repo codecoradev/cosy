@@ -1,49 +1,103 @@
 name: CI
 
 on:
-  push:
-    branches: [main, develop]
   pull_request:
-    branches: [main, develop]
+    branches: [develop, main]
+  push:
+    branches: [main]
 
 env:
   CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
-  build:
+  check:
+    name: Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo check --all-targets
 
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+  fmt:
+    name: Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          components: clippy, rustfmt
+          components: rustfmt
+      - run: cargo fmt --all -- --check
 
-      - name: Cache cargo
-        uses: actions/cache@v4
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo clippy --all-targets -- -D warnings
 
-      - name: Check formatting
-        run: cargo fmt -- --check
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo test --verbose
 
-      - name: Clippy
-        run: cargo clippy --all-targets -- -D warnings
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo build --release --verbose
 
-      - name: Build
-        run: cargo build --verbose
-
-      - name: Run tests
-        run: cargo test --verbose
-
-      - name: Verify templates
+  verify-templates:
+    name: Verify Templates
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo build --verbose
+      - name: Verify all templates render
         run: |
           ./target/debug/cosy templates
-          ./target/debug/cosy render -t social-quote -d templates/social-quote/defaults.json -o /tmp/test-quote.png --scale 1
+          # Render a representative subset (single + multi-slide)
+          ./target/debug/cosy render -t stat-card -d templates/stat-card/defaults.json -o /tmp/test-stat.png --scale 1
           ./target/debug/cosy render -t carousel-default -d templates/carousel-default/defaults.json -o /tmp/test-carousel --scale 1
-          ./target/debug/cosy render -t og-image -d templates/og-image/defaults.json -o /tmp/test-og.png --scale 1
+          ./target/debug/cosy render -t gradient-card -d templates/gradient-card/defaults.json -o /tmp/test-card.png --scale 1
+
+  mutation-testing:
+    name: Mutation Testing
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: mutants
+      - name: Install cargo-mutants
+        run: cargo install cargo-mutants --locked
+      - name: Run mutation tests
+        run: cargo mutants --file src/schema.rs --file src/template.rs --file src/text.rs -j 2
+      - name: Check mutation score
+        run: |
+          if [ -f mutants.out/missed.txt ]; then
+            MISSED=$(wc -l < mutants.out/missed.txt)
+            if [ "$MISSED" -gt 0 ]; then
+              echo "::warning::${MISSED} mutants were not caught by tests"
+              cat mutants.out/missed.txt
+            else
+              echo "✅ All mutants caught!"
+            fi
+          fi
