@@ -130,7 +130,8 @@ async fn auth_middleware(
     match auth_header {
         Some(header_val) if header_val.starts_with("Bearer ") => {
             let token = &header_val[7..];
-            if token == expected {
+            // Constant-time comparison to prevent timing attacks
+            if constant_time_eq(token.as_bytes(), expected.as_bytes()) {
                 next.run(req).await
             } else {
                 error_response(StatusCode::UNAUTHORIZED, "Invalid API key".into())
@@ -141,6 +142,19 @@ async fn auth_middleware(
             "Missing or invalid Authorization header. Expected: Bearer <token>".into(),
         ),
     }
+}
+
+/// Constant-time byte comparison to prevent timing side-channel attacks.
+/// Compares all bytes regardless of match position, accumulating differences.
+fn constant_time_eq(a: &[u8], b: &[u8]) -> bool {
+    if a.len() != b.len() {
+        return false;
+    }
+    let mut diff = 0u8;
+    for (x, y) in a.iter().zip(b.iter()) {
+        diff |= x ^ y;
+    }
+    diff == 0
 }
 
 // ─── Handlers ──────────────────────────────────────────────────────
