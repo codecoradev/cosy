@@ -12,11 +12,15 @@
       <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0.06"/>
       <stop offset="100%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0"/>
     </radialGradient>
+  <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+    <circle cx="20" cy="20" r="1.5" fill="#ffffff" opacity="0.06"/>
+  </pattern>
   </defs>
 
   <!-- Gradient background + glow -->
   <rect width="1080" height="1350" fill="url(#bg-gradient)"/>
   <rect width="1080" height="1350" fill="url(#glow)"/>
+  <rect width="1080" height="1350" fill="url(#dots)"/>
 
   <!-- Accent bar -->
   <rect x="80" y="120" width="8" height="80" rx="4" fill="url(#accent-gradient)"/>
@@ -42,4 +46,5 @@
   <text x="80" y="1280" font-family="JetBrains Mono, monospace" font-size="22" font-weight="400" fill="#7f849c">
     {{ brand.brand_name | default('') }} · {{ brand.brand_handle | default('') }}
   </text>
+  <circle cx="1000" cy="80" r="180" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
 </svg>
