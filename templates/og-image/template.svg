@@ -1,12 +1,35 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-  <!-- Background -->
-  <rect width="1200" height="630" fill="{{ brand.bg_color | default('#1e1e2e') }}"/>
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.bg_color | default('#1e1e2e') }}"/>
+      <stop offset="100%" stop-color="{{ brand.bg_color_end | default('#11111b') }}"/>
+    </linearGradient>
+    <linearGradient id="accent-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="80%" cy="20%" r="50%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0"/>
+    </radialGradient>
+  <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+    <circle cx="20" cy="20" r="1.5" fill="#ffffff" opacity="0.06"/>
+  </pattern>
+  </defs>
 
-  <!-- Left accent bar -->
-  <rect x="0" y="0" width="8" height="630" fill="{{ brand.accent_color | default('#cba6f7') }}"/>
+  <!-- Gradient background + glow -->
+  {% if bg_image_data_uri %}
+  <image href="{{ bg_image_data_uri }}" width="1200" height="630" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
+  {% endif %}
+  <rect width="1200" height="630" fill="url(#bg-gradient)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect width="1200" height="630" fill="url(#dots)"/>
+
+  <!-- Left accent bar (gradient) -->
+  <rect x="0" y="0" width="8" height="630" fill="url(#accent-gradient)"/>
 
   <!-- Brand name top-left -->
-  <rect x="80" y="50" width="5" height="28" rx="2.5" fill="{{ brand.accent_color | default('#cba6f7') }}"/>
+  <rect x="80" y="50" width="5" height="28" rx="2.5" fill="url(#accent-gradient)"/>
   <text x="96" y="72" font-family="Inter, sans-serif" font-size="22" font-weight="600" fill="#a6adc8">
     {{ brand.brand_name | default('') }}
   </text>
@@ -45,5 +68,9 @@
   <text x="1120" y="580" font-family="JetBrains Mono, monospace" font-size="20" font-weight="400" fill="#7f849c" text-anchor="end">
     {{ slide.url }}
   </text>
+  {% endif %}
+  <circle cx="1120" cy="80" r="105" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
+  {% if logo_data_uri %}
+  <image href="{{ logo_data_uri }}" x="1072" y="502" height="48" preserveAspectRatio="xMidYMid meet"/>
   {% endif %}
 </svg>

@@ -9,9 +9,9 @@
   },
   "slides": [
     {
-      "quote": "Build things that solve real problems. Everything else is just noise.",
-      "author": "Anaz",
-      "author_title": "Founder, CodeCora"
+      "title": "Building an Image Generator in Rust",
+      "episode": "EP. 03",
+      "tag": "Rust + resvg"
     }
   ]
 }

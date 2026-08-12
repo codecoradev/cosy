@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+  <defs>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.bg_color | default('#1e1e2e') }}"/>
+      <stop offset="100%" stop-color="{{ brand.bg_color_end | default('#11111b') }}"/>
+    </linearGradient>
+    <linearGradient id="acc-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="75%" cy="25%" r="55%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0"/>
+    </radialGradient>
+  <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+    <circle cx="20" cy="20" r="1.5" fill="#ffffff" opacity="0.06"/>
+  </pattern>
+  </defs>
+  {% if bg_image_data_uri %}
+  <image href="{{ bg_image_data_uri }}" width="1080" height="1080" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
+  {% endif %}
+  <rect width="1080" height="1080" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
+  <rect width="1080" height="1080" fill="url(#glow)"/>
+  <rect width="1080" height="1080" fill="url(#dots)"/>
+  {% if slide.episode_num %}
+  <text x="200" y="150" font-family="JetBrains Mono,monospace" font-size="24" font-weight="700" fill="{{ brand.accent_color | default('#cba6f7') }}">{{ slide.episode_num }}</text>
+  {% endif %}
+  <rect x="200" y="190" width="120" height="8" rx="4" fill="url(#acc-grad)"/>
+  <text x="200" y="520" font-family="Inter,sans-serif" font-size="22" font-weight="800" fill="#cdd6f4">
+    {% for line in title_lines %}<tspan x="200" dy="{% if loop.first %}0{% else %}170{% endif %}">{{ line }}</tspan>{% endfor %}
+    {% if not title_lines %}<tspan x="200" dy="0">{{ slide.title }}</tspan>{% endif %}
+  </text>
+  {% if slide.guest %}
+  <text x="200" y="900" font-family="Inter,sans-serif" font-size="22" font-weight="600" fill="#a6adc8">with {{ slide.guest }}</text>
+  {% endif %}
+  <text x="2800" y="1000" text-anchor="end" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  <circle cx="1000" cy="80" r="180" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
+  {% if logo_data_uri %}
+  <image href="{{ logo_data_uri }}" x="952" y="952" height="48" preserveAspectRatio="xMidYMid meet"/>
+  {% endif %}
+</svg>

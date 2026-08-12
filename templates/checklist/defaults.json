@@ -1,0 +1,20 @@
+{
+  "brand": {
+    "brand_name": "CodeCora",
+    "brand_handle": "@codecoradev",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "5 Tips for Faster Rust Builds",
+      "item1": "Use sccache for CI caches",
+      "item2": "Split crates into workspaces",
+      "item3": "Avoid unnecessary dependencies",
+      "item4": "Enable LTO only for releases",
+      "item5": "Profile before you optimize"
+    }
+  ]
+}

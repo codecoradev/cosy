@@ -9,9 +9,9 @@
   },
   "slides": [
     {
-      "quote": "Build things that solve real problems. Everything else is just noise.",
-      "author": "Anaz",
-      "author_title": "Founder, CodeCora"
+      "headline": "Ship faster with less overhead",
+      "subtext": "A Rust-native image generation tool that turns JSON into beautiful branded visuals in milliseconds.",
+      "tag": "New Release"
     }
   ]
 }

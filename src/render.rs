@@ -182,7 +182,26 @@ fn build_font_db(custom_dir: Option<&Path>) -> anyhow::Result<usvg::fontdb::Data
         "Regular",
         include_bytes!("assets/fonts/JetBrainsMono-Regular.ttf"),
     );
-    log::debug!("Loaded 4 bundled fonts (Inter R/B/SB, JetBrains Mono R)");
+    // Display font: Space Grotesk (trending modern geometric sans-serif)
+    load_bundled_font(
+        &mut db,
+        "Space Grotesk",
+        "Medium",
+        include_bytes!("assets/fonts/SpaceGrotesk-Medium.ttf"),
+    );
+    load_bundled_font(
+        &mut db,
+        "Space Grotesk",
+        "SemiBold",
+        include_bytes!("assets/fonts/SpaceGrotesk-SemiBold.ttf"),
+    );
+    load_bundled_font(
+        &mut db,
+        "Space Grotesk",
+        "Bold",
+        include_bytes!("assets/fonts/SpaceGrotesk-Bold.ttf"),
+    );
+    log::debug!("Loaded 7 bundled fonts (Inter R/B/SB, JetBrains Mono R, SpaceGrotesk M/SB/B)");
 
     // 2. Load system fonts (may fail in containers — that's OK)
     db.load_system_fonts();

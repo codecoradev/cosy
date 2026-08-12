@@ -1,0 +1,18 @@
+{
+  "brand": {
+    "brand_name": "CodeCora",
+    "brand_handle": "@codecoradev",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "quote": "We switched our entire image pipeline to Cosy and cut render times by 90%. The JSON-to-PNG workflow is exactly what we needed for our content team.",
+      "author_name": "Sarah Chen",
+      "author_role": "CTO",
+      "author_company": "FastShip"
+    }
+  ]
+}
