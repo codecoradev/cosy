@@ -18,6 +18,7 @@ use axum::{
 use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
 use std::sync::Arc;
+use tower_http::cors::CorsLayer;
 
 /// Shared server state — font DB built once at startup.
 struct AppState {
@@ -66,6 +67,7 @@ pub async fn run(port: u16) -> anyhow::Result<()> {
         .route("/api/health", get(health))
         .route("/api/templates", get(list_templates))
         .route("/api/render", post(render_handler))
+        .layer(CorsLayer::permissive())
         .with_state(state);
 
     let addr = SocketAddr::from(([0, 0, 0, 0], port));

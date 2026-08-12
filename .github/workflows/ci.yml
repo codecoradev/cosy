@@ -75,4 +75,3 @@ jobs:
           ./target/debug/cosy render -t stat-card -d templates/stat-card/defaults.json -o /tmp/test-stat.png --scale 1
           ./target/debug/cosy render -t carousel-default -d templates/carousel-default/defaults.json -o /tmp/test-carousel --scale 1
           ./target/debug/cosy render -t og-image -d templates/og-image/defaults.json -o /tmp/test-og.png --scale 1
-

@@ -248,3 +248,55 @@ pub fn validate_input(template: &TemplateDef, data: &InputData) -> Vec<String> {
 
     errors
 }
+
+#[cfg(test)]
+mod filter_tests {
+    use super::*;
+
+    #[test]
+    fn test_filter_wordwrap_returns_wrapped_text() {
+        let result = filter_wordwrap("Hello World Foo Bar".into(), 5);
+        assert!(
+            result.contains('\n'),
+            "wordwrap should produce newlines, got: {:?}",
+            result
+        );
+        assert!(
+            !result.is_empty(),
+            "wordwrap should not return empty string"
+        );
+        assert!(
+            result.lines().all(|l| l.len() <= 5),
+            "each line should be within width"
+        );
+    }
+
+    #[test]
+    fn test_filter_wordwrap_preserves_content() {
+        let result = filter_wordwrap("CodeCora".into(), 100);
+        assert_eq!(result, "CodeCora");
+    }
+
+    #[test]
+    fn test_filter_b64_returns_data_uri() {
+        let filepath = std::env::temp_dir().join("cosy_filter_test.png");
+        std::fs::write(&filepath, b"fake-image").unwrap();
+        let path_str = filepath.to_str().unwrap().to_string();
+
+        let result = filter_b64(path_str);
+        assert!(
+            result.starts_with("data:image/png;base64,"),
+            "b64 filter should return data URI, got: {}",
+            &result[..result.len().min(50)]
+        );
+        assert!(!result.is_empty());
+
+        let _ = std::fs::remove_file(&filepath);
+    }
+
+    #[test]
+    fn test_filter_b64_invalid_path_returns_empty() {
+        let result = filter_b64("/nonexistent/path/to/file.png".into());
+        assert_eq!(result, "");
+    }
+}
