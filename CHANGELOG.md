@@ -1,34 +1,46 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to Cosy will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.1.0] — 2026-08-12
 
 ### Added
 
-- **HTTP API server** (`cosy serve --port 3000`): RESTful endpoints for rendering images via HTTP
-  - `GET /api/health` — health check with version and template count
-  - `GET /api/templates` — list all available templates with dimensions
-  - `POST /api/render` — render template with JSON data, returns PNG directly
-- **15 new templates**: twitter-quote, linkedin-card, dev-quote, instagram-story, youtube-thumb, github-readme, tiktok-quote, newsletter-header, podcast-cover, event-banner, testimonial, stat-card, checklist, comparison, announcement
-- **Gradient backgrounds** with customizable `bg_color`, `bg_color_end`, `accent_color`, `accent_color_end`
-- **Image support**: `bg_image` (background texture/photo) and `logo` (brand watermark) fields
-- **`bg_image_opacity`** field for controlling background image visibility (0.0-1.0)
-- **Space Grotesk** display font for headlines (Medium, SemiBold, Bold)
-- **Visual enhancements**: dots pattern, decorative corner circles, radial glow
-- **`FieldType::Number` and `FieldType::Color`** variants in schema enum
-- Conditional gradient overlay (0.7 opacity when bg_image present, 1.0 when not)
+- **Bearer token authentication** for HTTP API server.
+  - `--token` CLI flag or `COSY_API_KEY` env var.
+  - When set, all endpoints except `/api/health` require `Authorization: Bearer <token>` header.
+  - When unset, auth is disabled (development mode).
+  - Health endpoint reports `auth_enabled` status.
+- **Docker support** — multi-stage build, multi-arch (amd64 + arm64).
+  - `Dockerfile` — Rust 1.96 builder → Debian bookworm-slim runtime.
+  - `docker-compose.yml` — one-command deployment with `.env` config.
+  - `.env.example` — template environment configuration.
+  - Health check built into Docker image.
+- **Docker publish workflow** — automated GHCR image publishing on tag push.
+- **CI pipeline** — 6 parallel jobs (check, fmt, clippy, test, build, verify-templates).
+- **Cora AI review** — automated code review on every PR.
+- **PR checks** — branch naming, conventional commits, PR body validation.
+- **CLA check** — contributor license agreement verification.
+- **Pre-commit hook** — adaptive language detection (Rust/TS/Go/Python) + cora review.
+- **Comprehensive test suite** — 123 tests across 9 suites.
+  - Unit tests: schema validation, template loading, text layout, custom filters.
+  - CLI integration tests: render + validate commands.
+  - API integration tests: health, templates, render, auth, CORS, error handling.
+- **Mutation testing config** — `cargo-mutants.toml` for local mutation testing (100% score).
 
 ### Changed
 
-- Removed CTA elements from all static image templates
-- Background image layering: image renders below gradient overlay for text readability
-- Podcast cover resized from 3000x3000 to 1080x1080 (render performance)
+- Release profile optimized: `codegen-units = 1`, `panic = "abort"` for smaller binary.
+- `server::run()` signature now accepts `api_key: Option<String>` parameter.
 
-### Fixed
+### Template Features
 
-- Checklist template: hardcoded Y positions (minijinja arithmetic in loops unreliable)
-- Template font-size regex corruption from batch enhancement script
+- 18 built-in templates with gradient backgrounds, image support, and custom fonts.
+- Templates: achievement-unlocked, before-after, carousel-default, comparison-table,
+  crypto-price, feature-highlight, git-diff, github-profile, gradient-card, grid-gallery,
+  headshot-frame, instagram-story, infographic, link-preview, quote-card, stat-card,
+  tech-stack, testimonial-card.
+- Bundled fonts: Inter (R/B/SB), JetBrains Mono R, Space Grotesk (Med/SB/B).

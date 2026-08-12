@@ -45,23 +45,51 @@ cosy render --template stat-card --data input.json --output cover.png --scale 2
 # Render with inline JSON
 cosy render --template stat-card --json '{"brand":{"brand_name":"CodeCora"},"slides":[{"stat_number":"127%","stat_label":"Revenue Growth"}]}' --output cover.png
 
-# Start HTTP API server
+# Start HTTP API server (open, no auth — dev only)
 cosy serve --port 3000
+
+# Start with bearer token auth
+cosy serve --port 3000 --token mysecretkey
+# or: COSY_API_KEY=mysecretkey cosy serve --port 3000
 ```
 
 ### HTTP API
 
 ```bash
-# Health check
+# Health check (always public)
 curl http://localhost:3000/api/health
 
-# List templates
-curl http://localhost:3000/api/templates
+# List templates (requires auth if token is set)
+curl -H "Authorization: Bearer mysecretkey" \
+  http://localhost:3000/api/templates
 
-# Render via API
+# Render via API (requires auth if token is set)
 curl -o output.png -X POST http://localhost:3000/api/render \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer mysecretkey" \
   -d '{"template":"stat-card","scale":2,"data":{"brand":{"brand_name":"CodeCora"},"slides":[{"stat_number":"127%","stat_label":"Revenue Growth"}]}}'
+```
+
+### Authentication
+
+When `COSY_API_KEY` is set (via env var or `--token` flag), all API endpoints except `/api/health` require an `Authorization: Bearer <token>` header. Requests without a valid token receive `401 Unauthorized`. If no key is configured, auth is disabled (development mode).
+
+### Docker
+
+```bash
+# Pull from GHCR
+docker pull ghcr.io/codecoradev/cosy:latest
+
+# Run with auth
+docker run -d \
+  -p 3000:3000 \
+  -e COSY_API_KEY=mysecretkey \
+  --name cosy \
+  ghcr.io/codecoradev/cosy:latest
+
+# Or use docker-compose
+cp .env.example .env  # edit COSY_API_KEY
+docker compose up -d
 ```
 
 ## Template Structure
