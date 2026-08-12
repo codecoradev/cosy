@@ -41,20 +41,7 @@ jobs:
         with:
           key: ${{ matrix.target }}
 
-      - name: Setup Zig (Linux x86_64)
-        if: matrix.target == 'x86_64-unknown-linux-gnu'
-        uses: mlugg/setup-zig@v1
-
-      - name: Install cargo-zigbuild (Linux x86_64)
-        if: matrix.target == 'x86_64-unknown-linux-gnu'
-        run: pip install cargo-zigbuild
-
-      - name: Build (Linux x86_64 with GLIBC 2.17)
-        if: matrix.target == 'x86_64-unknown-linux-gnu'
-        run: cargo zigbuild --release --target x86_64-unknown-linux-gnu.2.17
-
-      - name: Build (other targets)
-        if: matrix.target != 'x86_64-unknown-linux-gnu'
+      - name: Build
         run: cargo build --release --target ${{ matrix.target }}
 
       - name: Package (Unix)
