@@ -18,12 +18,12 @@
   </defs>
 
   <!-- Gradient background + glow -->
-  <rect width="1080" height="1350" fill="url(#bg-gradient)"/>
-  <rect width="1080" height="1350" fill="url(#glow)"/>
-  <rect width="1080" height="1350" fill="url(#dots)"/>
   {% if bg_image_data_uri %}
   <image href="{{ bg_image_data_uri }}" width="1080" height="1350" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
   {% endif %}
+  <rect width="1080" height="1350" fill="url(#bg-gradient)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
+  <rect width="1080" height="1350" fill="url(#glow)"/>
+  <rect width="1080" height="1350" fill="url(#dots)"/>
 
   <!-- Accent bar -->
   <rect x="80" y="120" width="8" height="80" rx="4" fill="url(#accent-gradient)"/>
