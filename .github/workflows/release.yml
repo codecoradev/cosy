@@ -41,18 +41,7 @@ jobs:
         with:
           key: ${{ matrix.target }}
 
-      - name: Install cargo-zigbuild (Linux x86_64)
-        if: matrix.target == 'x86_64-unknown-linux-gnu'
-        run: |
-          pip install cargo-zigbuild
-          sudo apt-get update && sudo apt-get install -y zig
-
-      - name: Build (Linux x86_64 with GLIBC 2.17)
-        if: matrix.target == 'x86_64-unknown-linux-gnu'
-        run: cargo zigbuild --release --target x86_64-unknown-linux-gnu.2.17
-
-      - name: Build (other targets)
-        if: matrix.target != 'x86_64-unknown-linux-gnu'
+      - name: Build
         run: cargo build --release --target ${{ matrix.target }}
 
       - name: Package (Unix)
@@ -61,7 +50,10 @@ jobs:
           VERSION=${GITHUB_REF_NAME}
           ARCHIVE="cosy-${VERSION}-${{ matrix.target }}.tar.gz"
           mkdir -p staging
-          cp target/${{ matrix.target }}/release/cosy staging/
+          # zigbuild puts output in target/x86_64-unknown-linux-gnu.2.17/release
+          # regular build puts output in target/<target>/release
+          BINARY=$(find target/ -name cosy -type f | head -1)
+          cp "$BINARY" staging/
           cp -r templates staging/
           cp README.md LICENSE staging/
           tar czf "$ARCHIVE" -C staging .
