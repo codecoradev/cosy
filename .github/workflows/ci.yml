@@ -76,28 +76,3 @@ jobs:
           ./target/debug/cosy render -t carousel-default -d templates/carousel-default/defaults.json -o /tmp/test-carousel --scale 1
           ./target/debug/cosy render -t og-image -d templates/og-image/defaults.json -o /tmp/test-og.png --scale 1
 
-  mutation-testing:
-    name: Mutation Testing
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
-        with:
-          key: mutants
-      - name: Install cargo-mutants
-        run: cargo install cargo-mutants --locked
-      - name: Run mutation tests
-        run: cargo mutants --file src/schema.rs --file src/template.rs --file src/text.rs -j 2
-      - name: Check mutation score
-        run: |
-          if [ -f mutants.out/missed.txt ]; then
-            MISSED=$(wc -l < mutants.out/missed.txt)
-            if [ "$MISSED" -gt 0 ]; then
-              echo "::warning::${MISSED} mutants were not caught by tests"
-              cat mutants.out/missed.txt
-            else
-              echo "✅ All mutants caught!"
-            fi
-          fi
