@@ -2,7 +2,9 @@
   "brand": {
     "brand_name": "CodeCora",
     "bg_color": "#1e1e2e",
-    "accent_color": "#cba6f7"
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
   },
   "slides": [
     {

@@ -3,14 +3,15 @@
     "brand_name": "CodeCora",
     "brand_handle": "@codecoradev",
     "bg_color": "#1e1e2e",
-    "accent_color": "#cba6f7"
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
   },
   "slides": [
     {
       "eyebrow": "Slide 01 of 05",
       "headline": "Stop wasting time on repetitive design tasks",
-      "body": "Cosy lets you generate branded visuals from JSON input. No more manual Photoshop edits for every post.",
-      "cta": "Get Started"
+      "body": "Cosy lets you generate branded visuals from JSON input. No more manual Photoshop edits for every post."
     },
     {
       "eyebrow": "Slide 02 of 05",
@@ -30,8 +31,7 @@
     {
       "eyebrow": "Slide 05 of 05",
       "headline": "Open source. Self-hosted. Yours.",
-      "body": "No subscription, no vendor lock-in. Run it on your infrastructure.",
-      "cta": "Try Cosy Today"
+      "body": "No subscription, no vendor lock-in. Run it on your infrastructure, on your terms."
     }
   ]
 }

@@ -1,9 +1,25 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350" viewBox="0 0 1080 1350">
-  <!-- Background -->
-  <rect width="1080" height="1350" fill="{{ brand.bg_color | default('#1e1e2e') }}"/>
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.bg_color | default('#1e1e2e') }}"/>
+      <stop offset="100%" stop-color="{{ brand.bg_color_end | default('#181825') }}"/>
+    </linearGradient>
+    <linearGradient id="accent-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="80%" cy="20%" r="60%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Gradient background -->
+  <rect width="1080" height="1350" fill="url(#bg-gradient)"/>
+  <rect width="1080" height="1350" fill="url(#glow)"/>
 
   <!-- Brand header -->
-  <rect x="80" y="60" width="6" height="36" rx="3" fill="{{ brand.accent_color | default('#cba6f7') }}"/>
+  <rect x="80" y="60" width="6" height="36" rx="3" fill="url(#accent-gradient)"/>
   <text x="100" y="88" font-family="Inter, sans-serif" font-size="28" font-weight="600" fill="#cdd6f4">
     {{ brand.brand_name | default('') }}
   </text>
@@ -16,7 +32,7 @@
   {% endif %}
 
   <!-- Accent bar -->
-  <rect x="80" y="260" width="60" height="6" rx="3" fill="{{ brand.accent_color | default('#cba6f7') }}"/>
+  <rect x="80" y="260" width="60" height="6" rx="3" fill="url(#accent-gradient)"/>
 
   <!-- Headline (wrapped) -->
   <text x="80" y="360" font-family="Inter, sans-serif" font-size="56" font-weight="800" fill="#cdd6f4">
@@ -37,14 +53,6 @@
     {% if not body_lines %}
     <tspan x="80" dy="0">{{ slide.body }}</tspan>
     {% endif %}
-  </text>
-  {% endif %}
-
-  <!-- CTA -->
-  {% if slide.cta %}
-  <rect x="80" y="1150" width="360" height="64" rx="32" fill="{{ brand.accent_color | default('#cba6f7') }}"/>
-  <text x="260" y="1190" font-family="Inter, sans-serif" font-size="26" font-weight="600" fill="#1e1e2e" text-anchor="middle">
-    {{ slide.cta }}
   </text>
   {% endif %}
 

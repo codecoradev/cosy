@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.bg_color | default('#1e1e2e') }}"/>
+      <stop offset="100%" stop-color="{{ brand.bg_color_end | default('#11111b') }}"/>
+    </linearGradient>
+    <linearGradient id="acc-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="75%" cy="25%" r="55%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#bg-grad)"/>
+  <rect width="1920" height="1080" fill="url(#glow)"/>
+  <rect x="120" y="200" width="8" height="80" rx="4" fill="url(#acc-grad)"/>
+  <text x="120" y="500" font-family="Inter,sans-serif" font-size="90" font-weight="800" fill="#cdd6f4">
+    {% for line in event_name_lines %}<tspan x="120" dy="{% if loop.first %}0{% else %}110{% endif %}">{{ line }}</tspan>{% endfor %}
+    {% if not event_name_lines %}<tspan x="120" dy="0">{{ slide.event_name }}</tspan>{% endif %}
+  </text>
+  {% if slide.date %}
+  <text x="120" y="750" font-family="Inter,sans-serif" font-size="40" font-weight="600" fill="{{ brand.accent_color | default('#cba6f7') }}">{{ slide.date }}{% if slide.time %} · {{ slide.time }}{% endif %}</text>
+  {% endif %}
+  {% if slide.speaker %}
+  <text x="120" y="900" font-family="Inter,sans-serif" font-size="32" font-weight="400" fill="#a6adc8">Speaker: {{ slide.speaker }}</text>
+  {% endif %}
+  <text x="1800" y="1000" text-anchor="end" font-family="Inter,sans-serif" font-size="28" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+</svg>

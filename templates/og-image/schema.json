@@ -18,10 +18,20 @@
       "required": false,
       "default": "#1e1e2e"
     },
+    "bg_color_end": {
+      "type": "bg",
+      "required": false,
+      "default": "#11111b"
+    },
     "accent_color": {
       "type": "bg",
       "required": false,
       "default": "#cba6f7"
+    },
+    "accent_color_end": {
+      "type": "bg",
+      "required": false,
+      "default": "#89b4fa"
     }
   },
   "slide_fields": {

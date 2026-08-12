@@ -9,9 +9,11 @@
   },
   "slides": [
     {
-      "quote": "Build things that solve real problems. Everything else is just noise.",
-      "author": "Anaz",
-      "author_title": "Founder, CodeCora"
+      "title": "Node.js vs Rust",
+      "before_label": "Node.js",
+      "before_text": "8.2s render\n350MB RAM\n24 dependencies",
+      "after_label": "Rust",
+      "after_text": "0.9s render\n45MB RAM\n0 runtime deps"
     }
   ]
 }

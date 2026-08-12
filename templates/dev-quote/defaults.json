@@ -9,9 +9,9 @@
   },
   "slides": [
     {
-      "quote": "Build things that solve real problems. Everything else is just noise.",
-      "author": "Anaz",
-      "author_title": "Founder, CodeCora"
+      "code_snippet": "fn main() {\n    let result = cosy::render(template, data);\n    println!(\"{}\", result.path);\n    // Ship it.\n}",
+      "language": "Rust",
+      "filename": "main.rs"
     }
   ]
 }

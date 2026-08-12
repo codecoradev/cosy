@@ -9,9 +9,9 @@
   },
   "slides": [
     {
-      "quote": "Build things that solve real problems. Everything else is just noise.",
-      "author": "Anaz",
-      "author_title": "Founder, CodeCora"
+      "stat_number": "90%",
+      "stat_label": "faster render times after switching to Rust",
+      "source": "Internal benchmark, 2026"
     }
   ]
 }

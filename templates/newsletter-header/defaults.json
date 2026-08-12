@@ -9,9 +9,9 @@
   },
   "slides": [
     {
-      "quote": "Build things that solve real problems. Everything else is just noise.",
-      "author": "Anaz",
-      "author_title": "Founder, CodeCora"
+      "issue_number": "ISSUE #042",
+      "title": "The Rust Image Pipeline",
+      "date": "August 2026"
     }
   ]
 }

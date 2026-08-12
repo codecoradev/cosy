@@ -9,9 +9,10 @@
   },
   "slides": [
     {
-      "quote": "Build things that solve real problems. Everything else is just noise.",
+      "headline": "Why we chose Rust for our image generation pipeline",
+      "body": "After benchmarking Node, Python, and Rust, the performance difference was undeniable. Here is what we learned.",
       "author": "Anaz",
-      "author_title": "Founder, CodeCora"
+      "role": "Founder at CodeCora"
     }
   ]
 }

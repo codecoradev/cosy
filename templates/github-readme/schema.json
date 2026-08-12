@@ -1,11 +1,15 @@
 {
-  "id": "social-quote",
-  "name": "Social Quote",
+  "id": "github-readme",
+  "name": "GitHub README Banner",
+  "description": "README banner for repos",
   "dimensions": {
-    "width": 1080,
-    "height": 1350
+    "width": 1280,
+    "height": 640
   },
-  "fonts": ["Inter"],
+  "fonts": [
+    "Inter",
+    "JetBrains Mono"
+  ],
   "brand_fields": {
     "brand_name": {
       "type": "text",
@@ -14,7 +18,7 @@
     },
     "brand_handle": {
       "type": "text",
-      "required": true,
+      "required": false,
       "max": 30
     },
     "bg_color": {
@@ -28,32 +32,33 @@
       "default": "#11111b"
     },
     "accent_color": {
-      "type": "text",
+      "type": "bg",
       "required": false,
       "default": "#cba6f7"
     },
     "accent_color_end": {
-      "type": "text",
+      "type": "bg",
       "required": false,
       "default": "#89b4fa"
     }
   },
   "slide_fields": {
-    "quote": {
+    "title": {
       "type": "text",
       "required": true,
-      "max": 280,
+      "max": 100,
       "wrap_width": 35
     },
-    "author": {
-      "type": "text",
-      "required": true,
-      "max": 50
-    },
-    "author_title": {
+    "description": {
       "type": "text",
       "required": false,
-      "max": 50
+      "max": 300,
+      "wrap_width": 60
+    },
+    "tech_stack": {
+      "type": "text",
+      "required": false,
+      "max": 100
     }
   }
 }

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1200" viewBox="0 0 1080 1200">
+  <defs>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.bg_color | default('#1e1e2e') }}"/>
+      <stop offset="100%" stop-color="{{ brand.bg_color_end | default('#11111b') }}"/>
+    </linearGradient>
+    <linearGradient id="acc-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="75%" cy="25%" r="55%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1080" height="1200" fill="url(#bg-grad)"/>
+  <rect width="1080" height="1200" fill="url(#glow)"/>
+  <text x="80" y="200" font-family="Inter,sans-serif" font-size="120" font-weight="800" fill="url(#acc-grad)" opacity="0.3">"</text>
+  <text x="100" y="480" font-family="Inter,sans-serif" font-size="36" font-weight="500" fill="#cdd6f4">
+    {% for line in quote_lines %}<tspan x="100" dy="{% if loop.first %}0{% else %}50{% endif %}">{{ line }}</tspan>{% endfor %}
+    {% if not quote_lines %}<tspan x="100" dy="0">{{ slide.quote }}</tspan>{% endif %}
+  </text>
+  <rect x="100" y="900" width="60" height="4" rx="2" fill="url(#acc-grad)"/>
+  <text x="100" y="970" font-family="Inter,sans-serif" font-size="28" font-weight="700" fill="#cdd6f4">{{ slide.author_name }}</text>
+  <text x="100" y="1010" font-family="Inter,sans-serif" font-size="22" font-weight="400" fill="#a6adc8">{{ slide.author_role | default('') }}{% if slide.author_company %} · {% endif %}{{ slide.author_company | default('') }}</text>
+  <text x="100" y="1130" font-family="Inter,sans-serif" font-size="20" font-weight="400" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+</svg>

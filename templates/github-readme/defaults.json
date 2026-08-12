@@ -1,0 +1,17 @@
+{
+  "brand": {
+    "brand_name": "CodeCora",
+    "brand_handle": "@codecoradev",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Cosy \u2014 Template-based Image Generation",
+      "description": "JSON to PNG in milliseconds. Rust-native, no browser, no headless Chrome. Just fast clean renders.",
+      "tech_stack": "Rust \u00b7 resvg \u00b7 minijinja \u00b7 clap"
+    }
+  ]
+}

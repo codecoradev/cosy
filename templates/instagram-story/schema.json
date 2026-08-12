@@ -1,11 +1,15 @@
 {
-  "id": "social-quote",
-  "name": "Social Quote",
+  "id": "instagram-story",
+  "name": "Instagram Story",
+  "description": "Vertical story format",
   "dimensions": {
     "width": 1080,
-    "height": 1350
+    "height": 1920
   },
-  "fonts": ["Inter"],
+  "fonts": [
+    "Inter",
+    "JetBrains Mono"
+  ],
   "brand_fields": {
     "brand_name": {
       "type": "text",
@@ -14,7 +18,7 @@
     },
     "brand_handle": {
       "type": "text",
-      "required": true,
+      "required": false,
       "max": 30
     },
     "bg_color": {
@@ -28,32 +32,33 @@
       "default": "#11111b"
     },
     "accent_color": {
-      "type": "text",
+      "type": "bg",
       "required": false,
       "default": "#cba6f7"
     },
     "accent_color_end": {
-      "type": "text",
+      "type": "bg",
       "required": false,
       "default": "#89b4fa"
     }
   },
   "slide_fields": {
-    "quote": {
+    "headline": {
       "type": "text",
       "required": true,
-      "max": 280,
-      "wrap_width": 35
+      "max": 150,
+      "wrap_width": 28
     },
-    "author": {
-      "type": "text",
-      "required": true,
-      "max": 50
-    },
-    "author_title": {
+    "subtext": {
       "type": "text",
       "required": false,
-      "max": 50
+      "max": 300,
+      "wrap_width": 40
+    },
+    "tag": {
+      "type": "text",
+      "required": false,
+      "max": 30
     }
   }
 }

@@ -9,9 +9,10 @@
   },
   "slides": [
     {
-      "quote": "Build things that solve real problems. Everything else is just noise.",
-      "author": "Anaz",
-      "author_title": "Founder, CodeCora"
+      "event_name": "Rust Meetup: Building Production Tools",
+      "date": "25 August 2026",
+      "time": "19:00 WIB",
+      "speaker": "Anaz"
     }
   ]
 }

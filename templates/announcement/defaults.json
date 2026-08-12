@@ -9,9 +9,10 @@
   },
   "slides": [
     {
-      "quote": "Build things that solve real problems. Everything else is just noise.",
-      "author": "Anaz",
-      "author_title": "Founder, CodeCora"
+      "tag": "v0.2",
+      "headline": "Cosy now supports 18 templates",
+      "detail": "Twitter quotes, Instagram stories, podcast covers, comparison cards, and more.",
+      "date": "Aug 2026"
     }
   ]
 }

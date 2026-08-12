@@ -1,11 +1,15 @@
 {
-  "id": "social-quote",
-  "name": "Social Quote",
+  "id": "checklist",
+  "name": "Checklist",
+  "description": "Tips/checklist carousel slide",
   "dimensions": {
     "width": 1080,
     "height": 1350
   },
-  "fonts": ["Inter"],
+  "fonts": [
+    "Inter",
+    "JetBrains Mono"
+  ],
   "brand_fields": {
     "brand_name": {
       "type": "text",
@@ -14,7 +18,7 @@
     },
     "brand_handle": {
       "type": "text",
-      "required": true,
+      "required": false,
       "max": 30
     },
     "bg_color": {
@@ -28,32 +32,47 @@
       "default": "#11111b"
     },
     "accent_color": {
-      "type": "text",
+      "type": "bg",
       "required": false,
       "default": "#cba6f7"
     },
     "accent_color_end": {
-      "type": "text",
+      "type": "bg",
       "required": false,
       "default": "#89b4fa"
     }
   },
   "slide_fields": {
-    "quote": {
+    "title": {
       "type": "text",
       "required": true,
-      "max": 280,
-      "wrap_width": 35
+      "max": 100,
+      "wrap_width": 30
     },
-    "author": {
-      "type": "text",
-      "required": true,
-      "max": 50
-    },
-    "author_title": {
+    "item1": {
       "type": "text",
       "required": false,
-      "max": 50
+      "max": 80
+    },
+    "item2": {
+      "type": "text",
+      "required": false,
+      "max": 80
+    },
+    "item3": {
+      "type": "text",
+      "required": false,
+      "max": 80
+    },
+    "item4": {
+      "type": "text",
+      "required": false,
+      "max": 80
+    },
+    "item5": {
+      "type": "text",
+      "required": false,
+      "max": 80
     }
   }
 }
