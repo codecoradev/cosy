@@ -30,7 +30,7 @@
   <line x1="400" y1="230" x2="680" y2="230" stroke="url(#acc-grad-h)" stroke-width="3" opacity="0.5"/>
   <text x="540" y="320" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="40" font-weight="700" fill="#cdd6f4">{{ slide.recipient }}</text>
   {% if slide.badge %}
-  <rect x="420" y="360" width="240" height="50" rx="25" fill="url(#acc-grad)" opacity="0.15"/>
+  <rect x="420" y="360" width="240" height="50" rx="30" fill="url(#acc-grad)" opacity="0.15"/>
   <text x="540" y="392" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="600" fill="url(#acc-grad)">{{ slide.badge }}</text>
   {% endif %}
   <text x="540" y="500" text-anchor="middle" font-family="Inter,sans-serif" font-size="26" fill="#a6adc8">

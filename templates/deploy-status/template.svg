@@ -27,12 +27,12 @@
   <rect width="1080" height="1080" fill="url(#glow)"/>
   <rect width="1080" height="1080" fill="url(#dots)"/>
   <text x="540" y="80" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="32" font-weight="700" fill="#cdd6f4">{{ slide.title }}</text>
-  <rect x="100" y="120" width="280" height="60" rx="10" fill="url(#acc-grad)" opacity="0.12"/>
+  <rect x="100" y="120" width="280" height="60" rx="12" fill="url(#acc-grad)" opacity="0.12"/>
   <text x="240" y="160" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="22" font-weight="700" fill="url(#acc-grad)">{{ slide.environment }}</text>
-  <rect x="420" y="120" width="280" height="60" rx="10" fill="#313244" opacity="0.12"/>
+  <rect x="420" y="120" width="280" height="60" rx="12" fill="#313244" opacity="0.12"/>
   <text x="560" y="160" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="22" fill="#cdd6f4">{{ slide.version }}</text>
   {% if slide.commit %}
-  <rect x="740" y="120" width="240" height="60" rx="10" fill="#313244" opacity="0.12"/>
+  <rect x="740" y="120" width="240" height="60" rx="12" fill="#313244" opacity="0.12"/>
   <text x="860" y="160" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="18" fill="#89b4fa">{{ slide.commit }}</text>
   {% endif %}
   {% set stages = [(slide.s1_name, slide.s1_status), (slide.s2_name, slide.s2_status), (slide.s3_name, slide.s3_status), (slide.s4_name, slide.s4_status)] %}
@@ -41,8 +41,8 @@
   {% set is_done = st[1] == 'success' or st[1] == 'Success' %}
   {% set is_run = st[1] == 'running' or st[1] == 'Running' %}
   {% set is_fail = st[1] == 'failed' or st[1] == 'Failed' %}
-  <rect x="100" y="{{ 240 + loop.index0 * 150 }}" width="880" height="120" rx="16" fill="#313244" opacity="0.12"/>
-  <rect x="100" y="{{ 240 + loop.index0 * 150 }}" width="8" height="120" rx="4" fill="{% if is_done %}#a6e3a1{% elif is_run %}#f9e2af{% elif is_fail %}#f38ba8{% else %}#7f849c{% endif %}" opacity="0.6"/>
+  <rect x="100" y="{{ 240 + loop.index0 * 150 }}" width="880" height="120" rx="20" fill="#313244" opacity="0.12"/>
+  <rect x="100" y="{{ 240 + loop.index0 * 150 }}" width="8" height="120" rx="8" fill="{% if is_done %}#a6e3a1{% elif is_run %}#f9e2af{% elif is_fail %}#f38ba8{% else %}#7f849c{% endif %}" opacity="0.6"/>
   <text x="140" y="{{ 290 + loop.index0 * 150 }}" font-family="Space Grotesk,sans-serif" font-size="26" font-weight="600" fill="#cdd6f4">{{ st[0] }}</text>
   <text x="140" y="{{ 325 + loop.index0 * 150 }}" font-family="Inter,sans-serif" font-size="18" fill="{% if is_done %}#a6e3a1{% elif is_run %}#f9e2af{% elif is_fail %}#f38ba8{% else %}#7f849c{% endif %}">{{ st[1] }}</text>
   {% if is_done %}

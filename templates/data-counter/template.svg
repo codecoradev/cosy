@@ -41,7 +41,7 @@
   {% set row = loop.index0 // 2 %}
   {% set mx = 200 + col * 340 %}
   {% set my = 350 + row * 280 %}
-  <rect x="{{ mx }}" y="{{ my - 60 }}" width="300" height="200" rx="16" fill="#313244" opacity="0.2"/>
+  <rect x="{{ mx }}" y="{{ my - 60 }}" width="300" height="200" rx="20" fill="#313244" opacity="0.2"/>
   <text x="{{ mx + 150 }}" y="{{ my + 50 }}" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="72" font-weight="900" fill="url(#acc-grad)">{{ m[0] }}</text>
   <text x="{{ mx + 150 }}" y="{{ my + 100 }}" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="500" fill="#a6adc8">{{ m[1] }}</text>
   {% endfor %}

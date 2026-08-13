@@ -37,7 +37,7 @@
   {% for q in items %}
   {% if q[0] %}
   {% set cy = 200 + loop.index0 * 370 %}
-  <rect x="160" y="{{ cy - 80 }}" width="760" height="340" rx="16" fill="#313244" opacity="0.25"/>
+  <rect x="160" y="{{ cy - 80 }}" width="760" height="340" rx="20" fill="#313244" opacity="0.25"/>
   <text x="220" y="{{ cy + 20 }}" font-size="60" fill="url(#acc-grad)" opacity="0.3">&#x26;</text>
   {% set ql = q[2] %}
   {% if ql %}

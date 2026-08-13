@@ -27,7 +27,7 @@
   <rect width="1080" height="1080" fill="url(#glow)"/>
   <rect width="1080" height="1080" fill="url(#dots)"/>
   <text x="540" y="100" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="34" font-weight="700" fill="#cdd6f4">{{ slide.title }}</text>
-  <rect x="340" y="150" width="400" height="120" rx="16" fill="#313244" opacity="0.15"/>
+  <rect x="340" y="150" width="400" height="120" rx="20" fill="#313244" opacity="0.15"/>
   <text x="540" y="210" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="48" font-weight="800" fill="#a6e3a1">{{ slide.overall_uptime }}</text>
   <text x="540" y="245" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" fill="#7f849c">Overall Uptime</text>
   {% set services = [(slide.s1_name, slide.s1_status), (slide.s2_name, slide.s2_status), (slide.s3_name, slide.s3_status), (slide.s4_name, slide.s4_status)] %}

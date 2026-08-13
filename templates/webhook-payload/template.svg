@@ -27,19 +27,19 @@
   <rect width="1200" height="630" fill="url(#glow)"/>
   <rect width="1200" height="630" fill="url(#dots)"/>
   <text x="600" y="55" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="22" font-weight="700" fill="#cdd6f4">{{ slide.title }}</text>
-  <rect x="80" y="80" width="300" height="80" rx="10" fill="url(#acc-grad)" opacity="0.12"/>
+  <rect x="80" y="80" width="300" height="80" rx="12" fill="url(#acc-grad)" opacity="0.12"/>
   <text x="100" y="115" font-family="Inter,sans-serif" font-size="16" fill="#7f849c">Event</text>
   <text x="100" y="142" font-family="Space Grotesk,sans-serif" font-size="22" font-weight="700" fill="url(#acc-grad)">{{ slide.event }}</text>
-  <rect x="400" y="80" width="300" height="80" rx="10" fill="#313244" opacity="0.12"/>
+  <rect x="400" y="80" width="300" height="80" rx="12" fill="#313244" opacity="0.12"/>
   <text x="420" y="115" font-family="Inter,sans-serif" font-size="16" fill="#7f849c">Source</text>
   <text x="420" y="142" font-family="JetBrains Mono,monospace" font-size="20" fill="#cdd6f4">{{ slide.source }}</text>
   {% if slide.timestamp %}
-  <rect x="720" y="80" width="180" height="80" rx="10" fill="#313244" opacity="0.12"/>
+  <rect x="720" y="80" width="180" height="80" rx="12" fill="#313244" opacity="0.12"/>
   <text x="740" y="115" font-family="Inter,sans-serif" font-size="16" fill="#7f849c">Timestamp</text>
   <text x="740" y="142" font-family="JetBrains Mono,monospace" font-size="18" fill="#cdd6f4">{{ slide.timestamp }}</text>
   {% endif %}
   {% if slide.delivery_id %}
-  <rect x="920" y="80" width="180" height="80" rx="10" fill="#313244" opacity="0.12"/>
+  <rect x="920" y="80" width="180" height="80" rx="12" fill="#313244" opacity="0.12"/>
   <text x="940" y="115" font-family="Inter,sans-serif" font-size="16" fill="#7f849c">Delivery ID</text>
   <text x="940" y="142" font-family="JetBrains Mono,monospace" font-size="16" fill="#cdd6f4">{{ slide.delivery_id }}</text>
   {% endif %}

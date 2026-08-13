@@ -27,12 +27,12 @@
   <rect width="1080" height="1080" fill="url(#glow)"/>
   <rect width="1080" height="1080" fill="url(#dots)"/>
   <text x="540" y="100" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="32" font-weight="700" fill="#cdd6f4">{{ slide.title }}</text>
-  <rect x="100" y="180" width="880" height="120" rx="16" fill="#0c0c14" opacity="0.85"/>
+  <rect x="100" y="180" width="880" height="120" rx="20" fill="#0c0c14" opacity="0.85"/>
   <text x="540" y="258" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="36" fill="#a6e3a1">{{ slide.password }}</text>
   {% set is_strong = slide.strength == 'strong' or slide.strength == 'Strong' %}
   {% set is_medium = slide.strength == 'medium' or slide.strength == 'Medium' %}
-  <rect x="100" y="360" width="880" height="50" rx="25" fill="#313244" opacity="0.2"/>
-  <rect x="100" y="360" width="{{ (slide.length | int) * 880 / 64 }}" height="50" rx="25" fill="{% if is_strong %}#a6e3a1{% elif is_medium %}#f9e2af{% else %}#f38ba8{% endif %}" opacity="0.4"/>
+  <rect x="100" y="360" width="880" height="50" rx="30" fill="#313244" opacity="0.2"/>
+  <rect x="100" y="360" width="{{ (slide.length | int) * 880 / 64 }}" height="50" rx="30" fill="{% if is_strong %}#a6e3a1{% elif is_medium %}#f9e2af{% else %}#f38ba8{% endif %}" opacity="0.4"/>
   <text x="540" y="393" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="700" fill="{% if is_strong %}#a6e3a1{% elif is_medium %}#f9e2af{% else %}#f38ba8{% endif %}">{{ slide.strength | upper }}</text>
   <rect x="100" y="500" width="280" height="120" rx="12" fill="#313244" opacity="0.12"/>
   <text x="240" y="550" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">Length</text>

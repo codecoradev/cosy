@@ -32,7 +32,7 @@
   {% if e[0] %}
   {% set is_top = loop.index <= 3 %}
   {% set medal_colors = ['#f9e2af', '#cdd6f4', '#fab387'] %}
-  <rect x="100" y="{{ 140 + loop.index0 * 170 }}" width="880" height="140" rx="16" fill="#313244" opacity="{{ '0.15' if is_top else '0.08' }}"/>
+  <rect x="100" y="{{ 140 + loop.index0 * 170 }}" width="880" height="140" rx="20" fill="#313244" opacity="{{ '0.15' if is_top else '0.08' }}"/>
   <text x="160" y="{{ 230 + loop.index0 * 170 }}" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="48" font-weight="800" fill="{% if is_top %}url(#acc-grad){% else %}#7f849c{% endif %}">{{ loop.index }}</text>
   <text x="280" y="{{ 215 + loop.index0 * 170 }}" font-family="Space Grotesk,sans-serif" font-size="28" font-weight="600" fill="#cdd6f4">{{ e[0] }}</text>
   <text x="280" y="{{ 248 + loop.index0 * 170 }}" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">{% if loop.index == 1 %}1st Place{% elif loop.index == 2 %}2nd Place{% elif loop.index == 3 %}3rd Place{% else %}{{ loop.index }}th Place{% endif %}</text>

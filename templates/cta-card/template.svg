@@ -36,7 +36,7 @@
     {% if not subtext_lines %}<tspan x="540">{{ slide.subtext }}</tspan>{% endif %}
   </text>
   {% endif %}
-  <rect x="340" y="720" width="400" height="70" rx="35" fill="url(#acc-grad)"/>
+  <rect x="340" y="720" width="400" height="70" rx="30" fill="url(#acc-grad)"/>
   <text x="540" y="765" text-anchor="middle" font-family="Inter,sans-serif" font-size="28" font-weight="700" fill="#1e1e2e">{{ slide.cta_text }}</text>
   {% if slide.url %}
   <text x="540" y="840" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="22" font-weight="500" fill="#7f849c">{{ slide.url }}</text>

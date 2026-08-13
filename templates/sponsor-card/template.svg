@@ -30,9 +30,9 @@
   <circle cx="540" cy="280" r="100" fill="url(#acc-grad)" opacity="0.12"/>
   <text x="540" y="300" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="60" font-weight="800" fill="url(#acc-grad)">{{ slide.sponsor_name[:1] }}</text>
   <text x="540" y="440" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="36" font-weight="700" fill="#cdd6f4">{{ slide.sponsor_name }}</text>
-  <rect x="390" y="480" width="300" height="56" rx="28" fill="url(#acc-grad)" opacity="0.12"/>
+  <rect x="390" y="480" width="300" height="56" rx="30" fill="url(#acc-grad)" opacity="0.12"/>
   <text x="540" y="517" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="24" font-weight="700" fill="url(#acc-grad)">{{ slide.tier }} Sponsor</text>
-  <rect x="340" y="580" width="400" height="100" rx="16" fill="#313244" opacity="0.12"/>
+  <rect x="340" y="580" width="400" height="100" rx="20" fill="#313244" opacity="0.12"/>
   <text x="540" y="625" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">Monthly Contribution</text>
   <text x="540" y="660" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="36" font-weight="800" fill="#a6e3a1">{{ slide.amount }}</text>
   {% if slide.message %}

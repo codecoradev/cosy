@@ -34,8 +34,8 @@
   {% set row = loop.index0 // 3 %}
   {% set cx = 180 + col * 360 %}
   {% set cy = 220 + row * 300 %}
-  <rect x="{{ cx }}" y="{{ cy }}" width="280" height="220" rx="16" fill="#313244" opacity="0.15"/>
-  <rect x="{{ cx }}" y="{{ cy }}" width="280" height="6" rx="3" fill="url(#acc-grad)" opacity="0.5"/>
+  <rect x="{{ cx }}" y="{{ cy }}" width="280" height="220" rx="20" fill="#313244" opacity="0.15"/>
+  <rect x="{{ cx }}" y="{{ cy }}" width="280" height="6" rx="8" fill="url(#acc-grad)" opacity="0.5"/>
   <text x="{{ cx + 140 }}" y="{{ cy + 100 }}" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="32" font-weight="700" fill="url(#acc-grad)">{{ t[0] }}</text>
   {% if t[1] %}
   <text x="{{ cx + 140 }}" y="{{ cy + 145 }}" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">{{ t[1] }}</text>

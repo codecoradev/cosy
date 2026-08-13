@@ -27,7 +27,7 @@
   <rect width="1200" height="630" fill="url(#glow)"/>
   <rect width="1200" height="630" fill="url(#dots)"/>
   <rect x="80" y="120" width="1040" height="390" rx="12" fill="#313244" opacity="0.2"/>
-  <rect x="80" y="120" width="8" height="390" rx="4" fill="url(#acc-grad)" opacity="0.4"/>
+  <rect x="80" y="120" width="8" height="390" rx="8" fill="url(#acc-grad)" opacity="0.4"/>
   {% if slide.status %}
   <rect x="830" y="145" width="260" height="40" rx="20" fill="url(#acc-grad)" opacity="0.12"/>
   <text x="960" y="171" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" font-weight="600" fill="url(#acc-grad)">{{ slide.status }}</text>
@@ -38,11 +38,11 @@
     {% if not title_lines %}<tspan x="130">{{ slide.title }}</tspan>{% endif %}
   </text>
   {% if slide.label1 %}
-  <rect x="130" y="380" width="140" height="36" rx="18" fill="#cba6f7" opacity="0.15"/>
+  <rect x="130" y="380" width="140" height="36" rx="20" fill="#cba6f7" opacity="0.15"/>
   <text x="200" y="403" text-anchor="middle" font-family="Inter,sans-serif" font-size="15" font-weight="500" fill="#cba6f7">{{ slide.label1 }}</text>
   {% endif %}
   {% if slide.label2 %}
-  <rect x="285" y="380" width="140" height="36" rx="18" fill="#89b4fa" opacity="0.15"/>
+  <rect x="285" y="380" width="140" height="36" rx="20" fill="#89b4fa" opacity="0.15"/>
   <text x="355" y="403" text-anchor="middle" font-family="Inter,sans-serif" font-size="15" font-weight="500" fill="#89b4fa">{{ slide.label2 }}</text>
   {% endif %}
   {% if slide.author %}

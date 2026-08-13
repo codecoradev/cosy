@@ -30,8 +30,8 @@
   <text x="540" y="260" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="44" font-weight="800" fill="#cdd6f4">{{ slide.name }}</text>
   <text x="540" y="310" text-anchor="middle" font-family="Inter,sans-serif" font-size="24" font-weight="400" fill="url(#acc-grad)">{{ slide.title }}</text>
   <rect x="440" y="370" width="200" height="3" rx="1.5" fill="url(#acc-grad-h)" opacity="0.4"/>
-  <rect x="390" y="420" width="300" height="300" rx="16" fill="#1e1e2e" opacity="0.6"/>
-  <rect x="430" y="460" width="220" height="220" rx="8" fill="none" stroke="url(#acc-grad)" stroke-width="2" opacity="0.2"/>
+  <rect x="390" y="420" width="300" height="300" rx="20" fill="#1e1e2e" opacity="0.6"/>
+  <rect x="430" y="460" width="220" height="220" rx="12" fill="none" stroke="url(#acc-grad)" stroke-width="2" opacity="0.2"/>
   <text x="540" y="580" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="120" fill="url(#acc-grad)" opacity="0.15">QR</text>
   <text x="540" y="625" text-anchor="middle" font-family="Inter,sans-serif" font-size="16" fill="#7f849c">Scan to connect</text>
   {% if slide.email %}

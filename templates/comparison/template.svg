@@ -33,7 +33,7 @@
     {% for line in before_text_lines %}<tspan x="270" dy="{% if loop.first %}0{% else %}42{% endif %}">{{ line }}</tspan>{% endfor %}
   </text>
   <!-- Right: After -->
-  <rect x="810" y="380" width="160" height="6" rx="3" fill="url(#acc-grad)"/>
+  <rect x="810" y="380" width="160" height="6" rx="8" fill="url(#acc-grad)"/>
   <text x="810" y="420" text-anchor="middle" font-family="Inter,sans-serif" font-size="28" font-weight="600" fill="{{ brand.accent_color | default('#cba6f7') }}">{{ slide.after_label | default('After') }}</text>
   <text x="810" y="560" text-anchor="middle" font-family="Inter,sans-serif" font-size="30" font-weight="400" fill="#cdd6f4">
     {% for line in after_text_lines %}<tspan x="810" dy="{% if loop.first %}0{% else %}42{% endif %}">{{ line }}</tspan>{% endfor %}

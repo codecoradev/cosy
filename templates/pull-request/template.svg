@@ -38,7 +38,7 @@
   <text x="440" y="400" font-family="JetBrains Mono,monospace" font-size="20" fill="#a6e3a1">{{ slide.base_branch }}</text>
   {% set is_merged = slide.status == 'Merged' or slide.status == 'MERGED' %}
   {% set is_open = slide.status == 'Open' or slide.status == 'OPEN' %}
-  <rect x="100" y="460" width="160" height="44" rx="22" fill="{% if is_merged %}#cba6f7{% elif is_open %}#a6e3a1{% else %}#f38ba8{% endif %}" opacity="0.15"/>
+  <rect x="100" y="460" width="160" height="44" rx="20" fill="{% if is_merged %}#cba6f7{% elif is_open %}#a6e3a1{% else %}#f38ba8{% endif %}" opacity="0.15"/>
   <text x="180" y="488" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" font-weight="600" fill="{% if is_merged %}#cba6f7{% elif is_open %}#a6e3a1{% else %}#f38ba8{% endif %}">{{ slide.status }}</text>
   {% if slide.additions %}
   <text x="350" y="488" font-family="JetBrains Mono,monospace" font-size="20" fill="#a6e3a1">+{{ slide.additions }}</text>

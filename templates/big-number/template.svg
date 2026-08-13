@@ -27,7 +27,7 @@
   <rect width="1080" height="1080" fill="url(#glow)"/>
   <rect width="1080" height="1080" fill="url(#dots)"/>
   <text x="540" y="480" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="280" font-weight="900" fill="url(#acc-grad)">{{ slide.number }}</text>
-  <rect x="440" y="560" width="200" height="4" rx="2" fill="url(#acc-grad-h)"/>
+  <rect x="440" y="560" width="200" height="4" rx="8" fill="url(#acc-grad-h)"/>
   <text x="540" y="650" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="42" font-weight="700" fill="#cdd6f4">
 {% for line in label_lines %}    <tspan x="540" dy="{% if loop.first %}0{% else %}52{% endif %}">{{ line }}</tspan>{% endfor %}
     {% if not label_lines %}<tspan x="540">{{ slide.label }}</tspan>{% endif %}

@@ -39,7 +39,7 @@
   <text x="540" y="810" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="28" font-weight="700" fill="#f9e2af">{{ slide.rating }} / 5</text>
   {% endif %}
   {% if slide.genre or slide.pages %}
-  <rect x="290" y="840" width="500" height="44" rx="22" fill="#313244" opacity="0.3"/>
+  <rect x="290" y="840" width="500" height="44" rx="20" fill="#313244" opacity="0.3"/>
   {% if slide.genre %}<text x="420" y="868" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" fill="#a6adc8">{{ slide.genre }}</text>{% endif %}
   {% if slide.genre and slide.pages %}<text x="540" y="868" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" fill="#45475a">|</text>{% endif %}
   {% if slide.pages %}<text x="650" y="868" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" fill="#a6adc8">{{ slide.pages }} pages</text>{% endif %}

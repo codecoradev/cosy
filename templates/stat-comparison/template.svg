@@ -37,7 +37,7 @@
   <rect x="580" y="280" width="360" height="380" rx="20" fill="none" stroke="url(#acc-grad)" stroke-width="2" opacity="0.3"/>
   <text x="760" y="340" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="url(#acc-grad)">{{ slide.after_label }}</text>
   <text x="760" y="500" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="72" font-weight="800" fill="url(#acc-grad)">{{ slide.after_value }}</text>
-  <rect x="440" y="720" width="200" height="56" rx="28" fill="url(#acc-grad)" opacity="0.15"/>
+  <rect x="440" y="720" width="200" height="56" rx="30" fill="url(#acc-grad)" opacity="0.15"/>
   <text x="540" y="757" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="28" font-weight="700" fill="url(#acc-grad)">{{ slide.improvement }}</text>
   {% if slide.metric %}
   <text x="540" y="850" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="400" fill="#7f849c">{{ slide.metric }}</text>

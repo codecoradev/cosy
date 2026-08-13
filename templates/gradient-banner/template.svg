@@ -27,7 +27,7 @@
   <rect width="1200" height="630" fill="url(#glow)"/>
   <rect width="1200" height="630" fill="url(#dots)"/>
   {% if slide.badge %}
-  <rect x="100" y="120" width="280" height="44" rx="22" fill="url(#acc-grad)" opacity="0.12"/>
+  <rect x="100" y="120" width="280" height="44" rx="20" fill="url(#acc-grad)" opacity="0.12"/>
   <text x="240" y="149" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="url(#acc-grad)">{{ slide.badge }}</text>
   {% endif %}
   <text x="100" y="280" font-family="Space Grotesk,sans-serif" font-size="52" font-weight="800" fill="#cdd6f4">

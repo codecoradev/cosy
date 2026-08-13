@@ -23,7 +23,7 @@
   <rect width="1200" height="630" fill="url(#glow)"/>
   <rect width="1200" height="630" fill="url(#dots)"/>
   {% if slide.tag %}
-  <rect x="80" y="60" width="180" height="44" rx="22" fill="url(#acc-grad)" opacity="0.2"/>
+  <rect x="80" y="60" width="180" height="44" rx="20" fill="url(#acc-grad)" opacity="0.2"/>
   <text x="170" y="88" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="{{ brand.accent_color | default('#cba6f7') }}">{{ slide.tag }}</text>
   {% endif %}
   <text x="80" y="260" font-family="Space Grotesk,sans-serif" font-size="46" font-weight="700" fill="#cdd6f4">
