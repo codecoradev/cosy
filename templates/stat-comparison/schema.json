@@ -1,0 +1,99 @@
+{
+  "id": "stat-comparison",
+  "name": "Stat Comparison",
+  "description": "Before/after comparison showing improvement metrics",
+  "dimensions": {
+    "width": 1080,
+    "height": 1080
+  },
+  "fonts": [
+    "Inter",
+    "JetBrains Mono",
+    "Space Grotesk"
+  ],
+  "brand_fields": {
+    "brand_name": {
+      "type": "text",
+      "required": true,
+      "max": 30
+    },
+    "brand_handle": {
+      "type": "text",
+      "required": false,
+      "max": 30
+    },
+    "bg_color": {
+      "type": "bg",
+      "required": false,
+      "default": "#1e1e2e"
+    },
+    "bg_color_end": {
+      "type": "bg",
+      "required": false,
+      "default": "#11111b"
+    },
+    "accent_color": {
+      "type": "bg",
+      "required": false,
+      "default": "#cba6f7"
+    },
+    "accent_color_end": {
+      "type": "bg",
+      "required": false,
+      "default": "#89b4fa"
+    },
+    "bg_image": {
+      "type": "image",
+      "required": false,
+      "description": "Background image path."
+    },
+    "bg_image_opacity": {
+      "type": "number",
+      "required": false,
+      "default": 0.15
+    },
+    "logo": {
+      "type": "image",
+      "required": false,
+      "description": "Brand logo path."
+    }
+  },
+  "slide_fields": {
+    "title": {
+      "type": "text",
+      "required": true,
+      "max": 80,
+      "wrap_width": 28
+    },
+    "before_label": {
+      "type": "text",
+      "required": true,
+      "max": 30
+    },
+    "before_value": {
+      "type": "text",
+      "required": true,
+      "max": 20
+    },
+    "after_label": {
+      "type": "text",
+      "required": true,
+      "max": 30
+    },
+    "after_value": {
+      "type": "text",
+      "required": true,
+      "max": 20
+    },
+    "improvement": {
+      "type": "text",
+      "required": true,
+      "max": 20
+    },
+    "metric": {
+      "type": "text",
+      "required": false,
+      "max": 40
+    }
+  }
+}
