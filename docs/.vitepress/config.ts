@@ -4,7 +4,7 @@ export default defineConfig({
   title: 'Cosy',
   description: 'Template-based image generation in Rust',
   lang: 'en',
-  base: '/cosy/',
+  base: '/',
   cleanUrls: true,
   lastUpdated: true,
   ignoreDeadLinks: true,
