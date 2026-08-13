@@ -1,0 +1,126 @@
+{
+  "id": "config-display",
+  "name": "Config Display",
+  "description": "Configuration file key-value display",
+  "dimensions": {
+    "width": 1200,
+    "height": 630
+  },
+  "fonts": [
+    "Inter",
+    "JetBrains Mono",
+    "Space Grotesk"
+  ],
+  "brand_fields": {
+    "brand_name": {
+      "type": "text",
+      "required": true,
+      "max": 30
+    },
+    "brand_handle": {
+      "type": "text",
+      "required": false,
+      "max": 30
+    },
+    "bg_color": {
+      "type": "bg",
+      "required": false,
+      "default": "#1e1e2e"
+    },
+    "bg_color_end": {
+      "type": "bg",
+      "required": false,
+      "default": "#11111b"
+    },
+    "accent_color": {
+      "type": "bg",
+      "required": false,
+      "default": "#cba6f7"
+    },
+    "accent_color_end": {
+      "type": "bg",
+      "required": false,
+      "default": "#89b4fa"
+    },
+    "bg_image": {
+      "type": "image",
+      "required": false
+    },
+    "bg_image_opacity": {
+      "type": "number",
+      "required": false,
+      "default": 0.15
+    },
+    "logo": {
+      "type": "image",
+      "required": false
+    }
+  },
+  "slide_fields": {
+    "title": {
+      "type": "text",
+      "required": true,
+      "max": 40
+    },
+    "k1": {
+      "type": "text",
+      "required": true,
+      "max": 25
+    },
+    "v1": {
+      "type": "text",
+      "required": true,
+      "max": 30
+    },
+    "k2": {
+      "type": "text",
+      "required": true,
+      "max": 25
+    },
+    "v2": {
+      "type": "text",
+      "required": true,
+      "max": 30
+    },
+    "k3": {
+      "type": "text",
+      "required": true,
+      "max": 25
+    },
+    "v3": {
+      "type": "text",
+      "required": true,
+      "max": 30
+    },
+    "k4": {
+      "type": "text",
+      "required": false,
+      "max": 25
+    },
+    "v4": {
+      "type": "text",
+      "required": false,
+      "max": 30
+    },
+    "k5": {
+      "type": "text",
+      "required": false,
+      "max": 25
+    },
+    "v5": {
+      "type": "text",
+      "required": false,
+      "max": 30
+    },
+    "k6": {
+      "type": "text",
+      "required": false,
+      "max": 25
+    },
+    "v6": {
+      "type": "text",
+      "required": false,
+      "max": 30
+    }
+  }
+}

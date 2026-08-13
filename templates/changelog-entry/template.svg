@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.bg_color | default('#1e1e2e') }}"/>
+      <stop offset="100%" stop-color="{{ brand.bg_color_end | default('#11111b') }}"/>
+    </linearGradient>
+    <linearGradient id="acc-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
+    </linearGradient>
+    <linearGradient id="acc-grad-h" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="75%" cy="25%" r="55%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <circle cx="20" cy="20" r="1.5" fill="#ffffff" opacity="0.06"/>
+    </pattern>
+  </defs>
+{% if bg_image_data_uri %}
+  <image href="{{ bg_image_data_uri }}" width="1200" height="630" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
+  {% endif %}
+  <rect width="1200" height="630" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect width="1200" height="630" fill="url(#dots)"/>
+  {% set is_major = slide.type == 'major' or slide.type == 'Major' %}
+  {% set is_minor = slide.type == 'minor' or slide.type == 'Minor' %}
+  <rect x="80" y="50" width="160" height="50" rx="8" fill="{% if is_major %}#f38ba8{% elif is_minor %}#cba6f7{% else %}#a6e3a1{% endif %}" opacity="0.15"/>
+  <text x="160" y="83" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="18" font-weight="700" fill="{% if is_major %}#f38ba8{% elif is_minor %}#cba6f7{% else %}#a6e3a1{% endif %}">{{ slide.type | upper }}</text>
+  <text x="280" y="85" font-family="Space Grotesk,sans-serif" font-size="36" font-weight="800" fill="url(#acc-grad)">v{{ slide.version }}</text>
+  <text x="1100" y="85" text-anchor="end" font-family="Inter,sans-serif" font-size="20" fill="#7f849c">{{ slide.date }}</text>
+  <line x1="80" y1="120" x2="1120" y2="120" stroke="url(#acc-grad-h)" stroke-width="2" opacity="0.2"/>
+  {% if slide.item1 %}<text x="100" y="180" font-family="Inter,sans-serif" font-size="22" fill="#a6e3a1">&#x2022; {{ slide.item1 }}</text>{% endif %}
+  {% if slide.item2 %}<text x="100" y="230" font-family="Inter,sans-serif" font-size="22" fill="#a6e3a1">&#x2022; {{ slide.item2 }}</text>{% endif %}
+  {% if slide.item3 %}<text x="100" y="280" font-family="Inter,sans-serif" font-size="22" fill="#a6e3a1">&#x2022; {{ slide.item3 }}</text>{% endif %}
+  {% if slide.item4 %}<text x="100" y="330" font-family="Inter,sans-serif" font-size="22" fill="#a6e3a1">&#x2022; {{ slide.item4 }}</text>{% endif %}
+  {% if slide.breaking %}
+  <rect x="80" y="420" width="1040" height="80" rx="12" fill="#f38ba8" opacity="0.08"/>
+  <text x="110" y="455" font-family="Inter,sans-serif" font-size="18" font-weight="700" fill="#f38ba8">BREAKING CHANGES</text>
+  <text x="110" y="485" font-family="Inter,sans-serif" font-size="20" fill="#cdd6f4">{{ slide.breaking }}</text>
+  {% endif %}
+  <text x="600" y="615" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+</svg>
