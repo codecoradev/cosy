@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.bg_color | default('#1e1e2e') }}"/>
+      <stop offset="100%" stop-color="{{ brand.bg_color_end | default('#11111b') }}"/>
+    </linearGradient>
+    <linearGradient id="acc-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
+    </linearGradient>
+    <linearGradient id="acc-grad-h" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="75%" cy="25%" r="55%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <circle cx="20" cy="20" r="1.5" fill="#ffffff" opacity="0.06"/>
+    </pattern>
+  </defs>
+{% if bg_image_data_uri %}
+  <image href="{{ bg_image_data_uri }}" width="1200" height="630" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
+  {% endif %}
+  <rect width="1200" height="630" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect width="1200" height="630" fill="url(#dots)"/>
+  <text x="600" y="65" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="24" font-weight="700" fill="#cdd6f4">Table: {{ slide.table_name }}</text>
+  <rect x="300" y="100" width="600" height="430" rx="12" fill="#313244" opacity="0.15"/>
+  <rect x="300" y="100" width="600" height="50" rx="12" fill="url(#acc-grad)" opacity="0.2"/>
+  <text x="350" y="132" font-family="JetBrains Mono,monospace" font-size="20" font-weight="700" fill="url(#acc-grad)">{{ slide.table_name }}</text>
+  <text x="350" y="132" font-family="JetBrains Mono,monospace" font-size="16" fill="#7f849c">  table</text>
+  <line x1="320" y1="170" x2="880" y2="170" stroke="#313244" stroke-width="1" opacity="0.5"/>
+  {% set cols = [(slide.c1_name, slide.c1_type, slide.c1_key), (slide.c2_name, slide.c2_type, slide.c2_key), (slide.c3_name, slide.c3_type, slide.c3_key), (slide.c4_name, slide.c4_type, slide.c4_key), (slide.c5_name, slide.c5_type, slide.c5_key)] %}
+  {% for c in cols %}
+  {% if c[0] %}
+  <text x="340" y="{{ 210 + loop.index0 * 60 }}" font-family="JetBrains Mono,monospace" font-size="18" fill="#cdd6f4">{{ c[0] }}</text>
+  <text x="700" y="{{ 210 + loop.index0 * 60 }}" font-family="JetBrains Mono,monospace" font-size="16" fill="#89b4fa">{{ c[1] }}</text>
+  {% if c[2] %}
+  <rect x="830" y="{{ 193 + loop.index0 * 60 }}" width="40" height="24" rx="6" fill="url(#acc-grad)" opacity="0.2"/>
+  <text x="850" y="{{ 210 + loop.index0 * 60 }}" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="600" fill="url(#acc-grad)">{{ c[2] }}</text>
+  {% endif %}
+  {% if not loop.last %}
+  <line x1="320" y1="{{ 230 + loop.index0 * 60 }}" x2="880" y2="{{ 230 + loop.index0 * 60 }}" stroke="#313244" stroke-width="1" opacity="0.2"/>
+  {% endif %}
+  {% endif %}
+  {% endfor %}
+  <text x="600" y="615" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+</svg>

@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+  <defs>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.bg_color | default('#1e1e2e') }}"/>
+      <stop offset="100%" stop-color="{{ brand.bg_color_end | default('#11111b') }}"/>
+    </linearGradient>
+    <linearGradient id="acc-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
+    </linearGradient>
+    <linearGradient id="acc-grad-h" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="75%" cy="25%" r="55%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <circle cx="20" cy="20" r="1.5" fill="#ffffff" opacity="0.06"/>
+    </pattern>
+  </defs>
+{% if bg_image_data_uri %}
+  <image href="{{ bg_image_data_uri }}" width="1080" height="1080" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
+  {% endif %}
+  <rect width="1080" height="1080" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
+  <rect width="1080" height="1080" fill="url(#glow)"/>
+  <rect width="1080" height="1080" fill="url(#dots)"/>
+  <rect x="390" y="80" width="300" height="60" rx="30" fill="url(#acc-grad)" opacity="0.15"/>
+  <text x="540" y="120" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="28" font-weight="800" fill="url(#acc-grad)">{{ slide.license_name }}</text>
+  <text x="540" y="175" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="18" fill="#7f849c">{{ slide.license_spdx }}</text>
+  <text x="540" y="250" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" fill="#a6adc8">
+{% for line in description_lines %}    <tspan x="540" dy="{% if loop.first %}0{% else %}32{% endif %}">{{ line }}</tspan>{% endfor %}
+    {% if not description_lines %}<tspan x="540">{{ slide.description }}</tspan>{% endif %}
+  </text>
+  <rect x="100" y="440" width="880" height="80" rx="12" fill="#a6e3a1" opacity="0.06"/>
+  <text x="140" y="475" font-family="Inter,sans-serif" font-size="16" font-weight="700" fill="#a6e3a1">PERMISSIONS</text>
+  <text x="140" y="505" font-family="Inter,sans-serif" font-size="20" fill="#cdd6f4">{{ slide.permissions }}</text>
+  {% if slide.conditions %}
+  <rect x="100" y="540" width="880" height="80" rx="12" fill="#f9e2af" opacity="0.06"/>
+  <text x="140" y="575" font-family="Inter,sans-serif" font-size="16" font-weight="700" fill="#f9e2af">CONDITIONS</text>
+  <text x="140" y="605" font-family="Inter,sans-serif" font-size="20" fill="#cdd6f4">{{ slide.conditions }}</text>
+  {% endif %}
+  {% if slide.limitations %}
+  <rect x="100" y="640" width="880" height="80" rx="12" fill="#f38ba8" opacity="0.06"/>
+  <text x="140" y="675" font-family="Inter,sans-serif" font-size="16" font-weight="700" fill="#f38ba8">LIMITATIONS</text>
+  <text x="140" y="705" font-family="Inter,sans-serif" font-size="20" fill="#cdd6f4">{{ slide.limitations }}</text>
+  {% endif %}
+  {% if slide.copyright_holder %}
+  <text x="540" y="830" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">Copyright {{ slide.copyright_year | default('2026') }} {{ slide.copyright_holder }}</text>
+  {% endif %}
+  <text x="540" y="1050" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+</svg>
