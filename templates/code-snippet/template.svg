@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.bg_color | default('#1e1e2e') }}"/>
+      <stop offset="100%" stop-color="{{ brand.bg_color_end | default('#11111b') }}"/>
+    </linearGradient>
+    <linearGradient id="acc-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
+    </linearGradient>
+    <linearGradient id="acc-grad-h" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="75%" cy="25%" r="55%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <circle cx="20" cy="20" r="1.5" fill="#ffffff" opacity="0.06"/>
+    </pattern>
+  </defs>
+{% if bg_image_data_uri %}
+  <image href="{{ bg_image_data_uri }}" width="1200" height="630" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
+  {% endif %}
+  <rect width="1200" height="630" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect width="1200" height="630" fill="url(#dots)"/>
+  {% if slide.title %}
+  <text x="100" y="100" font-family="Space Grotesk,sans-serif" font-size="32" font-weight="700" fill="#cdd6f4">{{ slide.title }}</text>
+  {% endif %}
+  {% if slide.language %}
+  <rect x="1000" y="70" width="100" height="34" rx="17" fill="url(#acc-grad)" opacity="0.2"/>
+  <text x="1050" y="92" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" font-weight="600" fill="url(#acc-grad)">{{ slide.language }}</text>
+  {% endif %}
+  <rect x="80" y="140" width="1040" height="420" rx="16" fill="#11111b" opacity="0.6"/>
+  <rect x="80" y="140" width="1040" height="420" rx="16" fill="none" stroke="#313244" stroke-width="1"/>
+  <circle cx="112" cy="172" r="8" fill="#f38ba8"/>
+  <circle cx="138" cy="172" r="8" fill="#f9e2af"/>
+  <circle cx="164" cy="172" r="8" fill="#a6e3a1"/>
+  {% set lines = [slide.line1, slide.line2, slide.line3, slide.line4, slide.line5, slide.line6, slide.line7, slide.line8] %}
+  {% for line in lines %}
+  {% if line %}
+  <text x="110" y="{{ 230 + loop.index0 * 40 }}" font-family="JetBrains Mono,monospace" font-size="22" font-weight="400" fill="#cdd6f4">{{ line }}</text>
+  {% endif %}
+  {% endfor %}
+  <text x="600" y="590" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% if logo_data_uri %}
+  <image href="{{ logo_data_uri }}" x="1072" y="562" height="48" preserveAspectRatio="xMidYMid meet"/>
+  {% endif %}
+</svg>
