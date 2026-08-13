@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+  <defs>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.bg_color | default('#1e1e2e') }}"/>
+      <stop offset="100%" stop-color="{{ brand.bg_color_end | default('#11111b') }}"/>
+    </linearGradient>
+    <linearGradient id="acc-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
+    </linearGradient>
+    <linearGradient id="acc-grad-h" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="75%" cy="25%" r="55%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <circle cx="20" cy="20" r="1.5" fill="#ffffff" opacity="0.06"/>
+    </pattern>
+  </defs>
+{% if bg_image_data_uri %}
+  <image href="{{ bg_image_data_uri }}" width="1080" height="1080" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
+  {% endif %}
+  <rect width="1080" height="1080" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
+  <rect width="1080" height="1080" fill="url(#glow)"/>
+  <rect width="1080" height="1080" fill="url(#dots)"/>
+  <text x="540" y="80" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="32" font-weight="700" fill="#cdd6f4">{{ slide.title }}</text>
+  {% set is_valid = slide.status == 'valid' or slide.status == 'Valid' %}
+  <rect x="380" y="120" width="320" height="60" rx="30" fill="{% if is_valid %}#a6e3a1{% else %}#f38ba8{% endif %}" opacity="0.15"/>
+  <text x="540" y="160" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="24" font-weight="700" fill="{% if is_valid %}#a6e3a1{% else %}#f38ba8{% endif %}">{{ slide.status | upper }}</text>
+  <rect x="100" y="230" width="880" height="100" rx="12" fill="#313244" opacity="0.12"/>
+  <text x="130" y="270" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">Domain</text>
+  <text x="130" y="305" font-family="JetBrains Mono,monospace" font-size="26" fill="url(#acc-grad)">{{ slide.domain }}</text>
+  <rect x="100" y="360" width="880" height="80" rx="12" fill="#313244" opacity="0.12"/>
+  <text x="130" y="395" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">Issuer</text>
+  <text x="130" y="425" font-family="Inter,sans-serif" font-size="22" fill="#cdd6f4">{{ slide.issuer }}</text>
+  <rect x="100" y="470" width="420" height="120" rx="12" fill="#313244" opacity="0.12"/>
+  <text x="130" y="510" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">Valid From</text>
+  <text x="130" y="545" font-family="JetBrains Mono,monospace" font-size="22" fill="#a6e3a1">{{ slide.valid_from }}</text>
+  <rect x="560" y="470" width="420" height="120" rx="12" fill="#313244" opacity="0.12"/>
+  <text x="590" y="510" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">Valid To</text>
+  <text x="590" y="545" font-family="JetBrains Mono,monospace" font-size="22" fill="#f9e2af">{{ slide.valid_to }}</text>
+  {% if slide.serial %}
+  <rect x="100" y="630" width="560" height="80" rx="12" fill="#313244" opacity="0.12"/>
+  <text x="130" y="665" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">Serial Number</text>
+  <text x="130" y="695" font-family="JetBrains Mono,monospace" font-size="18" fill="#cdd6f4">{{ slide.serial }}</text>
+  {% endif %}
+  {% if slide.algo %}
+  <rect x="700" y="630" width="280" height="80" rx="12" fill="#313244" opacity="0.12"/>
+  <text x="730" y="665" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">Algorithm</text>
+  <text x="730" y="695" font-family="JetBrains Mono,monospace" font-size="20" fill="#cba6f7">{{ slide.algo }}</text>
+  {% endif %}
+  <text x="540" y="1050" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+</svg>
