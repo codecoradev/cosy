@@ -8,13 +8,12 @@ Cosy ships with **148 templates** out of the box. Browse the gallery below, or u
 
 <style>
 .template-masonry {
-  column-count: 5;
-  column-gap: 14px;
+  column-count: 3;
+  column-gap: 16px;
   margin: 24px 0;
   line-height: 0;
 }
-@media (max-width: 1280px) { .template-masonry { column-count: 4; } }
-@media (max-width: 1024px) { .template-masonry { column-count: 3; } }
+@media (min-width: 1440px) { .template-masonry { column-count: 4; } }
 @media (max-width: 768px)  { .template-masonry { column-count: 2; } }
 @media (max-width: 480px)  { .template-masonry { column-count: 1; } }
 .template-card {
