@@ -36,5 +36,7 @@
   <rect x="{{ q[2] - 100 }}" y="400" width="200" height="120" rx="12" fill="#313244" opacity="0.12"/>
   <text x="{{ q[2] }}" y="450" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" fill="#a6adc8">{{ q[1] }}</text>
   {% endfor %}
+  {% if brand.show_brand %}
   <text x="540" y="1050" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
 </svg>

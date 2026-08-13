@@ -50,7 +50,9 @@
   {% endif %}
 
   <circle cx="850" cy="300" r="200" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.05"/>
+  {% if brand.show_brand %}
   <text x="500" y="1460" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
   {% if logo_data_uri %}
   <image href="{{ logo_data_uri }}" x="872" y="1432" height="48" preserveAspectRatio="xMidYMid meet"/>
   {% endif %}

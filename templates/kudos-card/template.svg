@@ -38,5 +38,7 @@
     {% if not reason_lines %}<tspan x="540">{{ slide.reason }}</tspan>{% endif %}
   </text>
   <text x="540" y="780" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" fill="#7f849c">from {{ slide.from_name }}</text>
+  {% if brand.show_brand %}
   <text x="540" y="1050" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
 </svg>

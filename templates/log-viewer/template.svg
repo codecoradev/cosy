@@ -38,5 +38,7 @@
   <text x="330" y="{{ 165 + loop.index0 * 55 }}" font-family="JetBrains Mono,monospace" font-size="18" fill="#cdd6f4">{{ lg[2] }}</text>
   {% endif %}
   {% endfor %}
+  {% if brand.show_brand %}
   <text x="600" y="615" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
 </svg>

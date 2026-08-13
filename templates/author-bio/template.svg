@@ -58,7 +58,9 @@
   <text x="{{ tag_x[loop.index0] }}" y="927" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" font-weight="600" fill="url(#acc-grad)">{{ tag }}</text>
   {% endif %}
   {% endfor %}
+  {% if brand.show_brand %}
   <text x="540" y="1000" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
   {% if logo_data_uri %}
   <image href="{{ logo_data_uri }}" x="952" y="1012" height="48" preserveAspectRatio="xMidYMid meet"/>
   {% endif %}

@@ -47,5 +47,7 @@
   <text x="840" y="550" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">Crack Time</text>
   <text x="840" y="590" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="24" font-weight="700" fill="#a6e3a1">{{ slide.crack_time }}</text>
   {% endif %}
+  {% if brand.show_brand %}
   <text x="540" y="1050" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
 </svg>

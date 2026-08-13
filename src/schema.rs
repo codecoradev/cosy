@@ -54,6 +54,8 @@ pub enum FieldType {
     Bg,
     Number,
     Color,
+    /// Boolean toggle (true/false)
+    Boolean,
 }
 
 /// Input data — what the user fills in.

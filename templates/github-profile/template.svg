@@ -48,5 +48,7 @@
   <rect x="680" y="720" width="200" height="100" rx="12" fill="#313244" opacity="0.2"/>
   <text x="780" y="765" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="36" font-weight="800" fill="url(#acc-grad)">{{ slide.following | default('0') }}</text>
   <text x="780" y="800" text-anchor="middle" font-family="Inter,sans-serif" font-size="16" fill="#7f849c">Following</text>
+  {% if brand.show_brand %}
   <text x="540" y="1040" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
 </svg>

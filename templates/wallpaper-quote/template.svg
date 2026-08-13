@@ -35,5 +35,7 @@
   <rect x="490" y="1280" width="100" height="3" rx="1.5" fill="url(#acc-grad-h)" opacity="0.4"/>
   <text x="540" y="1340" text-anchor="middle" font-family="Inter,sans-serif" font-size="30" font-weight="600" fill="url(#acc-grad)">{{ slide.author }}</text>
   {% endif %}
+  {% if brand.show_brand %}
   <text x="540" y="1860" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
 </svg>

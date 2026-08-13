@@ -40,5 +40,7 @@
 {% for line in tip_body_lines %}    <tspan x="540" dy="{% if loop.first %}0{% else %}38{% endif %}">{{ line }}</tspan>{% endfor %}
     {% if not tip_body_lines %}<tspan x="540">{{ slide.tip_body }}</tspan>{% endif %}
   </text>
+  {% if brand.show_brand %}
   <text x="540" y="1000" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
 </svg>

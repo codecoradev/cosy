@@ -40,5 +40,7 @@
   <rect x="300" y="850" width="480" height="60" rx="30" fill="#a6e3a1" opacity="0.1"/>
   <text x="540" y="890" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="22" font-weight="700" fill="#a6e3a1">Winner: {{ slide.winner }}</text>
   {% endif %}
+  {% if brand.show_brand %}
   <text x="540" y="1050" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
 </svg>

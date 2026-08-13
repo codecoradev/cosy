@@ -46,9 +46,11 @@
   {% endif %}
 
   <!-- Brand footer -->
+  {% if brand.show_brand %}
   <text x="80" y="1280" font-family="JetBrains Mono, monospace" font-size="22" font-weight="400" fill="#7f849c">
     {{ brand.brand_name | default('') }} · {{ brand.brand_handle | default('') }}
   </text>
+  {% endif %}
   <circle cx="1000" cy="80" r="180" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
   {% if logo_data_uri %}
   <image href="{{ logo_data_uri }}" x="952" y="1222" height="48" preserveAspectRatio="xMidYMid meet"/>

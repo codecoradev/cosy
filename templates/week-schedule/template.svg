@@ -46,5 +46,7 @@
   <text x="{{ cx + 60 }}" y="290" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="500" fill="#cdd6f4">{{ d[1] }}</text>
   {% endif %}
   {% endfor %}
+  {% if brand.show_brand %}
   <text x="540" y="1040" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
 </svg>

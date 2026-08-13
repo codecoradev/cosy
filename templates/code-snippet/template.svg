@@ -44,7 +44,9 @@
   <text x="110" y="{{ 230 + loop.index0 * 40 }}" font-family="JetBrains Mono,monospace" font-size="22" font-weight="400" fill="#cdd6f4">{{ line }}</text>
   {% endif %}
   {% endfor %}
+  {% if brand.show_brand %}
   <text x="600" y="590" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
   {% if logo_data_uri %}
   <image href="{{ logo_data_uri }}" x="1072" y="562" height="48" preserveAspectRatio="xMidYMid meet"/>
   {% endif %}

@@ -36,5 +36,7 @@
   {% if slide.role %}
   <text x="540" y="880" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="400" fill="#7f849c">{{ slide.role }}</text>
   {% endif %}
+  {% if brand.show_brand %}
   <text x="540" y="1040" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
 </svg>

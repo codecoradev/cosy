@@ -30,7 +30,9 @@
   {% if slide.source %}
   <text x="540" y="920" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="400" fill="#7f849c">{{ slide.source }}</text>
   {% endif %}
+  {% if brand.show_brand %}
   <text x="540" y="1000" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
   <circle cx="1000" cy="80" r="180" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
   {% if logo_data_uri %}
   <image href="{{ logo_data_uri }}" x="952" y="952" height="48" preserveAspectRatio="xMidYMid meet"/>
