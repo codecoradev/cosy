@@ -43,5 +43,7 @@
   {% endif %}
   {% endfor %}
   <text x="120" y="{{ 260 + kvs | length * 55 }}" font-family="JetBrains Mono,monospace" font-size="26" fill="#f9e2af">}</text>
+  {% if brand.show_brand %}
   <text x="600" y="615" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
 </svg>

@@ -43,5 +43,7 @@
   <text x="700" y="{{ 310 + loop.index0 * 180 }}" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="28" font-weight="700" fill="url(#acc-grad)">{{ r[3] }}</text>
   {% endif %}
   {% endfor %}
+  {% if brand.show_brand %}
   <text x="540" y="1050" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
 </svg>

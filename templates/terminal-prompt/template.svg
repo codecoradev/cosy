@@ -47,5 +47,7 @@
   <rect x="115" y="415" width="14" height="24" fill="#cdd6f4" opacity="0.6">
     <animate attributeName="opacity" values="0.6;0.1;0.6" dur="1s" repeatCount="indefinite"/>
   </rect>
+  {% if brand.show_brand %}
   <text x="600" y="615" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
 </svg>

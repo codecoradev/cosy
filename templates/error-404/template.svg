@@ -43,5 +43,7 @@
   <rect x="390" y="780" width="300" height="60" rx="30" fill="none" stroke="url(#acc-grad)" stroke-width="2"/>
   <text x="540" y="818" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="600" fill="url(#acc-grad)">{{ slide.button_text }}</text>
   {% endif %}
+  {% if brand.show_brand %}
   <text x="540" y="1040" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
 </svg>

@@ -52,5 +52,7 @@
   <text x="730" y="665" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">Algorithm</text>
   <text x="730" y="695" font-family="JetBrains Mono,monospace" font-size="20" fill="#cba6f7">{{ slide.algo }}</text>
   {% endif %}
+  {% if brand.show_brand %}
   <text x="540" y="1050" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
 </svg>

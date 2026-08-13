@@ -52,7 +52,9 @@
   <path d="M102,980 l5,6 l11,-13" stroke="#1e1e2e" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
   <text x="148" y="988" font-family="Inter,sans-serif" font-size="30" font-weight="400" fill="#bac2de">{{ slide.item5 }}</text>
   {% endif %}
+  {% if brand.show_brand %}
   <text x="540" y="1280" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="400" fill="#7f849c">{{ brand.brand_name | default('') }} · {{ brand.brand_handle | default('') }}</text>
+  {% endif %}
   <circle cx="1000" cy="80" r="180" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
   {% if logo_data_uri %}
   <image href="{{ logo_data_uri }}" x="952" y="1222" height="48" preserveAspectRatio="xMidYMid meet"/>

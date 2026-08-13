@@ -45,5 +45,7 @@
   <text x="{{ mx + 150 }}" y="{{ my + 50 }}" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="72" font-weight="900" fill="url(#acc-grad)">{{ m[0] }}</text>
   <text x="{{ mx + 150 }}" y="{{ my + 100 }}" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="500" fill="#a6adc8">{{ m[1] }}</text>
   {% endfor %}
+  {% if brand.show_brand %}
   <text x="540" y="1040" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
 </svg>

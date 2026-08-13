@@ -38,7 +38,9 @@
   <text x="810" y="560" text-anchor="middle" font-family="Inter,sans-serif" font-size="30" font-weight="400" fill="#cdd6f4">
     {% for line in after_text_lines %}<tspan x="810" dy="{% if loop.first %}0{% else %}42{% endif %}">{{ line }}</tspan>{% endfor %}
   </text>
+  {% if brand.show_brand %}
   <text x="540" y="1280" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="400" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
   <circle cx="1000" cy="80" r="180" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
   {% if logo_data_uri %}
   <image href="{{ logo_data_uri }}" x="952" y="1222" height="48" preserveAspectRatio="xMidYMid meet"/>

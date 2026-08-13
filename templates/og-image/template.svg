@@ -30,9 +30,11 @@
 
   <!-- Brand name top-left -->
   <rect x="80" y="50" width="5" height="28" rx="2.5" fill="url(#accent-gradient)"/>
+  {% if brand.show_brand %}
   <text x="96" y="72" font-family="Inter, sans-serif" font-size="22" font-weight="600" fill="#a6adc8">
     {{ brand.brand_name | default('') }}
   </text>
+  {% endif %}
 
   <!-- Title (wrapped, large) -->
   <text x="80" y="240" font-family="Inter, sans-serif" font-size="52" font-weight="800" fill="#cdd6f4">

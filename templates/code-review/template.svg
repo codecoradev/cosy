@@ -44,5 +44,7 @@
   <text x="110" y="488" font-family="JetBrains Mono,monospace" font-size="14" fill="#7f849c">// suggested fix</text>
   <text x="110" y="515" font-family="JetBrains Mono,monospace" font-size="18" fill="#a6e3a1">{{ slide.suggestion }}</text>
   {% endif %}
+  {% if brand.show_brand %}
   <text x="600" y="615" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
 </svg>

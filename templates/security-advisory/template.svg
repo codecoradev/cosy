@@ -44,5 +44,7 @@
   <rect x="80" y="510" width="280" height="50" rx="12" fill="#a6e3a1" opacity="0.1"/>
   <text x="100" y="542" font-family="Inter,sans-serif" font-size="18" font-weight="600" fill="#a6e3a1">Fixed in v{{ slide.fix_version }}</text>
   {% endif %}
+  {% if brand.show_brand %}
   <text x="600" y="615" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
 </svg>

@@ -52,5 +52,7 @@
 {% for line in description_lines %}    <tspan x="140" dy="{% if loop.first %}0{% else %}34{% endif %}">{{ line }}</tspan>{% endfor %}
     {% if not description_lines %}<tspan x="140">{{ slide.description }}</tspan>{% endif %}
   </text>
+  {% if brand.show_brand %}
   <text x="600" y="610" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
 </svg>

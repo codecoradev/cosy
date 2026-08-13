@@ -39,5 +39,7 @@
   {% if slide.line4 %}<text x="120" y="305" font-family="JetBrains Mono,monospace" font-size="18" fill="#a6e3a1">{{ slide.line4 }}</text>{% endif %}
   {% if slide.line5 %}<text x="120" y="350" font-family="JetBrains Mono,monospace" font-size="18" fill="#cdd6f4">{{ slide.line5 }}</text>{% endif %}
   {% if slide.line6 %}<text x="120" y="395" font-family="JetBrains Mono,monospace" font-size="18" fill="#f9e2af">{{ slide.line6 }}</text>{% endif %}
+  {% if brand.show_brand %}
   <text x="600" y="615" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
 </svg>

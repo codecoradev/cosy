@@ -57,7 +57,9 @@
   <text x="{{ pos[0] }}" y="{{ pos[1] + 30 }}" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="500" fill="#a6adc8">{{ metric[1] }}</text>
   {% endif %}
   {% endfor %}
+  {% if brand.show_brand %}
   <text x="540" y="1000" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
   {% if logo_data_uri %}
   <image href="{{ logo_data_uri }}" x="952" y="1012" height="48" preserveAspectRatio="xMidYMid meet"/>
   {% endif %}

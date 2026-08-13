@@ -42,5 +42,7 @@
   <rect x="540" y="360" width="160" height="60" rx="12" fill="#313244" opacity="0.2"/>
   <text x="620" y="385" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="28" font-weight="700" fill="url(#acc-grad)">{{ slide.prs | default('0') }}</text>
   <text x="620" y="408" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" fill="#7f849c">PRs merged</text>
+  {% if brand.show_brand %}
   <text x="600" y="610" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
 </svg>

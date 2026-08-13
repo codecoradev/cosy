@@ -43,5 +43,7 @@
   <text x="{{ cx + 80 }}" y="835" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="18" font-weight="500" fill="#7f849c">{{ c[1] }}</text>
   {% endif %}
   {% endfor %}
+  {% if brand.show_brand %}
   <text x="540" y="1020" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
 </svg>

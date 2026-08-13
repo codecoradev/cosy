@@ -35,5 +35,7 @@
     {% if not tweet_lines %}<tspan x="100">{{ slide.tweet }}</tspan>{% endif %}
   </text>
   <text x="100" y="610" font-size="28" fill="url(#acc-grad)" opacity="0.6">&#x1F4AC; reply &#xA0; &#x1F501; retweet &#xA0; &#x2764;&#xFE0F; like</text>
+  {% if brand.show_brand %}
   <text x="600" y="635" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
 </svg>

@@ -27,9 +27,11 @@
 
   <!-- Brand header -->
   <rect x="80" y="60" width="6" height="36" rx="8" fill="url(#accent-gradient)"/>
+  {% if brand.show_brand %}
   <text x="100" y="88" font-family="Inter, sans-serif" font-size="28" font-weight="600" fill="#cdd6f4">
     {{ brand.brand_name | default('') }}
   </text>
+  {% endif %}
 
   <!-- Eyebrow -->
   {% if slide.eyebrow %}
@@ -64,9 +66,11 @@
   {% endif %}
 
   <!-- Brand footer -->
+  {% if brand.show_brand %}
   <text x="80" y="1290" font-family="Inter, sans-serif" font-size="22" font-weight="400" fill="#7f849c">
     {{ brand.brand_name | default('') }} · {{ brand.brand_handle | default('') }}
   </text>
+  {% endif %}
   <circle cx="1000" cy="80" r="180" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
   {% if logo_data_uri %}
   <image href="{{ logo_data_uri }}" x="952" y="1222" height="48" preserveAspectRatio="xMidYMid meet"/>
