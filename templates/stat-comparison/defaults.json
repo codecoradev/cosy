@@ -1,0 +1,22 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Before and After Rust Rewrite",
+      "before_label": "Puppeteer (v1.x)",
+      "before_value": "3000ms",
+      "after_label": "Cosy Rust (v2.0)",
+      "after_value": "150ms",
+      "improvement": "20x faster",
+      "metric": "Average render time"
+    }
+  ]
+}

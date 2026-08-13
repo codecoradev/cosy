@@ -1,0 +1,26 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Template Priority Matrix",
+      "axis_x": "Complexity",
+      "axis_y": "Impact",
+      "q1_label": "Quick Wins",
+      "q1_item": "Social cards, quotes",
+      "q2_label": "Major Projects",
+      "q2_item": "Dashboard, reports",
+      "q3_label": "Fill-ins",
+      "q3_item": "Error pages, badges",
+      "q4_label": "Thankless",
+      "q4_item": "Config display"
+    }
+  ]
+}

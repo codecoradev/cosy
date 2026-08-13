@@ -1,0 +1,27 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Cosy v2.0 Features",
+      "subtitle": "Everything you need for automated image generation",
+      "f1_title": "Pure Rust Rendering Engine",
+      "f1_desc": "SVG to PNG with resvg, no browser needed",
+      "f2_title": "149 Pre-built Templates",
+      "f2_desc": "Code snippets, social cards, deployment statuses",
+      "f3_title": "Background Image Overlay",
+      "f3_desc": "Custom images with adjustable opacity per template",
+      "f4_title": "Logo Watermarking",
+      "f4_desc": "Automatic bottom-right logo on every render",
+      "f5_title": "Batch Processing",
+      "f5_desc": "Render hundreds of images concurrently"
+    }
+  ]
+}

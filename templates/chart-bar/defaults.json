@@ -1,0 +1,26 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Monthly Template Renders",
+      "b1_label": "Mar",
+      "b1_value": "45",
+      "b2_label": "Apr",
+      "b2_value": "62",
+      "b3_label": "May",
+      "b3_value": "78",
+      "b4_label": "Jun",
+      "b4_value": "94",
+      "b5_label": "Jul",
+      "b5_value": "131"
+    }
+  ]
+}

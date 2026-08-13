@@ -1,0 +1,26 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Cosy Dockerfile",
+      "step1_inst": "FROM",
+      "step1_arg": "rust:1.82-slim AS builder",
+      "step2_inst": "COPY",
+      "step2_arg": ". /app",
+      "step3_inst": "RUN",
+      "step3_arg": "cargo build --release",
+      "step4_inst": "FROM",
+      "step4_arg": "debian:bookworm-slim",
+      "step5_inst": "COPY",
+      "step5_arg": "--from=builder /app/target/release/cosy /usr/bin/"
+    }
+  ]
+}

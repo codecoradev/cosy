@@ -1,0 +1,24 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Cosy Dependency Tree",
+      "root": "cosy",
+      "child1": "resvg",
+      "child2": "serde",
+      "child3": "tokio",
+      "leaf1": "usvg",
+      "leaf2": "tiny-skia",
+      "leaf3": "serde_json",
+      "leaf4": "tokio-http"
+    }
+  ]
+}

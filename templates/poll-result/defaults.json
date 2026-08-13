@@ -1,0 +1,25 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "question": "What is your preferred image generation approach?",
+      "option_a": "Pure Rust (Cosy)",
+      "option_a_pct": "62%",
+      "option_b": "Puppeteer / Browser",
+      "option_b_pct": "18%",
+      "option_c": "Cloud API (SaaS)",
+      "option_c_pct": "14%",
+      "option_d": "Canvas / WebGL",
+      "option_d_pct": "6%",
+      "total_votes": "1,247 votes"
+    }
+  ]
+}

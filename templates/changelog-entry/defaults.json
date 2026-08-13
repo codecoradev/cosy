@@ -1,0 +1,23 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "version": "v2.1.0",
+      "date": "Aug 10, 2026",
+      "type": "Feature",
+      "item1": "Added 60 new templates including deploy-status and ci-pipeline",
+      "item2": "Background image overlay support for all card templates",
+      "item3": "Custom logo rendering at bottom-right corner",
+      "item4": "Gradient color support for accent borders",
+      "breaking": "Removed deprecated render_png endpoint"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "What Developers Say",
+      "t1_text": "Cosy replaced our entire Puppeteer cluster. 20x faster and zero maintenance headaches.",
+      "t1_author": "Sarah Chen, CTO",
+      "t2_text": "The schema-driven templates are brilliant. We built 30 custom templates in one afternoon.",
+      "t2_author": "Marcus Lee, DevOps",
+      "t3_text": "150ms renders changed how we think about dynamic image generation. Pure magic.",
+      "t3_author": "Dina Park, Eng Lead"
+    }
+  ]
+}

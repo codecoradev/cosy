@@ -1,0 +1,20 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Cosy v2.1 Development",
+      "percentage": "78%",
+      "milestone_label": "60 new templates added, batch rendering optimized",
+      "items_done": "47",
+      "items_total": "60"
+    }
+  ]
+}

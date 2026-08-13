@@ -1,0 +1,23 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "HTTP render handler",
+      "filename": "handler.go",
+      "line1": "func RenderHandler(w http.ResponseWriter, r *http.Request) {",
+      "line2": "    var req RenderRequest",
+      "line3": "    json.NewDecoder(r.Body).Decode(andreq)",
+      "line4": "    png, err := cosy.Render(req.Template, req.Data)",
+      "line5": "    w.Header().Set(\"Content-Type\", \"image/png\")",
+      "line6": "    w.Write(png)"
+    }
+  ]
+}

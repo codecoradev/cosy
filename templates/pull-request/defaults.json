@@ -1,0 +1,23 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "pr_number": "#203",
+      "pr_title": "Add background image overlay with opacity control",
+      "author": "ajianaz",
+      "branch": "feat/bg-overlay",
+      "base_branch": "main",
+      "status": "Merged",
+      "additions": "+847",
+      "deletions": "-23"
+    }
+  ]
+}

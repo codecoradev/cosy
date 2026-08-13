@@ -1,0 +1,21 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Production API Key",
+      "key_prefix": "cza_live_",
+      "key_body": "sk_9f2a4b8c1e7d3f6a0b5c2e8d",
+      "created": "Aug 03, 2026",
+      "permissions": "read, write, render",
+      "last_used": "12 min ago"
+    }
+  ]
+}

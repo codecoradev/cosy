@@ -1,0 +1,26 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Feature Flag Status",
+      "f1_name": "background_images",
+      "f1_status": "Enabled",
+      "f2_name": "custom_fonts",
+      "f2_status": "Enabled",
+      "f3_name": "batch_rendering",
+      "f3_status": "Beta",
+      "f4_name": "video_output",
+      "f4_status": "Disabled",
+      "f5_name": "ai_descriptions",
+      "f5_status": "Beta"
+    }
+  ]
+}

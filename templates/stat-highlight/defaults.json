@@ -1,0 +1,19 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "stat_value": "20",
+      "stat_suffix": "x",
+      "label": "faster than Puppeteer",
+      "context": "Average render time dropped from 3000ms to 150ms after the Rust rewrite"
+    }
+  ]
+}

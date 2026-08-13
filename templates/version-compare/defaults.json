@@ -1,0 +1,23 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Render Performance",
+      "v_old": "v1.x (Node)",
+      "v_new": "v2.0 (Rust)",
+      "metric": "Avg render",
+      "old_val": "3000ms",
+      "new_val": "150ms",
+      "delta": "95%",
+      "delta_dir": "down"
+    }
+  ]
+}
