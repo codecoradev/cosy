@@ -1,0 +1,126 @@
+{
+  "id": "token-display",
+  "name": "Token Display",
+  "description": "Design token and color variable display",
+  "dimensions": {
+    "width": 1200,
+    "height": 630
+  },
+  "fonts": [
+    "Inter",
+    "JetBrains Mono",
+    "Space Grotesk"
+  ],
+  "brand_fields": {
+    "brand_name": {
+      "type": "text",
+      "required": true,
+      "max": 30
+    },
+    "brand_handle": {
+      "type": "text",
+      "required": false,
+      "max": 30
+    },
+    "bg_color": {
+      "type": "bg",
+      "required": false,
+      "default": "#1e1e2e"
+    },
+    "bg_color_end": {
+      "type": "bg",
+      "required": false,
+      "default": "#11111b"
+    },
+    "accent_color": {
+      "type": "bg",
+      "required": false,
+      "default": "#cba6f7"
+    },
+    "accent_color_end": {
+      "type": "bg",
+      "required": false,
+      "default": "#89b4fa"
+    },
+    "bg_image": {
+      "type": "image",
+      "required": false
+    },
+    "bg_image_opacity": {
+      "type": "number",
+      "required": false,
+      "default": 0.15
+    },
+    "logo": {
+      "type": "image",
+      "required": false
+    }
+  },
+  "slide_fields": {
+    "title": {
+      "type": "text",
+      "required": true,
+      "max": 40
+    },
+    "t1_name": {
+      "type": "text",
+      "required": true,
+      "max": 20
+    },
+    "t1_value": {
+      "type": "text",
+      "required": true,
+      "max": 15
+    },
+    "t1_color": {
+      "type": "text",
+      "required": true,
+      "max": 10
+    },
+    "t2_name": {
+      "type": "text",
+      "required": true,
+      "max": 20
+    },
+    "t2_value": {
+      "type": "text",
+      "required": true,
+      "max": 15
+    },
+    "t2_color": {
+      "type": "text",
+      "required": true,
+      "max": 10
+    },
+    "t3_name": {
+      "type": "text",
+      "required": true,
+      "max": 20
+    },
+    "t3_value": {
+      "type": "text",
+      "required": true,
+      "max": 15
+    },
+    "t3_color": {
+      "type": "text",
+      "required": true,
+      "max": 10
+    },
+    "t4_name": {
+      "type": "text",
+      "required": true,
+      "max": 20
+    },
+    "t4_value": {
+      "type": "text",
+      "required": true,
+      "max": 15
+    },
+    "t4_color": {
+      "type": "text",
+      "required": true,
+      "max": 10
+    }
+  }
+}

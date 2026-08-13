@@ -1,0 +1,140 @@
+{
+  "id": "matrix-display",
+  "name": "Matrix Display",
+  "description": "Color-coded comparison matrix",
+  "dimensions": {
+    "width": 1080,
+    "height": 1080
+  },
+  "fonts": [
+    "Inter",
+    "Space Grotesk"
+  ],
+  "brand_fields": {
+    "brand_name": {
+      "type": "text",
+      "required": true,
+      "max": 30
+    },
+    "brand_handle": {
+      "type": "text",
+      "required": false,
+      "max": 30
+    },
+    "bg_color": {
+      "type": "bg",
+      "required": false,
+      "default": "#1e1e2e"
+    },
+    "bg_color_end": {
+      "type": "bg",
+      "required": false,
+      "default": "#11111b"
+    },
+    "accent_color": {
+      "type": "bg",
+      "required": false,
+      "default": "#cba6f7"
+    },
+    "accent_color_end": {
+      "type": "bg",
+      "required": false,
+      "default": "#89b4fa"
+    },
+    "bg_image": {
+      "type": "image",
+      "required": false
+    },
+    "bg_image_opacity": {
+      "type": "number",
+      "required": false,
+      "default": 0.15
+    },
+    "logo": {
+      "type": "image",
+      "required": false
+    }
+  },
+  "slide_fields": {
+    "title": {
+      "type": "text",
+      "required": true,
+      "max": 40
+    },
+    "col1": {
+      "type": "text",
+      "required": true,
+      "max": 15
+    },
+    "col2": {
+      "type": "text",
+      "required": true,
+      "max": 15
+    },
+    "col3": {
+      "type": "text",
+      "required": true,
+      "max": 15
+    },
+    "r1_label": {
+      "type": "text",
+      "required": true,
+      "max": 20
+    },
+    "r1c1": {
+      "type": "text",
+      "required": true,
+      "max": 8
+    },
+    "r1c2": {
+      "type": "text",
+      "required": true,
+      "max": 8
+    },
+    "r1c3": {
+      "type": "text",
+      "required": true,
+      "max": 8
+    },
+    "r2_label": {
+      "type": "text",
+      "required": true,
+      "max": 20
+    },
+    "r2c1": {
+      "type": "text",
+      "required": true,
+      "max": 8
+    },
+    "r2c2": {
+      "type": "text",
+      "required": true,
+      "max": 8
+    },
+    "r2c3": {
+      "type": "text",
+      "required": true,
+      "max": 8
+    },
+    "r3_label": {
+      "type": "text",
+      "required": true,
+      "max": 20
+    },
+    "r3c1": {
+      "type": "text",
+      "required": true,
+      "max": 8
+    },
+    "r3c2": {
+      "type": "text",
+      "required": true,
+      "max": 8
+    },
+    "r3c3": {
+      "type": "text",
+      "required": true,
+      "max": 8
+    }
+  }
+}
