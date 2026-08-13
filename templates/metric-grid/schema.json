@@ -1,0 +1,114 @@
+{
+  "id": "metric-grid",
+  "name": "Metric Grid",
+  "description": "2x2 grid of metrics with numbers and labels",
+  "dimensions": {
+    "width": 1080,
+    "height": 1080
+  },
+  "fonts": [
+    "Inter",
+    "Space Grotesk",
+    "JetBrains Mono"
+  ],
+  "brand_fields": {
+    "brand_name": {
+      "type": "text",
+      "required": true,
+      "max": 30
+    },
+    "brand_handle": {
+      "type": "text",
+      "required": false,
+      "max": 30
+    },
+    "bg_color": {
+      "type": "bg",
+      "required": false,
+      "default": "#1e1e2e"
+    },
+    "bg_color_end": {
+      "type": "bg",
+      "required": false,
+      "default": "#11111b"
+    },
+    "accent_color": {
+      "type": "bg",
+      "required": false,
+      "default": "#cba6f7"
+    },
+    "accent_color_end": {
+      "type": "bg",
+      "required": false,
+      "default": "#89b4fa"
+    },
+    "bg_image": {
+      "type": "image",
+      "required": false,
+      "description": "Background image path (PNG/JPG/WebP). Rendered with configurable opacity behind gradient overlay."
+    },
+    "bg_image_opacity": {
+      "type": "number",
+      "required": false,
+      "default": 0.15,
+      "description": "Opacity of background image (0.0-1.0)."
+    },
+    "logo": {
+      "type": "image",
+      "required": false,
+      "description": "Brand logo path (PNG/SVG). Rendered at bottom-right corner."
+    }
+  },
+  "slide_fields": {
+    "title": {
+      "type": "text",
+      "required": false,
+      "max": 80,
+      "wrap_width": 30
+    },
+    "metric1_value": {
+      "type": "text",
+      "required": true,
+      "max": 20
+    },
+    "metric1_label": {
+      "type": "text",
+      "required": true,
+      "max": 50,
+      "wrap_width": 18
+    },
+    "metric2_value": {
+      "type": "text",
+      "required": true,
+      "max": 20
+    },
+    "metric2_label": {
+      "type": "text",
+      "required": true,
+      "max": 50,
+      "wrap_width": 18
+    },
+    "metric3_value": {
+      "type": "text",
+      "required": true,
+      "max": 20
+    },
+    "metric3_label": {
+      "type": "text",
+      "required": true,
+      "max": 50,
+      "wrap_width": 18
+    },
+    "metric4_value": {
+      "type": "text",
+      "required": true,
+      "max": 20
+    },
+    "metric4_label": {
+      "type": "text",
+      "required": true,
+      "max": 50,
+      "wrap_width": 18
+    }
+  }
+}
