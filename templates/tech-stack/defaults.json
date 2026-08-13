@@ -1,0 +1,28 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Cosy Tech Stack",
+      "t1_name": "Rust",
+      "t1_desc": "Core engine",
+      "t2_name": "resvg",
+      "t2_desc": "SVG rendering",
+      "t3_name": "Tokio",
+      "t3_desc": "Async runtime",
+      "t4_name": "Axum",
+      "t4_desc": "HTTP framework",
+      "t5_name": "SQLite",
+      "t5_desc": "Template store",
+      "t6_name": "Docker",
+      "t6_desc": "Deployment"
+    }
+  ]
+}

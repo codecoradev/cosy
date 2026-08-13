@@ -1,0 +1,23 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Cosy Banner",
+      "line1": "  ___           _",
+      "line2": " / __\\_ _  ___| | ___",
+      "line3": "/ /  | || |/ -_) |/ _ \\",
+      "line4": "\\/_/  \\_, |\\___|_|\\___/",
+      "line5": "      |__/  v2.0",
+      "line6": "  JSON to Image engine",
+      "caption": "Generated with figlet"
+    }
+  ]
+}

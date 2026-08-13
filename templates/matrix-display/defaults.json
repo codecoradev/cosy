@@ -1,0 +1,31 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Framework Comparison",
+      "col1": "Speed",
+      "col2": "Memory",
+      "col3": "Binary",
+      "r1_label": "Cosy (Rust)",
+      "r1c1": "A+",
+      "r1c2": "20MB",
+      "r1c3": "8MB",
+      "r2_label": "Node.js",
+      "r2c1": "C",
+      "r2c2": "300MB",
+      "r2c3": "120MB",
+      "r3_label": "Python",
+      "r3c1": "D",
+      "r3c2": "250MB",
+      "r3c3": "N/A"
+    }
+  ]
+}

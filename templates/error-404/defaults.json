@@ -1,0 +1,19 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "error_code": "404",
+      "message": "Template not found",
+      "submessage": "The template you requested does not exist. Check the template ID and try again.",
+      "button_text": "Browse Templates"
+    }
+  ]
+}

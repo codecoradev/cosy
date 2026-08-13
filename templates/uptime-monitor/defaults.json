@@ -1,0 +1,25 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Service Uptime (90 days)",
+      "overall_uptime": "99.98%",
+      "s1_name": "API Gateway",
+      "s1_status": "Up",
+      "s2_name": "Render Worker",
+      "s2_status": "Up",
+      "s3_name": "Template Store",
+      "s3_status": "Up",
+      "s4_name": "CDN Edge",
+      "s4_status": "Up"
+    }
+  ]
+}

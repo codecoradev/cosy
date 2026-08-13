@@ -1,0 +1,24 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Cosy Development Timeline",
+      "milestone1_date": "Jan 2026",
+      "milestone1_text": "Started Rust rewrite from Node.js codebase",
+      "milestone2_date": "Mar 2026",
+      "milestone2_text": "Shipped v2.0 with resvg rendering engine",
+      "milestone3_date": "Jun 2026",
+      "milestone3_text": "Reached 100 templates and 1000 GitHub stars",
+      "milestone4_date": "Aug 2026",
+      "milestone4_text": "149 templates, background images, and custom logo support"
+    }
+  ]
+}

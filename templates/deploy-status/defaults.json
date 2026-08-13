@@ -1,0 +1,27 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Production Deploy",
+      "environment": "production",
+      "version": "v2.1.0",
+      "s1_name": "API Gateway",
+      "s1_status": "Healthy",
+      "s2_name": "Render Worker",
+      "s2_status": "Healthy",
+      "s3_name": "CDN Sync",
+      "s3_status": "Healthy",
+      "s4_name": "Webhook",
+      "s4_status": "Healthy",
+      "commit": "8f3a2b1"
+    }
+  ]
+}

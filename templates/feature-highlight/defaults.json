@@ -1,0 +1,18 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "feature_name": "Gradient Backgrounds",
+      "feature_desc": "Every template supports customizable gradient backgrounds with configurable start and end colors. Match your brand identity in seconds with hex color inputs.",
+      "icon_text": "GR"
+    }
+  ]
+}

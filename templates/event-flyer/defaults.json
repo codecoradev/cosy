@@ -1,0 +1,21 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "event_name": "Rust Meetup: Building Image Pipelines",
+      "date": "Wednesday, Aug 20, 2026",
+      "time": "18:30 - 21:00 WIB",
+      "location": "GoWork Thamrin, Jakarta + Online",
+      "speaker": "ajianaz",
+      "description": "Deep dive into building a JSON-to-image rendering engine with Rust and resvg. Live demo of Cosy."
+    }
+  ]
+}

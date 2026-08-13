@@ -1,0 +1,23 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Template query",
+      "filename": "query.sql",
+      "line1": "SELECT t.id, t.name, t.created_at,",
+      "line2": "       COUNT(r.id) as render_count",
+      "line3": "FROM templates t",
+      "line4": "LEFT JOIN renders r ON r.template_id = t.id",
+      "line5": "WHERE t.is_active = true",
+      "line6": "GROUP BY t.id ORDER BY render_count DESC"
+    }
+  ]
+}

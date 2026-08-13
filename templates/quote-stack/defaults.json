@@ -1,0 +1,22 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "On Building Developer Tools",
+      "q1_text": "Developer tools should be fast, reliable, and disappear into your workflow.",
+      "q1_author": "ajianaz",
+      "q2_text": "The best API is the one you do not have to read docs for twice.",
+      "q2_author": "ajianaz",
+      "q3_text": "Shipping beats perfection when perfection has no deadline.",
+      "q3_author": "ajianaz"
+    }
+  ]
+}

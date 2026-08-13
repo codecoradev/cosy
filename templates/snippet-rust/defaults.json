@@ -1,0 +1,23 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Batch render function",
+      "filename": "batch.rs",
+      "line1": "pub async fn batch_render(",
+      "line2": "    requests: BatchRequest,",
+      "line3": ") -> BatchResult {",
+      "line4": "    let results = futures::future::join_all(",
+      "line5": "        requests.items.iter().map(render)",
+      "line6": "    ).await"
+    }
+  ]
+}

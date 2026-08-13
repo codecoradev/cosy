@@ -1,0 +1,23 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Cosy CLI Session",
+      "user": "ajianaz",
+      "host": "cosy-dev",
+      "path": "~/projects/cosy",
+      "command": "cosy render deploy-status --watch",
+      "output1": "Watching defaults.json for changes...",
+      "output2": "Rendered deploy.png in 148ms",
+      "output3": "Watching for next change..."
+    }
+  ]
+}

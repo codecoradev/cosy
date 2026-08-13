@@ -1,0 +1,17 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "question": "How fast is Cosy compared to Puppeteer?",
+      "answer": "Cosy renders templates in approximately 150ms vs Puppeteer's 3000ms. That is a 20x improvement because we skip the browser entirely and render SVG directly."
+    }
+  ]
+}

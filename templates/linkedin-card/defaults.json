@@ -1,18 +1,19 @@
 {
   "brand": {
-    "brand_name": "CodeCora",
-    "brand_handle": "@codecoradev",
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
     "bg_color": "#1e1e2e",
     "bg_color_end": "#11111b",
     "accent_color": "#cba6f7",
-    "accent_color_end": "#89b4fa"
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
   },
   "slides": [
     {
       "headline": "Why we chose Rust for our image generation pipeline",
       "body": "After benchmarking Node, Python, and Rust, the performance difference was undeniable. Here is what we learned.",
-      "author": "Anaz",
-      "role": "Founder at CodeCora"
+      "author": "ajianaz",
+      "role": "Founder at ajianaz"
     }
   ]
 }

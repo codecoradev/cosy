@@ -1,0 +1,28 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Application Logs",
+      "l1_time": "14:32:01",
+      "l1_level": "INFO",
+      "l1_msg": "Render request received: template=deploy-status",
+      "l2_time": "14:32:01",
+      "l2_level": "INFO",
+      "l2_msg": "SVG built successfully in 42ms",
+      "l3_time": "14:32:01",
+      "l3_level": "INFO",
+      "l3_msg": "PNG encoded and uploaded to CDN",
+      "l4_time": "14:32:02",
+      "l4_level": "WARN",
+      "l4_msg": "Rate limit 80% reached for key cza_live_8f3a"
+    }
+  ]
+}

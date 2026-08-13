@@ -1,0 +1,24 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Cosy SDK Dependencies",
+      "dep1_name": "@ajianaz/cosy-sdk",
+      "dep1_version": "^2.1.0",
+      "dep2_name": "resvg-js",
+      "dep2_version": "^2.0.0",
+      "dep3_name": "zod",
+      "dep3_version": "^3.23.0",
+      "dep4_name": "dotenv",
+      "dep4_version": "^16.4.0"
+    }
+  ]
+}

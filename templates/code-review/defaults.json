@@ -1,0 +1,22 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "PR Review Comment",
+      "reviewer": "ajianaz",
+      "severity": "Medium",
+      "file": "src/renderer.rs",
+      "line": "142",
+      "comment": "Consider using a bounded channel here to prevent unbounded memory growth under high load scenarios",
+      "suggestion": "tokio::sync::mpsc::channel(128)"
+    }
+  ]
+}

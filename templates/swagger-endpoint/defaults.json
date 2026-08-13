@@ -1,0 +1,22 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Render Template",
+      "method": "POST",
+      "path": "/api/v2/templates/render",
+      "description": "Render a template to PNG using provided JSON data and brand settings",
+      "auth": "Bearer",
+      "response_code": "200",
+      "response_desc": "image/png binary"
+    }
+  ]
+}
