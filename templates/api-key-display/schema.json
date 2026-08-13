@@ -1,0 +1,91 @@
+{
+  "id": "api-key-display",
+  "name": "API Key Display",
+  "description": "API key/token reveal card with masked display",
+  "dimensions": {
+    "width": 1200,
+    "height": 630
+  },
+  "fonts": [
+    "Inter",
+    "JetBrains Mono",
+    "Space Grotesk"
+  ],
+  "brand_fields": {
+    "brand_name": {
+      "type": "text",
+      "required": true,
+      "max": 30
+    },
+    "brand_handle": {
+      "type": "text",
+      "required": false,
+      "max": 30
+    },
+    "bg_color": {
+      "type": "bg",
+      "required": false,
+      "default": "#1e1e2e"
+    },
+    "bg_color_end": {
+      "type": "bg",
+      "required": false,
+      "default": "#11111b"
+    },
+    "accent_color": {
+      "type": "bg",
+      "required": false,
+      "default": "#cba6f7"
+    },
+    "accent_color_end": {
+      "type": "bg",
+      "required": false,
+      "default": "#89b4fa"
+    },
+    "bg_image": {
+      "type": "image",
+      "required": false
+    },
+    "bg_image_opacity": {
+      "type": "number",
+      "required": false,
+      "default": 0.15
+    },
+    "logo": {
+      "type": "image",
+      "required": false
+    }
+  },
+  "slide_fields": {
+    "title": {
+      "type": "text",
+      "required": true,
+      "max": 40
+    },
+    "key_prefix": {
+      "type": "text",
+      "required": true,
+      "max": 10
+    },
+    "key_body": {
+      "type": "text",
+      "required": true,
+      "max": 40
+    },
+    "created": {
+      "type": "text",
+      "required": false,
+      "max": 20
+    },
+    "permissions": {
+      "type": "text",
+      "required": false,
+      "max": 40
+    },
+    "last_used": {
+      "type": "text",
+      "required": false,
+      "max": 20
+    }
+  }
+}
