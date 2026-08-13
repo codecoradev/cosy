@@ -2,50 +2,63 @@
 
 Tips/checklist carousel slide
 
-![Checklist sample](/samples/checklist.png)
+## Preview
+
+![Checklist](https://s3.ajianaz.dev/hermes/codecoradev/cosy/preview/checklist.png)
 
 ## Dimensions
 
-| Property | Value |
-|----------|-------|
-| Width | 1080px |
-| Height | 1350px |
-| Aspect | 1080:1350 |
-| Fonts | Inter, JetBrains Mono |
+- **Width:** 1080px
+- **Height:** 1350px
+- **Aspect Ratio:** 1080:1350
+
+## Fonts
+
+- Inter
+- JetBrains Mono
 
 ## Slide Fields
 
-| Field | Type | Required | Max | Description |
-|-------|------|----------|-----|-------------|
-| `title` | text | Yes | 100 | Main title or heading |
-| `item1` | text | No | 80 | Checklist item 1 |
-| `item2` | text | No | 80 | Checklist item 2 |
-| `item3` | text | No | 80 | Checklist item 3 |
-| `item4` | text | No | 80 | Checklist item 4 |
-| `item5` | text | No | 80 | Checklist item 5 |
+| Field | Type | Required | Max Length |
+|-------|------|----------|------------|
+| `title` | text | ✅ | 100 |
+| `item1` | text | — | 80 |
+| `item2` | text | — | 80 |
+| `item3` | text | — | 80 |
+| `item4` | text | — | 80 |
+| `item5` | text | — | 80 |
+
+## Brand Fields
+
+| Field | Type | Required | Default |
+|-------|------|----------|---------|
+| `brand_name` | text | ✅ | — |
+| `brand_handle` | text | — | — |
+| `bg_color` | bg | — | #1e1e2e |
+| `bg_color_end` | bg | — | #11111b |
+| `accent_color` | bg | — | #cba6f7 |
+| `accent_color_end` | bg | — | #89b4fa |
+| `bg_image` | image | — | — |
+| `bg_image_opacity` | number | — | 0.15 |
+| `logo` | image | — | — |
 
 ## Example JSON
 
 ```json
 {
   "brand": {
-    "brand_name": "Your Brand",
-    "brand_handle": "@yourbrand"
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz"
   },
   "slides": [
     {
-      "title": "Why Rust?",
-      "item1": "Write tests",
-      "item2": "Run clippy",
-      "item3": "Update changelog",
-      "item4": "Tag release",
-      "item5": "Publish"
+      // fill slide fields here
     }
   ]
 }
 ```
 
-## Render
+## Usage
 
 ```bash
 cosy render --template checklist --data input.json --output output.png

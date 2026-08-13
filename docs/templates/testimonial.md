@@ -2,46 +2,61 @@
 
 Customer testimonial card
 
-![Testimonial sample](/samples/testimonial.png)
+## Preview
+
+![Testimonial](https://s3.ajianaz.dev/hermes/codecoradev/cosy/preview/testimonial.png)
 
 ## Dimensions
 
-| Property | Value |
-|----------|-------|
-| Width | 1080px |
-| Height | 1200px |
-| Aspect | 1080:1200 |
-| Fonts | Inter, JetBrains Mono |
+- **Width:** 1080px
+- **Height:** 1200px
+- **Aspect Ratio:** 1080:1200
+
+## Fonts
+
+- Inter
+- JetBrains Mono
 
 ## Slide Fields
 
-| Field | Type | Required | Max | Description |
-|-------|------|----------|-----|-------------|
-| `quote` | text | Yes | 300 | The quote text |
-| `author_name` | text | Yes | 50 | Name of the person giving the testimonial |
-| `author_role` | text | No | 50 | Role of the person (e.g. "Senior Engineer") |
-| `author_company` | text | No | 50 | Company name |
+| Field | Type | Required | Max Length |
+|-------|------|----------|------------|
+| `quote` | text | ✅ | 300 |
+| `author_name` | text | ✅ | 50 |
+| `author_role` | text | — | 50 |
+| `author_company` | text | — | 50 |
+
+## Brand Fields
+
+| Field | Type | Required | Default |
+|-------|------|----------|---------|
+| `brand_name` | text | ✅ | — |
+| `brand_handle` | text | — | — |
+| `bg_color` | bg | — | #1e1e2e |
+| `bg_color_end` | bg | — | #11111b |
+| `accent_color` | bg | — | #cba6f7 |
+| `accent_color_end` | bg | — | #89b4fa |
+| `bg_image` | image | — | — |
+| `bg_image_opacity` | number | — | 0.15 |
+| `logo` | image | — | — |
 
 ## Example JSON
 
 ```json
 {
   "brand": {
-    "brand_name": "Your Brand",
-    "brand_handle": "@yourbrand"
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz"
   },
   "slides": [
     {
-      "quote": "The best time to ship was yesterday. The second best is now.",
-      "author_name": "Sarah Chen",
-      "author_role": "Content Lead",
-      "author_company": "DevStudio"
+      // fill slide fields here
     }
   ]
 }
 ```
 
-## Render
+## Usage
 
 ```bash
 cosy render --template testimonial --data input.json --output output.png

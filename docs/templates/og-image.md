@@ -2,46 +2,59 @@
 
 Open Graph image (1200×630) for blog posts and social previews
 
-![OG Image sample](/samples/og-image.png)
+## Preview
+
+![OG Image](https://s3.ajianaz.dev/hermes/codecoradev/cosy/preview/og-image.png)
 
 ## Dimensions
 
-| Property | Value |
-|----------|-------|
-| Width | 1200px |
-| Height | 630px |
-| Aspect | 1200:630 |
-| Fonts | Inter |
+- **Width:** 1200px
+- **Height:** 630px
+- **Aspect Ratio:** 1200:630
+
+## Fonts
+
+- Inter
 
 ## Slide Fields
 
-| Field | Type | Required | Max | Description |
-|-------|------|----------|-----|-------------|
-| `title` | text | Yes | 200 | Main title or heading |
-| `subtitle` | text | No | 150 | Secondary descriptive text |
-| `author` | text | No | 50 | Author or attributed person |
-| `url` | text | No | 100 | URL or domain (e.g. "codecora.dev") |
+| Field | Type | Required | Max Length |
+|-------|------|----------|------------|
+| `title` | text | ✅ | 200 |
+| `subtitle` | text | — | 150 |
+| `author` | text | — | 50 |
+| `url` | text | — | 100 |
+
+## Brand Fields
+
+| Field | Type | Required | Default |
+|-------|------|----------|---------|
+| `brand_name` | text | ✅ | — |
+| `bg_color` | bg | — | #1e1e2e |
+| `bg_color_end` | bg | — | #11111b |
+| `accent_color` | bg | — | #cba6f7 |
+| `accent_color_end` | bg | — | #89b4fa |
+| `bg_image` | image | — | — |
+| `bg_image_opacity` | number | — | 0.15 |
+| `logo` | image | — | — |
 
 ## Example JSON
 
 ```json
 {
   "brand": {
-    "brand_name": "Your Brand",
-    "brand_handle": "@yourbrand"
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz"
   },
   "slides": [
     {
-      "title": "Why Rust?",
-      "subtitle": "JSON in, PNG out \u2014 no design skills needed",
-      "author": "Linus Torvalds",
-      "url": "codecora.dev"
+      // fill slide fields here
     }
   ]
 }
 ```
 
-## Render
+## Usage
 
 ```bash
 cosy render --template og-image --data input.json --output output.png

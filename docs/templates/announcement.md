@@ -2,46 +2,61 @@
 
 Product/news announcement
 
-![Announcement sample](/samples/announcement.png)
+## Preview
+
+![Announcement](https://s3.ajianaz.dev/hermes/codecoradev/cosy/preview/announcement.png)
 
 ## Dimensions
 
-| Property | Value |
-|----------|-------|
-| Width | 1200px |
-| Height | 630px |
-| Aspect | 1200:630 |
-| Fonts | Inter, JetBrains Mono |
+- **Width:** 1200px
+- **Height:** 630px
+- **Aspect Ratio:** 1200:630
+
+## Fonts
+
+- Inter
+- JetBrains Mono
 
 ## Slide Fields
 
-| Field | Type | Required | Max | Description |
-|-------|------|----------|-----|-------------|
-| `tag` | text | No | 30 | Small label/badge (e.g. "NEW", "UPDATE") |
-| `headline` | text | Yes | 150 | Primary headline text |
-| `detail` | text | No | 200 | Additional context or detail text |
-| `date` | text | No | 30 | Date string (e.g. "25 August 2026") |
+| Field | Type | Required | Max Length |
+|-------|------|----------|------------|
+| `tag` | text | — | 30 |
+| `headline` | text | ✅ | 150 |
+| `detail` | text | — | 200 |
+| `date` | text | — | 30 |
+
+## Brand Fields
+
+| Field | Type | Required | Default |
+|-------|------|----------|---------|
+| `brand_name` | text | ✅ | — |
+| `brand_handle` | text | — | — |
+| `bg_color` | bg | — | #1e1e2e |
+| `bg_color_end` | bg | — | #11111b |
+| `accent_color` | bg | — | #cba6f7 |
+| `accent_color_end` | bg | — | #89b4fa |
+| `bg_image` | image | — | — |
+| `bg_image_opacity` | number | — | 0.15 |
+| `logo` | image | — | — |
 
 ## Example JSON
 
 ```json
 {
   "brand": {
-    "brand_name": "Your Brand",
-    "brand_handle": "@yourbrand"
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz"
   },
   "slides": [
     {
-      "tag": "NEW",
-      "headline": "Ship faster with templates",
-      "detail": "Available now on GitHub",
-      "date": "25 August 2026"
+      // fill slide fields here
     }
   ]
 }
 ```
 
-## Render
+## Usage
 
 ```bash
 cosy render --template announcement --data input.json --output output.png

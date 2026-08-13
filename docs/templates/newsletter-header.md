@@ -2,44 +2,60 @@
 
 Email newsletter header banner
 
-![Newsletter Header sample](/samples/newsletter-header.png)
+## Preview
+
+![Newsletter Header](https://s3.ajianaz.dev/hermes/codecoradev/cosy/preview/newsletter-header.png)
 
 ## Dimensions
 
-| Property | Value |
-|----------|-------|
-| Width | 1200px |
-| Height | 400px |
-| Aspect | 1200:400 |
-| Fonts | Inter, JetBrains Mono |
+- **Width:** 1200px
+- **Height:** 400px
+- **Aspect Ratio:** 1200:400
+
+## Fonts
+
+- Inter
+- JetBrains Mono
 
 ## Slide Fields
 
-| Field | Type | Required | Max | Description |
-|-------|------|----------|-----|-------------|
-| `issue_number` | text | No | 10 | Newsletter issue number (e.g. "#12") |
-| `title` | text | Yes | 120 | Main title or heading |
-| `date` | text | No | 30 | Date string (e.g. "25 August 2026") |
+| Field | Type | Required | Max Length |
+|-------|------|----------|------------|
+| `issue_number` | text | — | 10 |
+| `title` | text | ✅ | 120 |
+| `date` | text | — | 30 |
+
+## Brand Fields
+
+| Field | Type | Required | Default |
+|-------|------|----------|---------|
+| `brand_name` | text | ✅ | — |
+| `brand_handle` | text | — | — |
+| `bg_color` | bg | — | #1e1e2e |
+| `bg_color_end` | bg | — | #11111b |
+| `accent_color` | bg | — | #cba6f7 |
+| `accent_color_end` | bg | — | #89b4fa |
+| `bg_image` | image | — | — |
+| `bg_image_opacity` | number | — | 0.15 |
+| `logo` | image | — | — |
 
 ## Example JSON
 
 ```json
 {
   "brand": {
-    "brand_name": "Your Brand",
-    "brand_handle": "@yourbrand"
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz"
   },
   "slides": [
     {
-      "issue_number": "#12",
-      "title": "Why Rust?",
-      "date": "25 August 2026"
+      // fill slide fields here
     }
   ]
 }
 ```
 
-## Render
+## Usage
 
 ```bash
 cosy render --template newsletter-header --data input.json --output output.png

@@ -2,44 +2,60 @@
 
 README banner for repos
 
-![GitHub README Banner sample](/samples/github-readme.png)
+## Preview
+
+![GitHub README Banner](https://s3.ajianaz.dev/hermes/codecoradev/cosy/preview/github-readme.png)
 
 ## Dimensions
 
-| Property | Value |
-|----------|-------|
-| Width | 1280px |
-| Height | 640px |
-| Aspect | 1280:640 |
-| Fonts | Inter, JetBrains Mono |
+- **Width:** 1280px
+- **Height:** 640px
+- **Aspect Ratio:** 1280:640
+
+## Fonts
+
+- Inter
+- JetBrains Mono
 
 ## Slide Fields
 
-| Field | Type | Required | Max | Description |
-|-------|------|----------|-----|-------------|
-| `title` | text | Yes | 100 | Main title or heading |
-| `description` | text | No | 300 | Brief description |
-| `tech_stack` | text | No | 100 | Comma-separated tech list |
+| Field | Type | Required | Max Length |
+|-------|------|----------|------------|
+| `title` | text | ✅ | 100 |
+| `description` | text | — | 300 |
+| `tech_stack` | text | — | 100 |
+
+## Brand Fields
+
+| Field | Type | Required | Default |
+|-------|------|----------|---------|
+| `brand_name` | text | ✅ | — |
+| `brand_handle` | text | — | — |
+| `bg_color` | bg | — | #1e1e2e |
+| `bg_color_end` | bg | — | #11111b |
+| `accent_color` | bg | — | #cba6f7 |
+| `accent_color_end` | bg | — | #89b4fa |
+| `bg_image` | image | — | — |
+| `bg_image_opacity` | number | — | 0.15 |
+| `logo` | image | — | — |
 
 ## Example JSON
 
 ```json
 {
   "brand": {
-    "brand_name": "Your Brand",
-    "brand_handle": "@yourbrand"
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz"
   },
   "slides": [
     {
-      "title": "Why Rust?",
-      "description": "Template-based image generation in Rust.",
-      "tech_stack": "Rust, resvg, axum"
+      // fill slide fields here
     }
   ]
 }
 ```
 
-## Render
+## Usage
 
 ```bash
 cosy render --template github-readme --data input.json --output output.png

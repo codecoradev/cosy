@@ -2,44 +2,60 @@
 
 Quote card for X/Twitter
 
-![Twitter/X Quote sample](/samples/twitter-quote.png)
+## Preview
+
+![Twitter/X Quote](https://s3.ajianaz.dev/hermes/codecoradev/cosy/preview/twitter-quote.png)
 
 ## Dimensions
 
-| Property | Value |
-|----------|-------|
-| Width | 1200px |
-| Height | 675px |
-| Aspect | 1200:675 |
-| Fonts | Inter, JetBrains Mono |
+- **Width:** 1200px
+- **Height:** 675px
+- **Aspect Ratio:** 1200:675
+
+## Fonts
+
+- Inter
+- JetBrains Mono
 
 ## Slide Fields
 
-| Field | Type | Required | Max | Description |
-|-------|------|----------|-----|-------------|
-| `quote` | text | Yes | 280 | The quote text |
-| `author` | text | Yes | 50 | Author or attributed person |
-| `handle` | text | No | 30 | Social media handle (e.g. "@codecoradev") |
+| Field | Type | Required | Max Length |
+|-------|------|----------|------------|
+| `quote` | text | ✅ | 280 |
+| `author` | text | ✅ | 50 |
+| `handle` | text | — | 30 |
+
+## Brand Fields
+
+| Field | Type | Required | Default |
+|-------|------|----------|---------|
+| `brand_name` | text | ✅ | — |
+| `brand_handle` | text | — | — |
+| `bg_color` | bg | — | #1e1e2e |
+| `bg_color_end` | bg | — | #11111b |
+| `accent_color` | bg | — | #cba6f7 |
+| `accent_color_end` | bg | — | #89b4fa |
+| `bg_image` | image | — | — |
+| `bg_image_opacity` | number | — | 0.15 |
+| `logo` | image | — | — |
 
 ## Example JSON
 
 ```json
 {
   "brand": {
-    "brand_name": "Your Brand",
-    "brand_handle": "@yourbrand"
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz"
   },
   "slides": [
     {
-      "quote": "The best time to ship was yesterday. The second best is now.",
-      "author": "Linus Torvalds",
-      "handle": "@codecoradev"
+      // fill slide fields here
     }
   ]
 }
 ```
 
-## Render
+## Usage
 
 ```bash
 cosy render --template twitter-quote --data input.json --output output.png

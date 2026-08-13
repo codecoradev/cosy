@@ -1,45 +1,60 @@
-# Carousel
+# Carousel Default
 
 5-slide carousel with eyebrow, headline, body, CTA per slide
 
-![Carousel sample](/samples/carousel-default.png)
+## Preview
+
+![Carousel Default](https://s3.ajianaz.dev/hermes/codecoradev/cosy/preview/carousel-default.png)
 
 ## Dimensions
 
-| Property | Value |
-|----------|-------|
-| Width | 1080px |
-| Height | 1350px |
-| Aspect | 1080:1350 |
-| Fonts | Inter |
+- **Width:** 1080px
+- **Height:** 1350px
+- **Aspect Ratio:** 1080:1350
+
+## Fonts
+
+- Inter
 
 ## Slide Fields
 
-| Field | Type | Required | Max | Description |
-|-------|------|----------|-----|-------------|
-| `eyebrow` | text | No | 50 | Small text above headline (section label) |
-| `headline` | text | Yes | 200 | Primary headline text |
-| `body` | text | No | 400 | Longer body text or description |
+| Field | Type | Required | Max Length |
+|-------|------|----------|------------|
+| `eyebrow` | text | — | 50 |
+| `headline` | text | ✅ | 200 |
+| `body` | text | — | 400 |
+
+## Brand Fields
+
+| Field | Type | Required | Default |
+|-------|------|----------|---------|
+| `brand_name` | text | ✅ | — |
+| `brand_handle` | text | — | — |
+| `bg_color` | bg | — | #1e1e2e |
+| `bg_color_end` | bg | — | #181825 |
+| `accent_color` | bg | — | #cba6f7 |
+| `accent_color_end` | bg | — | #89b4fa |
+| `bg_image` | image | — | — |
+| `bg_image_opacity` | number | — | 0.15 |
+| `logo` | image | — | — |
 
 ## Example JSON
 
 ```json
 {
   "brand": {
-    "brand_name": "Your Brand",
-    "brand_handle": "@yourbrand"
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz"
   },
   "slides": [
     {
-      "eyebrow": "Chapter 1",
-      "headline": "Ship faster with templates",
-      "body": "Consistent branding across every post without manual design work."
+      // fill slide fields here
     }
   ]
 }
 ```
 
-## Render
+## Usage
 
 ```bash
 cosy render --template carousel-default --data input.json --output output.png

@@ -2,44 +2,60 @@
 
 Single statistic highlight, square
 
-![Stat Card sample](/samples/stat-card.png)
+## Preview
+
+![Stat Card](https://s3.ajianaz.dev/hermes/codecoradev/cosy/preview/stat-card.png)
 
 ## Dimensions
 
-| Property | Value |
-|----------|-------|
-| Width | 1080px |
-| Height | 1080px |
-| Aspect | 1080:1080 |
-| Fonts | Inter, JetBrains Mono |
+- **Width:** 1080px
+- **Height:** 1080px
+- **Aspect Ratio:** 1080:1080
+
+## Fonts
+
+- Inter
+- JetBrains Mono
 
 ## Slide Fields
 
-| Field | Type | Required | Max | Description |
-|-------|------|----------|-----|-------------|
-| `stat_number` | text | Yes | 20 | Large statistic number (e.g. "1M+", "42", "99.9%") |
-| `stat_label` | text | Yes | 150 | Label describing the statistic |
-| `source` | text | No | 100 | Optional source/citation text |
+| Field | Type | Required | Max Length |
+|-------|------|----------|------------|
+| `stat_number` | text | ✅ | 20 |
+| `stat_label` | text | ✅ | 150 |
+| `source` | text | — | 100 |
+
+## Brand Fields
+
+| Field | Type | Required | Default |
+|-------|------|----------|---------|
+| `brand_name` | text | ✅ | — |
+| `brand_handle` | text | — | — |
+| `bg_color` | bg | — | #1e1e2e |
+| `bg_color_end` | bg | — | #11111b |
+| `accent_color` | bg | — | #cba6f7 |
+| `accent_color_end` | bg | — | #89b4fa |
+| `bg_image` | image | — | — |
+| `bg_image_opacity` | number | — | 0.15 |
+| `logo` | image | — | — |
 
 ## Example JSON
 
 ```json
 {
   "brand": {
-    "brand_name": "Your Brand",
-    "brand_handle": "@yourbrand"
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz"
   },
   "slides": [
     {
-      "stat_number": "99.9%",
-      "stat_label": "Uptime",
-      "source": "Last 30 days"
+      // fill slide fields here
     }
   ]
 }
 ```
 
-## Render
+## Usage
 
 ```bash
 cosy render --template stat-card --data input.json --output output.png

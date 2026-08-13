@@ -2,44 +2,60 @@
 
 Code-style quote card, square
 
-![Dev Quote sample](/samples/dev-quote.png)
+## Preview
+
+![Dev Quote](https://s3.ajianaz.dev/hermes/codecoradev/cosy/preview/dev-quote.png)
 
 ## Dimensions
 
-| Property | Value |
-|----------|-------|
-| Width | 1080px |
-| Height | 1080px |
-| Aspect | 1080:1080 |
-| Fonts | Inter, JetBrains Mono |
+- **Width:** 1080px
+- **Height:** 1080px
+- **Aspect Ratio:** 1080:1080
+
+## Fonts
+
+- Inter
+- JetBrains Mono
 
 ## Slide Fields
 
-| Field | Type | Required | Max | Description |
-|-------|------|----------|-----|-------------|
-| `code_snippet` | text | Yes | 500 | Code block content |
-| `language` | text | No | 20 | Programming language label |
-| `filename` | text | No | 30 | Filename for code display |
+| Field | Type | Required | Max Length |
+|-------|------|----------|------------|
+| `code_snippet` | text | ✅ | 500 |
+| `language` | text | — | 20 |
+| `filename` | text | — | 30 |
+
+## Brand Fields
+
+| Field | Type | Required | Default |
+|-------|------|----------|---------|
+| `brand_name` | text | ✅ | — |
+| `brand_handle` | text | — | — |
+| `bg_color` | bg | — | #1e1e2e |
+| `bg_color_end` | bg | — | #11111b |
+| `accent_color` | bg | — | #cba6f7 |
+| `accent_color_end` | bg | — | #89b4fa |
+| `bg_image` | image | — | — |
+| `bg_image_opacity` | number | — | 0.15 |
+| `logo` | image | — | — |
 
 ## Example JSON
 
 ```json
 {
   "brand": {
-    "brand_name": "Your Brand",
-    "brand_handle": "@yourbrand"
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz"
   },
   "slides": [
     {
-      "code_snippet": "fn main() { }",
-      "language": "rust",
-      "filename": "main.rs"
+      // fill slide fields here
     }
   ]
 }
 ```
 
-## Render
+## Usage
 
 ```bash
 cosy render --template dev-quote --data input.json --output output.png
