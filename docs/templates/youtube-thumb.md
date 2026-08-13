@@ -2,44 +2,60 @@
 
 Eye-catching YouTube thumbnail
 
-![YouTube Thumbnail sample](/samples/youtube-thumb.png)
+## Preview
+
+![YouTube Thumbnail](https://s3.ajianaz.dev/hermes/codecoradev/cosy/preview/youtube-thumb.png)
 
 ## Dimensions
 
-| Property | Value |
-|----------|-------|
-| Width | 1280px |
-| Height | 720px |
-| Aspect | 1280:720 |
-| Fonts | Inter, JetBrains Mono |
+- **Width:** 1280px
+- **Height:** 720px
+- **Aspect Ratio:** 1280:720
+
+## Fonts
+
+- Inter
+- JetBrains Mono
 
 ## Slide Fields
 
-| Field | Type | Required | Max | Description |
-|-------|------|----------|-----|-------------|
-| `title` | text | Yes | 120 | Main title or heading |
-| `episode` | text | No | 20 | Episode identifier (e.g. "EP 01") |
-| `tag` | text | No | 30 | Small label/badge (e.g. "NEW", "UPDATE") |
+| Field | Type | Required | Max Length |
+|-------|------|----------|------------|
+| `title` | text | ✅ | 120 |
+| `episode` | text | — | 20 |
+| `tag` | text | — | 30 |
+
+## Brand Fields
+
+| Field | Type | Required | Default |
+|-------|------|----------|---------|
+| `brand_name` | text | ✅ | — |
+| `brand_handle` | text | — | — |
+| `bg_color` | bg | — | #1e1e2e |
+| `bg_color_end` | bg | — | #11111b |
+| `accent_color` | bg | — | #cba6f7 |
+| `accent_color_end` | bg | — | #89b4fa |
+| `bg_image` | image | — | — |
+| `bg_image_opacity` | number | — | 0.15 |
+| `logo` | image | — | — |
 
 ## Example JSON
 
 ```json
 {
   "brand": {
-    "brand_name": "Your Brand",
-    "brand_handle": "@yourbrand"
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz"
   },
   "slides": [
     {
-      "title": "Why Rust?",
-      "episode": "EP 01",
-      "tag": "NEW"
+      // fill slide fields here
     }
   ]
 }
 ```
 
-## Render
+## Usage
 
 ```bash
 cosy render --template youtube-thumb --data input.json --output output.png

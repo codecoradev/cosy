@@ -2,46 +2,61 @@
 
 Event/webinar banner
 
-![Event Banner sample](/samples/event-banner.png)
+## Preview
+
+![Event Banner](https://s3.ajianaz.dev/hermes/codecoradev/cosy/preview/event-banner.png)
 
 ## Dimensions
 
-| Property | Value |
-|----------|-------|
-| Width | 1920px |
-| Height | 1080px |
-| Aspect | 1920:1080 |
-| Fonts | Inter, JetBrains Mono |
+- **Width:** 1920px
+- **Height:** 1080px
+- **Aspect Ratio:** 1920:1080
+
+## Fonts
+
+- Inter
+- JetBrains Mono
 
 ## Slide Fields
 
-| Field | Type | Required | Max | Description |
-|-------|------|----------|-----|-------------|
-| `event_name` | text | Yes | 100 | Full event name |
-| `date` | text | No | 30 | Date string (e.g. "25 August 2026") |
-| `time` | text | No | 20 | Time string (e.g. "19:00 WIB") |
-| `speaker` | text | No | 50 | Speaker name for events |
+| Field | Type | Required | Max Length |
+|-------|------|----------|------------|
+| `event_name` | text | ✅ | 100 |
+| `date` | text | — | 30 |
+| `time` | text | — | 20 |
+| `speaker` | text | — | 50 |
+
+## Brand Fields
+
+| Field | Type | Required | Default |
+|-------|------|----------|---------|
+| `brand_name` | text | ✅ | — |
+| `brand_handle` | text | — | — |
+| `bg_color` | bg | — | #1e1e2e |
+| `bg_color_end` | bg | — | #11111b |
+| `accent_color` | bg | — | #cba6f7 |
+| `accent_color_end` | bg | — | #89b4fa |
+| `bg_image` | image | — | — |
+| `bg_image_opacity` | number | — | 0.15 |
+| `logo` | image | — | — |
 
 ## Example JSON
 
 ```json
 {
   "brand": {
-    "brand_name": "Your Brand",
-    "brand_handle": "@yourbrand"
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz"
   },
   "slides": [
     {
-      "event_name": "Rust Meetup Indonesia",
-      "date": "25 August 2026",
-      "time": "19:00 WIB",
-      "speaker": "Ajian Azhari"
+      // fill slide fields here
     }
   ]
 }
 ```
 
-## Render
+## Usage
 
 ```bash
 cosy render --template event-banner --data input.json --output output.png

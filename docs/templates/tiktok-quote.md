@@ -2,42 +2,59 @@
 
 Quote overlay for TikTok/Reels
 
-![TikTok Quote sample](/samples/tiktok-quote.png)
+## Preview
+
+![TikTok Quote](https://s3.ajianaz.dev/hermes/codecoradev/cosy/preview/tiktok-quote.png)
 
 ## Dimensions
 
-| Property | Value |
-|----------|-------|
-| Width | 1080px |
-| Height | 1350px |
-| Aspect | 1080:1350 |
-| Fonts | Inter, JetBrains Mono |
+- **Width:** 1080px
+- **Height:** 1350px
+- **Aspect Ratio:** 1080:1350
+
+## Fonts
+
+- Inter
+- JetBrains Mono
 
 ## Slide Fields
 
-| Field | Type | Required | Max | Description |
-|-------|------|----------|-----|-------------|
-| `quote` | text | Yes | 200 | The quote text |
-| `author` | text | Yes | 50 | Author or attributed person |
+| Field | Type | Required | Max Length |
+|-------|------|----------|------------|
+| `quote` | text | ✅ | 200 |
+| `author` | text | ✅ | 50 |
+
+## Brand Fields
+
+| Field | Type | Required | Default |
+|-------|------|----------|---------|
+| `brand_name` | text | ✅ | — |
+| `brand_handle` | text | — | — |
+| `bg_color` | bg | — | #1e1e2e |
+| `bg_color_end` | bg | — | #11111b |
+| `accent_color` | bg | — | #cba6f7 |
+| `accent_color_end` | bg | — | #89b4fa |
+| `bg_image` | image | — | — |
+| `bg_image_opacity` | number | — | 0.15 |
+| `logo` | image | — | — |
 
 ## Example JSON
 
 ```json
 {
   "brand": {
-    "brand_name": "Your Brand",
-    "brand_handle": "@yourbrand"
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz"
   },
   "slides": [
     {
-      "quote": "The best time to ship was yesterday. The second best is now.",
-      "author": "Linus Torvalds"
+      // fill slide fields here
     }
   ]
 }
 ```
 
-## Render
+## Usage
 
 ```bash
 cosy render --template tiktok-quote --data input.json --output output.png

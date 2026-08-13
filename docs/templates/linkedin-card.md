@@ -2,46 +2,61 @@
 
 Professional share card for LinkedIn
 
-![LinkedIn Card sample](/samples/linkedin-card.png)
+## Preview
+
+![LinkedIn Card](https://s3.ajianaz.dev/hermes/codecoradev/cosy/preview/linkedin-card.png)
 
 ## Dimensions
 
-| Property | Value |
-|----------|-------|
-| Width | 1200px |
-| Height | 627px |
-| Aspect | 1200:627 |
-| Fonts | Inter, JetBrains Mono |
+- **Width:** 1200px
+- **Height:** 627px
+- **Aspect Ratio:** 1200:627
+
+## Fonts
+
+- Inter
+- JetBrains Mono
 
 ## Slide Fields
 
-| Field | Type | Required | Max | Description |
-|-------|------|----------|-----|-------------|
-| `headline` | text | Yes | 200 | Primary headline text |
-| `body` | text | No | 300 | Longer body text or description |
-| `author` | text | No | 50 | Author or attributed person |
-| `role` | text | No | 50 | Author's role/title |
+| Field | Type | Required | Max Length |
+|-------|------|----------|------------|
+| `headline` | text | ✅ | 200 |
+| `body` | text | — | 300 |
+| `author` | text | — | 50 |
+| `role` | text | — | 50 |
+
+## Brand Fields
+
+| Field | Type | Required | Default |
+|-------|------|----------|---------|
+| `brand_name` | text | ✅ | — |
+| `brand_handle` | text | — | — |
+| `bg_color` | bg | — | #1e1e2e |
+| `bg_color_end` | bg | — | #11111b |
+| `accent_color` | bg | — | #cba6f7 |
+| `accent_color_end` | bg | — | #89b4fa |
+| `bg_image` | image | — | — |
+| `bg_image_opacity` | number | — | 0.15 |
+| `logo` | image | — | — |
 
 ## Example JSON
 
 ```json
 {
   "brand": {
-    "brand_name": "Your Brand",
-    "brand_handle": "@yourbrand"
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz"
   },
   "slides": [
     {
-      "headline": "Ship faster with templates",
-      "body": "Consistent branding across every post without manual design work.",
-      "author": "Linus Torvalds",
-      "role": "Founder"
+      // fill slide fields here
     }
   ]
 }
 ```
 
-## Render
+## Usage
 
 ```bash
 cosy render --template linkedin-card --data input.json --output output.png
