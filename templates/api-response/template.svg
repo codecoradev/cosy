@@ -27,7 +27,7 @@
   <rect width="1200" height="630" fill="url(#glow)"/>
   <rect width="1200" height="630" fill="url(#dots)"/>
   <text x="600" y="75" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="26" font-weight="700" fill="#cdd6f4">{{ slide.title }}</text>
-  <rect x="960" y="50" width="160" height="45" rx="10" fill="#a6e3a1" opacity="0.12"/>
+  <rect x="960" y="50" width="160" height="45" rx="12" fill="#a6e3a1" opacity="0.12"/>
   <text x="1040" y="80" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="24" font-weight="800" fill="#a6e3a1">{{ slide.status_code }}</text>
   <rect x="80" y="120" width="1040" height="400" rx="12" fill="#0c0c14" opacity="0.85"/>
   <rect x="80" y="120" width="1040" height="40" rx="12" fill="#313244" opacity="0.5"/>

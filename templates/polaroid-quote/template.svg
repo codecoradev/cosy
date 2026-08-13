@@ -26,8 +26,8 @@
   <rect width="1080" height="1080" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
   <rect width="1080" height="1080" fill="url(#glow)"/>
   <rect width="1080" height="1080" fill="url(#dots)"/>
-  <rect x="190" y="170" width="700" height="740" rx="8" fill="#cdd6f4" opacity="0.95" transform="rotate(-2 540 540)"/>
-  <rect x="190" y="170" width="700" height="560" rx="8" fill="#313244" transform="rotate(-2 540 540)"/>
+  <rect x="190" y="170" width="700" height="740" rx="12" fill="#cdd6f4" opacity="0.95" transform="rotate(-2 540 540)"/>
+  <rect x="190" y="170" width="700" height="560" rx="12" fill="#313244" transform="rotate(-2 540 540)"/>
   <text x="540" y="440" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="36" font-weight="600" fill="#cdd6f4" transform="rotate(-2 540 540)">
 {% for line in quote_lines %}    <tspan x="540" dy="{% if loop.first %}0{% else %}48{% endif %}">{{ line }}</tspan>{% endfor %}
     {% if not quote_lines %}<tspan x="540">{{ slide.quote }}</tspan>{% endif %}

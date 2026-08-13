@@ -22,8 +22,8 @@
   <rect width="1080" height="1080" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
   <rect width="1080" height="1080" fill="url(#glow)"/>
   <rect width="1080" height="1080" fill="url(#dots)"/>
-  <rect x="60" y="120" width="960" height="820" rx="16" fill="#181825" opacity="0.8"/>
-  <rect x="60" y="120" width="960" height="60" rx="16" fill="#11111b"/>
+  <rect x="60" y="120" width="960" height="820" rx="20" fill="#181825" opacity="0.8"/>
+  <rect x="60" y="120" width="960" height="60" rx="20" fill="#11111b"/>
   <rect x="60" y="150" width="960" height="30" fill="#11111b"/>
   <circle cx="100" cy="150" r="8" fill="#f38ba8"/>
   <circle cx="128" cy="150" r="8" fill="#f9e2af"/>
@@ -32,9 +32,9 @@
   <text x="100" y="260" font-family="JetBrains Mono,monospace" font-size="26" fill="#cdd6f4">
     {% for line in code_snippet_lines %}<tspan x="100" dy="{% if loop.first %}0{% else %}38{% endif %}">{{ line }}</tspan>{% endfor %}
   </text>
-  <rect x="60" y="940" width="180" height="44" rx="22" fill="url(#acc-grad)" opacity="0.2"/>
+  <rect x="60" y="940" width="180" height="44" rx="20" fill="url(#acc-grad)" opacity="0.2"/>
   <text x="150" y="968" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="20" font-weight="600" fill="{{ brand.accent_color | default('#cba6f7') }}">{{ slide.language | default('Rust') }}</text>
-  <text x="940" y="968" text-anchor="end" font-family="Inter,sans-serif" font-size="22" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  <text x="940" y="1040" text-anchor="end" font-family="Inter,sans-serif" font-size="22" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   <circle cx="1000" cy="80" r="180" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
   {% if logo_data_uri %}
   <image href="{{ logo_data_uri }}" x="952" y="952" height="48" preserveAspectRatio="xMidYMid meet"/>

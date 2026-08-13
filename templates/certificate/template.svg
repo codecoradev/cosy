@@ -26,8 +26,8 @@
   <rect width="1200" height="900" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
   <rect width="1200" height="900" fill="url(#glow)"/>
   <rect width="1200" height="900" fill="url(#dots)"/>
-  <rect x="40" y="40" width="1120" height="820" rx="8" fill="none" stroke="url(#acc-grad)" stroke-width="3" opacity="0.4"/>
-  <rect x="60" y="60" width="1080" height="780" rx="4" fill="none" stroke="url(#acc-grad)" stroke-width="1" opacity="0.2"/>
+  <rect x="40" y="40" width="1120" height="820" rx="12" fill="none" stroke="url(#acc-grad)" stroke-width="3" opacity="0.4"/>
+  <rect x="60" y="60" width="1080" height="780" rx="8" fill="none" stroke="url(#acc-grad)" stroke-width="1" opacity="0.2"/>
   <text x="600" y="200" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="48" font-weight="800" fill="url(#acc-grad)">{{ slide.title }}</text>
   <rect x="500" y="240" width="200" height="2" fill="url(#acc-grad-h)" opacity="0.4"/>
   <text x="600" y="320" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="400" fill="#7f849c">This certificate is proudly presented to</text>

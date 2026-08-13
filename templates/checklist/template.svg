@@ -22,7 +22,7 @@
   <rect width="1080" height="1350" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
   <rect width="1080" height="1350" fill="url(#glow)"/>
   <rect width="1080" height="1350" fill="url(#dots)"/>
-  <rect x="80" y="100" width="6" height="60" rx="3" fill="url(#acc-grad)"/>
+  <rect x="80" y="100" width="6" height="60" rx="8" fill="url(#acc-grad)"/>
   <text x="80" y="220" font-family="Space Grotesk,sans-serif" font-size="48" font-weight="700" fill="#cdd6f4">
     {% for line in title_lines %}<tspan x="80" dy="{% if loop.first %}0{% else %}58{% endif %}">{{ line }}</tspan>{% endfor %}
     {% if not title_lines %}<tspan x="80" dy="0">{{ slide.title }}</tspan>{% endif %}

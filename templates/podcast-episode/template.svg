@@ -26,7 +26,7 @@
   <rect width="1080" height="1080" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
   <rect width="1080" height="1080" fill="url(#glow)"/>
   <rect width="1080" height="1080" fill="url(#dots)"/>
-  <rect x="390" y="180" width="300" height="80" rx="40" fill="url(#acc-grad)" opacity="0.12"/>
+  <rect x="390" y="180" width="300" height="80" rx="30" fill="url(#acc-grad)" opacity="0.12"/>
   <text x="540" y="232" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="28" font-weight="700" fill="url(#acc-grad)">EP {{ slide.episode_number }}</text>
   <text x="540" y="380" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="44" font-weight="700" fill="#cdd6f4">
 {% for line in episode_title_lines %}    <tspan x="540" dy="{% if loop.first %}0{% else %}54{% endif %}">{{ line }}</tspan>{% endfor %}
@@ -38,7 +38,7 @@
   <text x="540" y="660" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="30" font-weight="700" fill="url(#acc-grad)">{{ slide.guest }}</text>
   {% endif %}
   {% if slide.topic %}
-  <rect x="390" y="710" width="300" height="44" rx="22" fill="#313244" opacity="0.4"/>
+  <rect x="390" y="710" width="300" height="44" rx="20" fill="#313244" opacity="0.4"/>
   <text x="540" y="739" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="500" fill="#a6adc8">{{ slide.topic }}</text>
   {% endif %}
   {% if slide.duration %}

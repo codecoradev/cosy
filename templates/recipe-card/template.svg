@@ -31,7 +31,7 @@
     {% if not recipe_name_lines %}<tspan x="540">{{ slide.recipe_name }}</tspan>{% endif %}
   </text>
   {% if slide.servings or slide.time %}
-  <rect x="290" y="220" width="500" height="44" rx="22" fill="url(#acc-grad)" opacity="0.08"/>
+  <rect x="290" y="220" width="500" height="44" rx="20" fill="url(#acc-grad)" opacity="0.08"/>
   {% if slide.servings %}<text x="380" y="248" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="500" fill="url(#acc-grad)">{{ slide.servings }}</text>{% endif %}
   {% if slide.servings and slide.time %}<text x="500" y="248" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" fill="#45475a">|</text>{% endif %}
   {% if slide.time %}<text x="600" y="248" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="500" fill="url(#acc-grad)">{{ slide.time }}</text>{% endif %}

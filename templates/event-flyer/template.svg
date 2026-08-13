@@ -27,13 +27,13 @@
   <rect width="1080" height="1350" fill="url(#glow)"/>
   <rect width="1080" height="1350" fill="url(#dots)"/>
   <rect x="0" y="0" width="1080" height="8" fill="url(#acc-grad-h)"/>
-  <rect x="140" y="150" width="140" height="50" rx="8" fill="url(#acc-grad)" opacity="0.2"/>
+  <rect x="140" y="150" width="140" height="50" rx="12" fill="url(#acc-grad)" opacity="0.2"/>
   <text x="210" y="183" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" font-weight="700" fill="url(#acc-grad)">EVENT</text>
   <text x="540" y="400" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="60" font-weight="900" fill="#cdd6f4">
 {% for line in event_name_lines %}    <tspan x="540" dy="{% if loop.first %}0{% else %}72{% endif %}">{{ line }}</tspan>{% endfor %}
     {% if not event_name_lines %}<tspan x="540">{{ slide.event_name }}</tspan>{% endif %}
   </text>
-  <rect x="440" y="580" width="200" height="4" rx="2" fill="url(#acc-grad-h)"/>
+  <rect x="440" y="580" width="200" height="4" rx="8" fill="url(#acc-grad-h)"/>
   <text x="540" y="660" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="32" font-weight="700" fill="url(#acc-grad)">{{ slide.date }}</text>
   {% if slide.time %}
   <text x="540" y="710" text-anchor="middle" font-family="Inter,sans-serif" font-size="24" font-weight="500" fill="#a6adc8">{{ slide.time }}</text>
@@ -43,7 +43,7 @@
     {% if not location_lines %}<tspan x="540">{{ slide.location }}</tspan>{% endif %}
   </text>
   {% if slide.speaker %}
-  <rect x="370" y="900" width="340" height="50" rx="25" fill="#313244" opacity="0.5"/>
+  <rect x="370" y="900" width="340" height="50" rx="30" fill="#313244" opacity="0.5"/>
   <text x="540" y="932" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="url(#acc-grad)">Featuring: {{ slide.speaker }}</text>
   {% endif %}
   {% if slide.description %}

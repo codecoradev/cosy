@@ -26,7 +26,7 @@
   <rect width="1080" height="1350" fill="url(#dots)"/>
 
   <!-- Accent bar -->
-  <rect x="80" y="120" width="8" height="80" rx="4" fill="url(#accent-gradient)"/>
+  <rect x="80" y="120" width="8" height="80" rx="8" fill="url(#accent-gradient)"/>
 
   <!-- Quote text (wrapped) -->
   <text x="80" y="420" font-family="Inter, sans-serif" font-size="52" font-weight="700" fill="#cdd6f4">

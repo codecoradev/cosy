@@ -36,7 +36,7 @@
   {% if st %}
   {% set sx = 110 + loop.index0 * 275 %}
   <rect x="{{ sx }}" y="280" width="230" height="90" rx="12" fill="#313244" opacity="0.2"/>
-  <rect x="{{ sx }}" y="280" width="230" height="6" rx="3" fill="url(#acc-grad)" opacity="0.5"/>
+  <rect x="{{ sx }}" y="280" width="230" height="6" rx="8" fill="url(#acc-grad)" opacity="0.5"/>
   <text x="{{ sx + 115 }}" y="335" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="22" font-weight="600" fill="#cdd6f4">{{ st }}</text>
   {% if not loop.last %}
   <text x="{{ sx + 245 }}" y="335" font-family="Inter,sans-serif" font-size="30" fill="url(#acc-grad)" opacity="0.4">-></text>

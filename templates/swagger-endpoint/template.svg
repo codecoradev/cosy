@@ -31,7 +31,7 @@
   {% set is_post = slide.method == 'POST' %}
   {% set is_put = slide.method == 'PUT' %}
   {% set is_del = slide.method == 'DELETE' %}
-  <rect x="80" y="90" width="120" height="50" rx="8" fill="{% if is_get %}#a6e3a1{% elif is_post %}#f9e2af{% elif is_put %}#89b4fa{% else %}#f38ba8{% endif %}" opacity="0.15"/>
+  <rect x="80" y="90" width="120" height="50" rx="12" fill="{% if is_get %}#a6e3a1{% elif is_post %}#f9e2af{% elif is_put %}#89b4fa{% else %}#f38ba8{% endif %}" opacity="0.15"/>
   <text x="140" y="123" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="22" font-weight="700" fill="{% if is_get %}#a6e3a1{% elif is_post %}#f9e2af{% elif is_put %}#89b4fa{% else %}#f38ba8{% endif %}">{{ slide.method }}</text>
   <text x="230" y="123" font-family="JetBrains Mono,monospace" font-size="22" fill="#cdd6f4">{{ slide.path }}</text>
   {% if slide.auth %}

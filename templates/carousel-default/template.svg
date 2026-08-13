@@ -26,7 +26,7 @@
   <rect width="1080" height="1350" fill="url(#dots)"/>
 
   <!-- Brand header -->
-  <rect x="80" y="60" width="6" height="36" rx="3" fill="url(#accent-gradient)"/>
+  <rect x="80" y="60" width="6" height="36" rx="8" fill="url(#accent-gradient)"/>
   <text x="100" y="88" font-family="Inter, sans-serif" font-size="28" font-weight="600" fill="#cdd6f4">
     {{ brand.brand_name | default('') }}
   </text>
@@ -39,7 +39,7 @@
   {% endif %}
 
   <!-- Accent bar -->
-  <rect x="80" y="260" width="60" height="6" rx="3" fill="url(#accent-gradient)"/>
+  <rect x="80" y="260" width="60" height="6" rx="8" fill="url(#accent-gradient)"/>
 
   <!-- Headline (wrapped) -->
   <text x="80" y="360" font-family="Inter, sans-serif" font-size="56" font-weight="800" fill="#cdd6f4">

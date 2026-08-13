@@ -38,7 +38,7 @@
   {% endif %}
   <rect x="290" y="640" width="500" height="60" rx="30" fill="#313244" opacity="0.6"/>
   <text x="320" y="678" font-family="JetBrains Mono,monospace" font-size="22" font-weight="400" fill="#7f849c">you@example.com</text>
-  <rect x="650" y="648" width="120" height="44" rx="22" fill="url(#acc-grad)"/>
+  <rect x="650" y="648" width="120" height="44" rx="20" fill="url(#acc-grad)"/>
   <text x="710" y="676" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" font-weight="700" fill="#1e1e2e">Subscribe</text>
   {% if slide.subscriber_count %}
   <text x="540" y="780" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="500" fill="url(#acc-grad)">{{ slide.subscriber_count }} subscribers{% if slide.frequency %} &#xB7; {{ slide.frequency }}{% endif %}</text>

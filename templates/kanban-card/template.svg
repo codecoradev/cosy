@@ -34,7 +34,7 @@
   {% for item in todo_items %}
   {% if item %}
   {% set iy = 200 + loop.index0 * 60 %}
-  <rect x="120" y="{{ iy - 25 }}" width="280" height="45" rx="6" fill="#313244" opacity="0.3"/>
+  <rect x="120" y="{{ iy - 25 }}" width="280" height="45" rx="12" fill="#313244" opacity="0.3"/>
   <text x="135" y="{{ iy }}" font-family="Inter,sans-serif" font-size="18" fill="#a6adc8">{{ item }}</text>
   {% endif %}
   {% endfor %}
@@ -45,7 +45,7 @@
   {% for item in doing_items %}
   {% if item %}
   {% set iy = 200 + loop.index0 * 60 %}
-  <rect x="460" y="{{ iy - 25 }}" width="280" height="45" rx="6" fill="#313244" opacity="0.3"/>
+  <rect x="460" y="{{ iy - 25 }}" width="280" height="45" rx="12" fill="#313244" opacity="0.3"/>
   <text x="475" y="{{ iy }}" font-family="Inter,sans-serif" font-size="18" fill="#a6adc8">{{ item }}</text>
   {% endif %}
   {% endfor %}
@@ -56,7 +56,7 @@
   {% for item in done_items %}
   {% if item %}
   {% set iy = 200 + loop.index0 * 60 %}
-  <rect x="800" y="{{ iy - 25 }}" width="280" height="45" rx="6" fill="#313244" opacity="0.3"/>
+  <rect x="800" y="{{ iy - 25 }}" width="280" height="45" rx="12" fill="#313244" opacity="0.3"/>
   <text x="815" y="{{ iy }}" font-family="Inter,sans-serif" font-size="18" fill="#7f849c" text-decoration="line-through">{{ item }}</text>
   {% endif %}
   {% endfor %}

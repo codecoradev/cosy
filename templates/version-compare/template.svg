@@ -28,14 +28,14 @@
   <rect width="1200" height="630" fill="url(#dots)"/>
   <text x="600" y="55" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="22" font-weight="700" fill="#cdd6f4">{{ slide.title }}</text>
   {% set is_up = slide.delta_dir == 'up' or slide.delta_dir == 'Up' %}
-  <rect x="80" y="100" width="520" height="260" rx="16" fill="#313244" opacity="0.1"/>
+  <rect x="80" y="100" width="520" height="260" rx="20" fill="#313244" opacity="0.1"/>
   <text x="340" y="150" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">Previous</text>
   <text x="340" y="210" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="28" fill="#7f849c">{{ slide.v_old }}</text>
   <text x="340" y="290" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="48" font-weight="800" fill="#7f849c">{{ slide.old_val }}</text>
   <text x="340" y="330" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">{{ slide.metric }}</text>
   <text x="600" y="240" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="40" font-weight="800" fill="{% if is_up %}#a6e3a1{% else %}#f38ba8{% endif %}">{{ slide.delta }} {% if is_up %}&#x2191;{% else %}&#x2193;{% endif %}</text>
-  <rect x="600" y="100" width="520" height="260" rx="16" fill="url(#acc-grad)" opacity="0.08"/>
-  <rect x="600" y="100" width="520" height="6" rx="3" fill="url(#acc-grad-h)" opacity="0.4"/>
+  <rect x="600" y="100" width="520" height="260" rx="20" fill="url(#acc-grad)" opacity="0.08"/>
+  <rect x="600" y="100" width="520" height="6" rx="8" fill="url(#acc-grad-h)" opacity="0.4"/>
   <text x="860" y="150" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" fill="#89b4fa">Current</text>
   <text x="860" y="210" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="28" fill="#cdd6f4">{{ slide.v_new }}</text>
   <text x="860" y="290" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="48" font-weight="800" fill="url(#acc-grad)">{{ slide.new_val }}</text>

@@ -35,7 +35,7 @@
     {% if not label_lines %}<tspan x="400">{{ slide.label }}</tspan>{% endif %}
   </text>
   {% if slide.code %}
-  <rect x="260" y="530" width="280" height="50" rx="25" fill="url(#acc-grad)" opacity="0.15"/>
+  <rect x="260" y="530" width="280" height="50" rx="30" fill="url(#acc-grad)" opacity="0.15"/>
   <text x="400" y="562" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="24" font-weight="700" fill="url(#acc-grad)">{{ slide.code }}</text>
   {% endif %}
   {% if slide.expires %}

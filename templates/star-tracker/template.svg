@@ -30,8 +30,8 @@
   <text x="540" y="280" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="120" font-weight="800" fill="url(#acc-grad)">{{ slide.current_stars }}</text>
   <text x="540" y="340" text-anchor="middle" font-family="Inter,sans-serif" font-size="28" fill="#7f849c">GitHub Stars</text>
   {% set progress = (slide.current_stars | int) * 100 / (slide.goal_stars | int) %}
-  <rect x="200" y="440" width="680" height="20" rx="10" fill="#313244" opacity="0.3"/>
-  <rect x="200" y="440" width="{{ progress * 680 / 100 }}" height="20" rx="10" fill="url(#acc-grad-h)"/>
+  <rect x="200" y="440" width="680" height="20" rx="12" fill="#313244" opacity="0.3"/>
+  <rect x="200" y="440" width="{{ progress * 680 / 100 }}" height="20" rx="12" fill="url(#acc-grad-h)"/>
   <text x="200" y="500" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">{{ slide.current_stars }}</text>
   <text x="880" y="500" text-anchor="end" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">{{ slide.goal_stars }}</text>
   {% if slide.milestone %}

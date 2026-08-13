@@ -42,7 +42,7 @@
   {% set bx = 120 + b[2] * 180 %}
   {% set bh = b[1] | int * 4 %}
   {% set by = 850 - bh %}
-  <rect x="{{ bx }}" y="{{ by }}" width="120" height="{{ bh }}" rx="8" fill="url(#acc-grad)" opacity="0.7"/>
+  <rect x="{{ bx }}" y="{{ by }}" width="120" height="{{ bh }}" rx="12" fill="url(#acc-grad)" opacity="0.7"/>
   <text x="{{ bx + 60 }}" y="{{ by - 15 }}" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="24" font-weight="700" fill="url(#acc-grad)">{{ b[1] }}</text>
   <text x="{{ bx + 60 }}" y="890" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">{{ b[0] }}</text>
   {% endif %}

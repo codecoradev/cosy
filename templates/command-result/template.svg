@@ -27,13 +27,13 @@
   <rect width="1080" height="1080" fill="url(#glow)"/>
   <rect width="1080" height="1080" fill="url(#dots)"/>
   {% set is_success = slide.exit_code == '0' %}
-  <rect x="80" y="80" width="920" height="60" rx="10" fill="#0c0c14" opacity="0.85"/>
+  <rect x="80" y="80" width="920" height="60" rx="12" fill="#0c0c14" opacity="0.85"/>
   <text x="110" y="120" font-family="JetBrains Mono,monospace" font-size="22" fill="#cdd6f4">$ {{ slide.command }}</text>
   <rect x="80" y="170" width="920" height="700" rx="12" fill="#0c0c14" opacity="0.75"/>
   {% if is_success %}
-  <rect x="80" y="170" width="920" height="6" rx="3" fill="#a6e3a1" opacity="0.5"/>
+  <rect x="80" y="170" width="920" height="6" rx="8" fill="#a6e3a1" opacity="0.5"/>
   {% else %}
-  <rect x="80" y="170" width="920" height="6" rx="3" fill="#f38ba8" opacity="0.5"/>
+  <rect x="80" y="170" width="920" height="6" rx="8" fill="#f38ba8" opacity="0.5"/>
   {% endif %}
   {% if slide.stdout_line1 %}<text x="110" y="230" font-family="JetBrains Mono,monospace" font-size="18" fill="#a6adc8">{{ slide.stdout_line1 }}</text>{% endif %}
   {% if slide.stdout_line2 %}<text x="110" y="270" font-family="JetBrains Mono,monospace" font-size="18" fill="#a6adc8">{{ slide.stdout_line2 }}</text>{% endif %}

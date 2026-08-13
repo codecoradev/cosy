@@ -38,7 +38,7 @@
   {% for t in testimonials %}
   {% if t[0] %}
   {% set cx = positions[loop.index0] %}
-  <rect x="{{ cx - 150 }}" y="200" width="300" height="680" rx="16" fill="#313244" opacity="0.35"/>
+  <rect x="{{ cx - 150 }}" y="200" width="300" height="680" rx="20" fill="#313244" opacity="0.35"/>
   <text x="{{ cx | string + ' ' }}" y="0" opacity="0" fill="none"></text>
   <text x="{{ cx }}" y="260" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="48" font-weight="900" fill="url(#acc-grad)" opacity="0.2">&amp;</text>
   {% set tl = t[2] %}
@@ -49,7 +49,7 @@
   {% else %}
   <text x="{{ cx }}" y="340" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="400" fill="#cdd6f4">{{ t[0] }}</text>
   {% endif %}
-  <rect x="{{ cx - 40 }}" y="760" width="80" height="2" rx="1" fill="url(#acc-grad-h)"/>
+  <rect x="{{ cx - 40 }}" y="760" width="80" height="2" rx="8" fill="url(#acc-grad-h)"/>
   <text x="{{ cx }}" y="810" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" font-weight="600" fill="url(#acc-grad)">{{ t[1] }}</text>
   {% endif %}
   {% endfor %}

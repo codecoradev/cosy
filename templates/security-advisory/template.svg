@@ -32,16 +32,16 @@
   <text x="600" y="70" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="26" font-weight="700" fill="#cdd6f4">{{ slide.title }}</text>
   <rect x="940" y="45" width="160" height="40" rx="20" fill="{% if is_critical %}#f38ba8{% elif is_high %}#fab387{% else %}#f9e2af{% endif %}" opacity="0.2"/>
   <text x="1020" y="71" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" font-weight="700" fill="{% if is_critical %}#f38ba8{% elif is_high %}#fab387{% else %}#f9e2af{% endif %}">{{ slide.severity | upper }}</text>
-  <rect x="80" y="120" width="280" height="50" rx="10" fill="#313244" opacity="0.2"/>
+  <rect x="80" y="120" width="280" height="50" rx="12" fill="#313244" opacity="0.2"/>
   <text x="100" y="152" font-family="JetBrains Mono,monospace" font-size="22" font-weight="600" fill="#89b4fa">{{ slide.cve }}</text>
-  <rect x="380" y="120" width="280" height="50" rx="10" fill="#313244" opacity="0.2"/>
+  <rect x="380" y="120" width="280" height="50" rx="12" fill="#313244" opacity="0.2"/>
   <text x="400" y="152" font-family="Inter,sans-serif" font-size="18" fill="#f38ba8">Affected: {{ slide.affected }}</text>
   <text x="100" y="260" font-family="Inter,sans-serif" font-size="24" fill="#cdd6f4">
 {% for line in description_lines %}    <tspan x="100" dy="{% if loop.first %}0{% else %}34{% endif %}">{{ line }}</tspan>{% endfor %}
     {% if not description_lines %}<tspan x="100">{{ slide.description }}</tspan>{% endif %}
   </text>
   {% if slide.fix_version %}
-  <rect x="80" y="510" width="280" height="50" rx="10" fill="#a6e3a1" opacity="0.1"/>
+  <rect x="80" y="510" width="280" height="50" rx="12" fill="#a6e3a1" opacity="0.1"/>
   <text x="100" y="542" font-family="Inter,sans-serif" font-size="18" font-weight="600" fill="#a6e3a1">Fixed in v{{ slide.fix_version }}</text>
   {% endif %}
   <text x="600" y="615" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>

@@ -38,11 +38,11 @@
   ] %}
   {% for d in days %}
   {% set cx = 100 + loop.index0 * 130 %}
-  <rect x="{{ cx }}" y="180" width="120" height="740" rx="10" fill="#313244" opacity="0.2"/>
-  <rect x="{{ cx }}" y="180" width="120" height="50" rx="10" fill="url(#acc-grad)" opacity="0.1"/>
+  <rect x="{{ cx }}" y="180" width="120" height="740" rx="12" fill="#313244" opacity="0.2"/>
+  <rect x="{{ cx }}" y="180" width="120" height="50" rx="12" fill="url(#acc-grad)" opacity="0.1"/>
   <text x="{{ cx + 60 }}" y="212" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="18" font-weight="700" fill="url(#acc-grad)">{{ d[0] }}</text>
   {% if d[1] %}
-  <rect x="{{ cx + 8 }}" y="260" width="104" height="50" rx="6" fill="url(#acc-grad)" opacity="0.06"/>
+  <rect x="{{ cx + 8 }}" y="260" width="104" height="50" rx="12" fill="url(#acc-grad)" opacity="0.06"/>
   <text x="{{ cx + 60 }}" y="290" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="500" fill="#cdd6f4">{{ d[1] }}</text>
   {% endif %}
   {% endfor %}

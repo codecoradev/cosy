@@ -27,8 +27,8 @@
   <rect width="1080" height="1080" fill="url(#glow)"/>
   <rect width="1080" height="1080" fill="url(#dots)"/>
   {% if slide.icon_text %}
-  <rect x="440" y="180" width="200" height="200" rx="40" fill="url(#acc-grad)" opacity="0.12"/>
-  <rect x="440" y="180" width="200" height="200" rx="40" fill="none" stroke="url(#acc-grad)" stroke-width="2" opacity="0.3"/>
+  <rect x="440" y="180" width="200" height="200" rx="30" fill="url(#acc-grad)" opacity="0.12"/>
+  <rect x="440" y="180" width="200" height="200" rx="30" fill="none" stroke="url(#acc-grad)" stroke-width="2" opacity="0.3"/>
   <text x="540" y="305" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="64" font-weight="800" fill="url(#acc-grad)">{{ slide.icon_text }}</text>
   {% endif %}
   <text x="540" y="530" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="56" font-weight="800" fill="#cdd6f4">

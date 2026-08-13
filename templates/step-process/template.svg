@@ -49,7 +49,7 @@
   {% set x_center = 280 + col * 520 %}
   {% set y_center = 400 + row * 280 %}
   <!-- Step box -->
-  <rect x="{{ x_center - 200 }}" y="{{ y_center - 90 }}" width="400" height="180" rx="16" fill="#313244" opacity="0.5"/>
+  <rect x="{{ x_center - 200 }}" y="{{ y_center - 90 }}" width="400" height="180" rx="20" fill="#313244" opacity="0.5"/>
   <!-- Step number badge -->
   <circle cx="{{ x_center - 160 }}" y="{{ y_center - 50 }}" r="32" fill="url(#acc-grad)" opacity="0.2"/>
   <text x="{{ x_center - 160 }}" y="{{ y_center - 38 }}" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="28" font-weight="800" fill="url(#acc-grad)">{{ num }}</text>

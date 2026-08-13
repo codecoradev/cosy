@@ -29,12 +29,12 @@
   <text x="540" y="80" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="32" font-weight="700" fill="#cdd6f4">{{ slide.title }}</text>
   {% set is_sev1 = slide.severity == 'SEV1' or slide.severity == 'sev1' %}
   {% set is_sev2 = slide.severity == 'SEV2' or slide.severity == 'sev2' %}
-  <rect x="100" y="120" width="200" height="50" rx="8" fill="{% if is_sev1 %}#f38ba8{% elif is_sev2 %}#f9e2af{% else %}#89b4fa{% endif %}" opacity="0.15"/>
+  <rect x="100" y="120" width="200" height="50" rx="12" fill="{% if is_sev1 %}#f38ba8{% elif is_sev2 %}#f9e2af{% else %}#89b4fa{% endif %}" opacity="0.15"/>
   <text x="200" y="153" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="20" font-weight="800" fill="{% if is_sev1 %}#f38ba8{% elif is_sev2 %}#f9e2af{% else %}#89b4fa{% endif %}">{{ slide.severity }}</text>
   {% set is_resolved = slide.status == 'resolved' or slide.status == 'Resolved' %}
-  <rect x="320" y="120" width="200" height="50" rx="8" fill="{% if is_resolved %}#a6e3a1{% else %}#f9e2af{% endif %}" opacity="0.15"/>
+  <rect x="320" y="120" width="200" height="50" rx="12" fill="{% if is_resolved %}#a6e3a1{% else %}#f9e2af{% endif %}" opacity="0.15"/>
   <text x="420" y="153" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="20" font-weight="700" fill="{% if is_resolved %}#a6e3a1{% else %}#f9e2af{% endif %}">{{ slide.status | upper }}</text>
-  <rect x="540" y="120" width="200" height="50" rx="8" fill="#313244" opacity="0.12"/>
+  <rect x="540" y="120" width="200" height="50" rx="12" fill="#313244" opacity="0.12"/>
   <text x="640" y="153" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="20" fill="#cdd6f4">{{ slide.duration }}</text>
   {% if slide.timestamp %}
   <text x="780" y="153" font-family="Inter,sans-serif" font-size="16" fill="#7f849c">{{ slide.timestamp }}</text>

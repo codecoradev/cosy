@@ -27,7 +27,7 @@
   <rect width="1200" height="630" fill="url(#glow)"/>
   <rect width="1200" height="630" fill="url(#dots)"/>
   <rect x="80" y="120" width="1040" height="390" rx="12" fill="#313244" opacity="0.2"/>
-  <rect x="80" y="120" width="8" height="390" rx="4" fill="#a6e3a1" opacity="0.4"/>
+  <rect x="80" y="120" width="8" height="390" rx="8" fill="#a6e3a1" opacity="0.4"/>
   {% if slide.status %}
   <rect x="830" y="145" width="260" height="40" rx="20" fill="#a6e3a1" opacity="0.12"/>
   <text x="960" y="171" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" font-weight="600" fill="#a6e3a1">{{ slide.status }}</text>

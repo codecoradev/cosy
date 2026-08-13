@@ -32,7 +32,7 @@
   {% if f[0] %}
   {% set w = (f[2] | float) * 8 %}
   {% set cx = 540 - w / 2 %}
-  <rect x="{{ cx }}" y="{{ 180 + loop.index0 * 110 }}" width="{{ w }}" height="80" rx="6" fill="url(#acc-grad-h)" opacity="{{ 0.8 - loop.index0 * 0.15 }}"/>
+  <rect x="{{ cx }}" y="{{ 180 + loop.index0 * 110 }}" width="{{ w }}" height="80" rx="12" fill="url(#acc-grad-h)" opacity="{{ 0.8 - loop.index0 * 0.15 }}"/>
   <text x="540" y="{{ 225 + loop.index0 * 110 }}" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="600" fill="#11111b">{{ f[0] }}</text>
   <text x="540" y="{{ 252 + loop.index0 * 110 }}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="16" fill="#11111b">{{ f[1] }}% time</text>
   {% endif %}

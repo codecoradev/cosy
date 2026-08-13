@@ -26,8 +26,8 @@
   <rect width="1080" height="1080" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
   <rect width="1080" height="1080" fill="url(#glow)"/>
   <rect width="1080" height="1080" fill="url(#dots)"/>
-  <rect x="190" y="100" width="700" height="830" rx="24" fill="#313244" opacity="0.35"/>
-  <rect x="190" y="100" width="700" height="830" rx="24" fill="none" stroke="url(#acc-grad)" stroke-width="2" opacity="0.2"/>
+  <rect x="190" y="100" width="700" height="830" rx="20" fill="#313244" opacity="0.35"/>
+  <rect x="190" y="100" width="700" height="830" rx="20" fill="none" stroke="url(#acc-grad)" stroke-width="2" opacity="0.2"/>
   <text x="540" y="190" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="32" font-weight="600" fill="url(#acc-grad)">{{ slide.tier_name | upper }}</text>
   <text x="540" y="320" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="80" font-weight="900" fill="#cdd6f4">{{ slide.price }}</text>
   {% if slide.period %}

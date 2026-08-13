@@ -29,14 +29,14 @@
   <rect x="0" y="0" width="1080" height="10" fill="url(#acc-grad-h)"/>
   <rect x="0" y="1610" width="1080" height="10" fill="url(#acc-grad-h)"/>
   {% if slide.edition %}
-  <rect x="390" y="150" width="300" height="50" rx="25" fill="url(#acc-grad)" opacity="0.15"/>
+  <rect x="390" y="150" width="300" height="50" rx="30" fill="url(#acc-grad)" opacity="0.15"/>
   <text x="540" y="182" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="url(#acc-grad)">{{ slide.edition }}</text>
   {% endif %}
   <text x="540" y="550" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="76" font-weight="900" fill="#cdd6f4">
 {% for line in title_lines %}    <tspan x="540" dy="{% if loop.first %}0{% else %}90{% endif %}">{{ line }}</tspan>{% endfor %}
     {% if not title_lines %}<tspan x="540">{{ slide.title }}</tspan>{% endif %}
   </text>
-  <rect x="390" y="800" width="300" height="4" rx="2" fill="url(#acc-grad-h)"/>
+  <rect x="390" y="800" width="300" height="4" rx="8" fill="url(#acc-grad-h)"/>
   {% if slide.subtitle %}
   <text x="540" y="900" text-anchor="middle" font-family="Inter,sans-serif" font-size="30" font-weight="400" fill="#a6adc8">
 {% for line in subtitle_lines %}    <tspan x="540" dy="{% if loop.first %}0{% else %}40{% endif %}">{{ line }}</tspan>{% endfor %}
@@ -44,7 +44,7 @@
   </text>
   {% endif %}
   <text x="540" y="1450" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="32" font-weight="700" fill="url(#acc-grad)">{{ slide.author }}</text>
-  <text x="540" y="1530" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  <text x="540" y="1580" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   {% if logo_data_uri %}
   <image href="{{ logo_data_uri }}" x="952" y="1552" height="48" preserveAspectRatio="xMidYMid meet"/>
   {% endif %}

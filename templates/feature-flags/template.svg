@@ -34,11 +34,11 @@
   <rect x="100" y="{{ 180 + loop.index0 * 140 }}" width="880" height="100" rx="12" fill="#313244" opacity="0.15"/>
   <text x="140" y="{{ 245 + loop.index0 * 140 }}" font-family="JetBrains Mono,monospace" font-size="24" fill="#cdd6f4">{{ f[0] }}</text>
   {% if is_on %}
-  <rect x="820" y="{{ 205 + loop.index0 * 140 }}" width="100" height="44" rx="22" fill="#a6e3a1" opacity="0.2"/>
+  <rect x="820" y="{{ 205 + loop.index0 * 140 }}" width="100" height="44" rx="20" fill="#a6e3a1" opacity="0.2"/>
   <circle cx="900" cy="{{ 227 + loop.index0 * 140 }}" r="16" fill="#a6e3a1" opacity="0.8"/>
   <text x="860" y="{{ 234 + loop.index0 * 140 }}" font-family="Inter,sans-serif" font-size="16" font-weight="600" fill="#a6e3a1">ON</text>
   {% else %}
-  <rect x="820" y="{{ 205 + loop.index0 * 140 }}" width="100" height="44" rx="22" fill="#313244" opacity="0.3"/>
+  <rect x="820" y="{{ 205 + loop.index0 * 140 }}" width="100" height="44" rx="20" fill="#313244" opacity="0.3"/>
   <circle cx="842" cy="{{ 227 + loop.index0 * 140 }}" r="16" fill="#7f849c" opacity="0.5"/>
   <text x="880" y="{{ 234 + loop.index0 * 140 }}" font-family="Inter,sans-serif" font-size="16" font-weight="600" fill="#7f849c">OFF</text>
   {% endif %}

@@ -28,7 +28,7 @@
   <rect width="1000" height="1500" fill="url(#dots)"/>
   <!-- Category badge -->
   {% if slide.category %}
-  <rect x="350" y="180" width="300" height="50" rx="25" fill="url(#acc-grad)" opacity="0.2"/>
+  <rect x="350" y="180" width="300" height="50" rx="30" fill="url(#acc-grad)" opacity="0.2"/>
   <text x="500" y="212" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="url(#acc-grad)">{{ slide.category }}</text>
   {% endif %}
 
@@ -39,7 +39,7 @@
   </text>
 
   <!-- Accent line -->
-  <rect x="400" y="800" width="200" height="4" rx="2" fill="url(#acc-grad-h)"/>
+  <rect x="400" y="800" width="200" height="4" rx="8" fill="url(#acc-grad-h)"/>
 
   <!-- Subtitle -->
   {% if slide.subtitle %}
@@ -50,7 +50,7 @@
   {% endif %}
 
   <circle cx="850" cy="300" r="200" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.05"/>
-  <text x="500" y="1400" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  <text x="500" y="1460" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   {% if logo_data_uri %}
   <image href="{{ logo_data_uri }}" x="872" y="1432" height="48" preserveAspectRatio="xMidYMid meet"/>
   {% endif %}

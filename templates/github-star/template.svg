@@ -33,7 +33,7 @@
 {% for line in description_lines %}    <tspan x="100" dy="{% if loop.first %}0{% else %}36{% endif %}">{{ line }}</tspan>{% endfor %}
     {% if not description_lines %}<tspan x="100">{{ slide.description }}</tspan>{% endif %}
   </text>
-  <rect x="900" y="420" width="120" height="42" rx="21" fill="#313244" opacity="0.6"/>
+  <rect x="900" y="420" width="120" height="42" rx="20" fill="#313244" opacity="0.6"/>
   <text x="960" y="448" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" font-weight="600" fill="url(#acc-grad)">{{ slide.language | default('Rust') }}</text>
   <text x="100" y="480" font-family="Inter,sans-serif" font-size="20" font-weight="500" fill="#7f849c">
     ⭐ {{ slide.stars }} stars{% if slide.forks %} · {{ slide.forks }} forks{% endif %}
