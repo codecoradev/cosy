@@ -7,52 +7,59 @@ aside: false
 Cosy ships with **148 templates** out of the box. Browse the gallery below, or use the sidebar to filter by category.
 
 <style>
-.template-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 16px;
+.template-masonry {
+  column-count: 5;
+  column-gap: 14px;
   margin: 24px 0;
+  line-height: 0;
 }
+@media (max-width: 1280px) { .template-masonry { column-count: 4; } }
+@media (max-width: 1024px) { .template-masonry { column-count: 3; } }
+@media (max-width: 768px)  { .template-masonry { column-count: 2; } }
+@media (max-width: 480px)  { .template-masonry { column-count: 1; } }
 .template-card {
-  display: block;
+  display: inline-block;
+  width: 100%;
+  margin-bottom: 14px;
   text-decoration: none !important;
   border: 1px solid var(--vp-c-divider);
   border-radius: 12px;
   overflow: hidden;
-  transition: transform 0.15s, box-shadow 0.15s;
+  break-inside: avoid;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 .template-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.18);
   border-color: var(--vp-c-brand);
 }
 .template-card img {
   width: 100%;
-  aspect-ratio: 4/3;
-  object-fit: cover;
+  height: auto;
   display: block;
 }
 .template-info {
-  padding: 10px 12px;
+  padding: 8px 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  line-height: normal;
 }
 .template-info h3 {
   margin: 0;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   border: none !important;
   padding: 0 !important;
 }
 .dims {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--vp-c-text-mute);
   white-space: nowrap;
 }
 </style>
 
-<div class="template-grid">
+<div class="template-masonry">
 <a href="./announcement" class="template-card">
   <img src="https://s3.ajianaz.dev/hermes/codecoradev/cosy/preview/announcement.png" alt="Announcement" loading="lazy" />
   <div class="template-info">
