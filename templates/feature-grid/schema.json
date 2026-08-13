@@ -1,0 +1,105 @@
+{
+  "id": "feature-grid",
+  "name": "Feature Grid",
+  "description": "Feature showcase in grid layout",
+  "dimensions": {
+    "width": 1080,
+    "height": 1080
+  },
+  "fonts": [
+    "Inter",
+    "Space Grotesk"
+  ],
+  "brand_fields": {
+    "brand_name": {
+      "type": "text",
+      "required": true,
+      "max": 30
+    },
+    "brand_handle": {
+      "type": "text",
+      "required": false,
+      "max": 30
+    },
+    "bg_color": {
+      "type": "bg",
+      "required": false,
+      "default": "#1e1e2e"
+    },
+    "bg_color_end": {
+      "type": "bg",
+      "required": false,
+      "default": "#11111b"
+    },
+    "accent_color": {
+      "type": "bg",
+      "required": false,
+      "default": "#cba6f7"
+    },
+    "accent_color_end": {
+      "type": "bg",
+      "required": false,
+      "default": "#89b4fa"
+    },
+    "bg_image": {
+      "type": "image",
+      "required": false
+    },
+    "bg_image_opacity": {
+      "type": "number",
+      "required": false,
+      "default": 0.15
+    },
+    "logo": {
+      "type": "image",
+      "required": false
+    }
+  },
+  "slide_fields": {
+    "title": {
+      "type": "text",
+      "required": true,
+      "max": 40
+    },
+    "f1_title": {
+      "type": "text",
+      "required": true,
+      "max": 20
+    },
+    "f1_desc": {
+      "type": "text",
+      "required": true,
+      "max": 50
+    },
+    "f2_title": {
+      "type": "text",
+      "required": true,
+      "max": 20
+    },
+    "f2_desc": {
+      "type": "text",
+      "required": true,
+      "max": 50
+    },
+    "f3_title": {
+      "type": "text",
+      "required": true,
+      "max": 20
+    },
+    "f3_desc": {
+      "type": "text",
+      "required": true,
+      "max": 50
+    },
+    "f4_title": {
+      "type": "text",
+      "required": true,
+      "max": 20
+    },
+    "f4_desc": {
+      "type": "text",
+      "required": true,
+      "max": 50
+    }
+  }
+}
