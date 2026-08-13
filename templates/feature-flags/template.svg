@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+  <defs>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.bg_color | default('#1e1e2e') }}"/>
+      <stop offset="100%" stop-color="{{ brand.bg_color_end | default('#11111b') }}"/>
+    </linearGradient>
+    <linearGradient id="acc-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
+    </linearGradient>
+    <linearGradient id="acc-grad-h" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="75%" cy="25%" r="55%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <circle cx="20" cy="20" r="1.5" fill="#ffffff" opacity="0.06"/>
+    </pattern>
+  </defs>
+{% if bg_image_data_uri %}
+  <image href="{{ bg_image_data_uri }}" width="1080" height="1080" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
+  {% endif %}
+  <rect width="1080" height="1080" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
+  <rect width="1080" height="1080" fill="url(#glow)"/>
+  <rect width="1080" height="1080" fill="url(#dots)"/>
+  <text x="540" y="100" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="36" font-weight="700" fill="#cdd6f4">{{ slide.title }}</text>
+  {% set flags = [(slide.f1_name, slide.f1_status), (slide.f2_name, slide.f2_status), (slide.f3_name, slide.f3_status), (slide.f4_name, slide.f4_status), (slide.f5_name, slide.f5_status)] %}
+  {% for f in flags %}
+  {% if f[0] %}
+  {% set is_on = f[1] == 'on' or f[1] == 'ON' or f[1] == 'On' %}
+  <rect x="100" y="{{ 180 + loop.index0 * 140 }}" width="880" height="100" rx="12" fill="#313244" opacity="0.15"/>
+  <text x="140" y="{{ 245 + loop.index0 * 140 }}" font-family="JetBrains Mono,monospace" font-size="24" fill="#cdd6f4">{{ f[0] }}</text>
+  {% if is_on %}
+  <rect x="820" y="{{ 205 + loop.index0 * 140 }}" width="100" height="44" rx="22" fill="#a6e3a1" opacity="0.2"/>
+  <circle cx="900" cy="{{ 227 + loop.index0 * 140 }}" r="16" fill="#a6e3a1" opacity="0.8"/>
+  <text x="860" y="{{ 234 + loop.index0 * 140 }}" font-family="Inter,sans-serif" font-size="16" font-weight="600" fill="#a6e3a1">ON</text>
+  {% else %}
+  <rect x="820" y="{{ 205 + loop.index0 * 140 }}" width="100" height="44" rx="22" fill="#313244" opacity="0.3"/>
+  <circle cx="842" cy="{{ 227 + loop.index0 * 140 }}" r="16" fill="#7f849c" opacity="0.5"/>
+  <text x="880" y="{{ 234 + loop.index0 * 140 }}" font-family="Inter,sans-serif" font-size="16" font-weight="600" fill="#7f849c">OFF</text>
+  {% endif %}
+  {% endif %}
+  {% endfor %}
+  <text x="540" y="1040" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+</svg>

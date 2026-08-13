@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.bg_color | default('#1e1e2e') }}"/>
+      <stop offset="100%" stop-color="{{ brand.bg_color_end | default('#11111b') }}"/>
+    </linearGradient>
+    <linearGradient id="acc-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
+    </linearGradient>
+    <linearGradient id="acc-grad-h" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="75%" cy="25%" r="55%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <circle cx="20" cy="20" r="1.5" fill="#ffffff" opacity="0.06"/>
+    </pattern>
+  </defs>
+{% if bg_image_data_uri %}
+  <image href="{{ bg_image_data_uri }}" width="1200" height="630" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
+  {% endif %}
+  <rect width="1200" height="630" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect width="1200" height="630" fill="url(#dots)"/>
+  <text x="600" y="75" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="26" font-weight="700" fill="#cdd6f4">{{ slide.title }}</text>
+  <rect x="960" y="50" width="160" height="45" rx="10" fill="#a6e3a1" opacity="0.12"/>
+  <text x="1040" y="80" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="24" font-weight="800" fill="#a6e3a1">{{ slide.status_code }}</text>
+  <rect x="80" y="120" width="1040" height="400" rx="12" fill="#0c0c14" opacity="0.85"/>
+  <rect x="80" y="120" width="1040" height="40" rx="12" fill="#313244" opacity="0.5"/>
+  <text x="600" y="144" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" fill="#7f849c">response.json</text>
+  <text x="120" y="200" font-family="JetBrains Mono,monospace" font-size="24" fill="#7f849c">{</text>
+  {% set kvs = [(slide.key1, slide.value1), (slide.key2, slide.value2), (slide.key3, slide.value3), (slide.key4, slide.value4)] %}
+  {% for kv in kvs %}
+  {% if kv[0] %}
+  <text x="160" y="{{ 245 + loop.index0 * 55 }}" font-family="JetBrains Mono,monospace" font-size="22" fill="#89b4fa">"{{ kv[0] }}"</text>
+  <text x="380" y="{{ 245 + loop.index0 * 55 }}" font-family="JetBrains Mono,monospace" font-size="22" fill="#7f849c">:</text>
+  <text x="410" y="{{ 245 + loop.index0 * 55 }}" font-family="JetBrains Mono,monospace" font-size="22" fill="#a6e3a1">"{{ kv[1] }}"</text>
+  {% endif %}
+  {% endfor %}
+  <text x="120" y="{{ 245 + kvs | length * 55 }}" font-family="JetBrains Mono,monospace" font-size="24" fill="#7f849c">}</text>
+  <text x="600" y="615" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+</svg>
