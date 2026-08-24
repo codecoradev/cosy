@@ -67,7 +67,8 @@
     "stat_value": {
       "type": "text",
       "required": true,
-      "max": 20
+      "max": 8,
+      "description": "Max 8 chars — longer values clip at this font size."
     },
     "stat_suffix": {
       "type": "text",
