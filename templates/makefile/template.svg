@@ -29,7 +29,7 @@
   <text x="600" y="60" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="22" font-weight="700" fill="#cdd6f4">{{ slide.title }}</text>
   <rect x="80" y="85" width="1040" height="490" rx="12" fill="#0c0c14" opacity="0.85"/>
   <rect x="80" y="85" width="1040" height="35" rx="12" fill="#313244" opacity="0.5"/>
-  <text x="600" y="107" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#7f849c">Makefile</text>
+  <text x="600" y="107" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" fill="#7f849c">Makefile</text>
   {% set targets = [(slide.t1_name, slide.t1_desc), (slide.t2_name, slide.t2_desc), (slide.t3_name, slide.t3_desc), (slide.t4_name, slide.t4_desc), (slide.t5_name, slide.t5_desc)] %}
   {% for t in targets %}
   {% if t[0] %}

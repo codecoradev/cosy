@@ -39,7 +39,7 @@
   <text x="700" y="{{ 210 + loop.index0 * 60 }}" font-family="JetBrains Mono,monospace" font-size="16" fill="#89b4fa">{{ c[1] }}</text>
   {% if c[2] %}
   <rect x="830" y="{{ 193 + loop.index0 * 60 }}" width="40" height="24" rx="12" fill="url(#acc-grad)" opacity="0.2"/>
-  <text x="850" y="{{ 210 + loop.index0 * 60 }}" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="600" fill="url(#acc-grad)">{{ c[2] }}</text>
+  <text x="850" y="{{ 210 + loop.index0 * 60 }}" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="600" fill="url(#acc-grad)">{{ c[2] }}</text>
   {% endif %}
   {% if not loop.last %}
   <line x1="320" y1="{{ 230 + loop.index0 * 60 }}" x2="880" y2="{{ 230 + loop.index0 * 60 }}" stroke="#313244" stroke-width="1" opacity="0.2"/>

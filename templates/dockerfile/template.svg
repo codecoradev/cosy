@@ -29,7 +29,7 @@
   <text x="600" y="60" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="22" font-weight="700" fill="#cdd6f4">{{ slide.title }}</text>
   <rect x="80" y="85" width="1040" height="490" rx="12" fill="#0c0c14" opacity="0.85"/>
   <rect x="80" y="85" width="1040" height="35" rx="12" fill="#313244" opacity="0.5"/>
-  <text x="600" y="107" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#7f849c">Dockerfile</text>
+  <text x="600" y="107" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="14" fill="#7f849c">Dockerfile</text>
   {% set steps = [(slide.step1_inst, slide.step1_arg), (slide.step2_inst, slide.step2_arg), (slide.step3_inst, slide.step3_arg), (slide.step4_inst, slide.step4_arg), (slide.step5_inst, slide.step5_arg)] %}
   {% for st in steps %}
   {% if st[0] %}

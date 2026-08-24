@@ -33,17 +33,17 @@
   <text x="960" y="171" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" font-weight="600" fill="url(#acc-grad)">{{ slide.status }}</text>
   {% endif %}
   <text x="130" y="175" font-family="Inter,sans-serif" font-size="18" font-weight="500" fill="#7f849c">{{ slide.issue_num }}</text>
-  <text x="130" y="260" font-family="Space Grotesk,sans-serif" font-size="34" font-weight="700" fill="#cdd6f4">
+  <text x="130" y="260" font-family="Space Grotesk,sans-serif" font-size="32" font-weight="700" fill="#cdd6f4">
 {% for line in title_lines %}    <tspan x="130" dy="{% if loop.first %}0{% else %}44{% endif %}">{{ line }}</tspan>{% endfor %}
     {% if not title_lines %}<tspan x="130">{{ slide.title }}</tspan>{% endif %}
   </text>
   {% if slide.label1 %}
   <rect x="130" y="380" width="140" height="36" rx="20" fill="#cba6f7" opacity="0.15"/>
-  <text x="200" y="403" text-anchor="middle" font-family="Inter,sans-serif" font-size="15" font-weight="500" fill="#cba6f7">{{ slide.label1 }}</text>
+  <text x="200" y="403" text-anchor="middle" font-family="Inter,sans-serif" font-size="16" font-weight="500" fill="#cba6f7">{{ slide.label1 }}</text>
   {% endif %}
   {% if slide.label2 %}
   <rect x="285" y="380" width="140" height="36" rx="20" fill="#89b4fa" opacity="0.15"/>
-  <text x="355" y="403" text-anchor="middle" font-family="Inter,sans-serif" font-size="15" font-weight="500" fill="#89b4fa">{{ slide.label2 }}</text>
+  <text x="355" y="403" text-anchor="middle" font-family="Inter,sans-serif" font-size="16" font-weight="500" fill="#89b4fa">{{ slide.label2 }}</text>
   {% endif %}
   {% if slide.author %}
   <text x="130" y="465" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">Opened by {{ slide.author }}</text>
