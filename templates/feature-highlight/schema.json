@@ -81,7 +81,7 @@
       "type": "text",
       "required": false,
       "max": 4,
-      "description": "Short text/emoji for icon badge (e.g. 'AI', '⚡', 'v2')"
+      "description": "Short text for icon badge (e.g. 'AI', 'v2', 'Go'). Avoid emoji — OS-dependent rendering"
     }
   }
 }

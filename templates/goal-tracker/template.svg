@@ -26,7 +26,7 @@
   <rect width="1080" height="1080" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
   <rect width="1080" height="1080" fill="url(#glow)"/>
   <rect width="1080" height="1080" fill="url(#dots)"/>
-  <text x="540" y="110" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="38" font-weight="700" fill="#cdd6f4">{{ slide.title }}</text>
+  <text x="540" y="110" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="36" font-weight="700" fill="#cdd6f4">{{ slide.title }}</text>
   <circle cx="320" cy="540" r="160" fill="none" stroke="#313244" stroke-width="20"/>
   <circle cx="320" cy="540" r="160" fill="none" stroke="url(#acc-grad)" stroke-width="20" stroke-dasharray="754" stroke-dashoffset="377" stroke-linecap="round" transform="rotate(-90 320 540)"/>
   <text x="320" y="530" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="64" font-weight="800" fill="url(#acc-grad)">{{ slide.current }}</text>

@@ -35,9 +35,10 @@
   </text>
   <rect x="900" y="420" width="120" height="42" rx="20" fill="#313244" opacity="0.6"/>
   <text x="960" y="448" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" font-weight="600" fill="url(#acc-grad)">{{ slide.language | default('Rust') }}</text>
-  <text x="100" y="480" font-family="Inter,sans-serif" font-size="20" font-weight="500" fill="#7f849c">
-    ⭐ {{ slide.stars }} stars{% if slide.forks %} · {{ slide.forks }} forks{% endif %}
-  </text>
+  <g transform="translate(100,466)">
+    <path d="M9 1.5l2.47 5 5.53.8-4 3.9.94 5.5L9 14.1l-4.94 2.6.94-5.5-4-3.9 5.53-.8z" fill="url(#acc-grad)"/>
+    <text x="24" y="15" font-family="Inter,sans-serif" font-size="20" font-weight="500" fill="#7f849c">{{ slide.stars }} stars{% if slide.forks %} · {{ slide.forks }} forks{% endif %}</text>
+  </g>
   <circle cx="1050" cy="150" r="120" fill="url(#acc-grad)" opacity="0.05"/>
   {% if brand.show_brand %}
   <text x="600" y="590" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>

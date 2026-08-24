@@ -29,7 +29,7 @@
   <circle cx="200" cy="315" r="90" fill="none" stroke="url(#acc-grad)" stroke-width="3" opacity="0.4"/>
   <circle cx="200" cy="315" r="80" fill="#313244" opacity="0.3"/>
   <text x="200" y="335" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="56" font-weight="800" fill="url(#acc-grad)">{{ slide.username | first | upper }}</text>
-  <text x="350" y="250" font-family="Space Grotesk,sans-serif" font-size="34" font-weight="700" fill="#cdd6f4">{{ slide.username }}</text>
+  <text x="350" y="250" font-family="Space Grotesk,sans-serif" font-size="32" font-weight="700" fill="#cdd6f4">{{ slide.username }}</text>
   {% if slide.role %}
   <text x="350" y="290" font-family="Inter,sans-serif" font-size="22" fill="#7f849c">{{ slide.role }}</text>
   {% endif %}

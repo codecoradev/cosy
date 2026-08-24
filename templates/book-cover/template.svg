@@ -32,7 +32,7 @@
   <rect x="390" y="150" width="300" height="50" rx="30" fill="url(#acc-grad)" opacity="0.15"/>
   <text x="540" y="182" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="url(#acc-grad)">{{ slide.edition }}</text>
   {% endif %}
-  <text x="540" y="550" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="76" font-weight="900" fill="#cdd6f4">
+  <text x="540" y="550" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="72" font-weight="900" fill="#cdd6f4">
 {% for line in title_lines %}    <tspan x="540" dy="{% if loop.first %}0{% else %}90{% endif %}">{{ line }}</tspan>{% endfor %}
     {% if not title_lines %}<tspan x="540">{{ slide.title }}</tspan>{% endif %}
   </text>

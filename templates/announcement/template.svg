@@ -26,7 +26,7 @@
   <rect x="80" y="60" width="180" height="44" rx="20" fill="url(#acc-grad)" opacity="0.2"/>
   <text x="170" y="88" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="{{ brand.accent_color | default('#cba6f7') }}">{{ slide.tag }}</text>
   {% endif %}
-  <text x="80" y="260" font-family="Space Grotesk,sans-serif" font-size="46" font-weight="700" fill="#cdd6f4">
+  <text x="80" y="260" font-family="Space Grotesk,sans-serif" font-size="48" font-weight="700" fill="#cdd6f4">
     {% for line in headline_lines %}<tspan x="80" dy="{% if loop.first %}0{% else %}56{% endif %}">{{ line }}</tspan>{% endfor %}
     {% if not headline_lines %}<tspan x="80" dy="0">{{ slide.headline }}</tspan>{% endif %}
   </text>
