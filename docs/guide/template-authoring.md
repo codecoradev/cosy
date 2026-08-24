@@ -232,6 +232,19 @@ Most templates use a two-stop linear gradient for the background:
 <circle cx="1000" cy="80" r="180" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
 ```
 
+### Border Radius (4-tier system)
+
+Cards and UI surfaces use a standardized 4-tier radius system:
+
+| Tier | rx | Use for |
+|---|---|---|
+| Small | `8` | Chips, tags, small inner elements |
+| Default | `12` | Standard cards, inputs, code blocks |
+| Large | `20` | Feature cards, media containers |
+| Pill | `30` | Full-width banners, oversized cards |
+
+**Exception — sub-5px decorative elements.** Thin decorative bars (divider lines, accent underlines) with height or width ≤ 5px may use any `rx` up to half their thickness (e.g. a 3px divider bar may use `rx="1.5"`). These are not UI surfaces and are exempt from the tier system. Audit scripts should skip rects with `height` or `width` ≤ 5 when checking radius compliance.
+
 ---
 
 ## Image Support
