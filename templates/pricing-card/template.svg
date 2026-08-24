@@ -48,6 +48,6 @@
   <text x="540" y="860" text-anchor="middle" font-family="Inter,sans-serif" font-size="24" font-weight="700" fill="#1e1e2e">{{ slide.cta_text }}</text>
   {% endif %}
   {% if brand.show_brand %}
-  <text x="540" y="1040" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  <text x="540" y="1050" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   {% endif %}
 </svg>

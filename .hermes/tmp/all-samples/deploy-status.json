@@ -1,0 +1,26 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Sample Title",
+      "environment": "Sample environm",
+      "version": "Sample version",
+      "s1_name": "Sample s1 name",
+      "s1_status": "Sample s1 ",
+      "s2_name": "Sample s2 name",
+      "s2_status": "Sample s2 ",
+      "s3_name": "Sample s3 name",
+      "s3_status": "Sample s3 ",
+      "s4_name": "Sample s4 name",
+      "s4_status": "Sample s4 ",
+      "commit": "Sample commit"
+    }
+  ]
+}

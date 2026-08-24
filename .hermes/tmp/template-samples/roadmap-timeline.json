@@ -1,0 +1,23 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Product Roadmap 2026",
+      "q1_label": "Q1",
+      "q1_items": "Core engine and CLI",
+      "q2_label": "Q2",
+      "q2_items": "REST API and auth",
+      "q3_label": "Q3",
+      "q3_items": "108 templates library",
+      "q4_label": "Q4",
+      "q4_items": "Cloud version launch"
+    }
+  ]
+}

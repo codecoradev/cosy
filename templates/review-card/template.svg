@@ -41,6 +41,6 @@
   <text x="470" y="825" font-family="Inter,sans-serif" font-size="18" font-weight="400" fill="#7f849c">{{ slide.source }}</text>
   {% endif %}
   {% if brand.show_brand %}
-  <text x="540" y="1000" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  <text x="540" y="1050" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   {% endif %}
 </svg>

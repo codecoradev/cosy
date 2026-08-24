@@ -1,0 +1,29 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Weekly Downloads",
+      "label1": "Mon",
+      "val1": "45",
+      "label2": "Tue",
+      "val2": "62",
+      "label3": "Wed",
+      "val3": "38",
+      "label4": "Thu",
+      "val4": "71",
+      "label5": "Fri",
+      "val5": "85",
+      "label6": "Sat",
+      "val6": "53",
+      "label7": "Sun",
+      "val7": "29"
+    }
+  ]
+}

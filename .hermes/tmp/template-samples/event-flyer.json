@@ -1,0 +1,20 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "event_name": "Rust Meetup Kudus",
+      "date": "Sept 15, 2026",
+      "time": "6:00 PM WIB",
+      "location": "CodeCora HQ, Kudus",
+      "speaker": "ajianaz",
+      "description": "Learn async Rust patterns and build real-time apps with Tokio"
+    }
+  ]
+}

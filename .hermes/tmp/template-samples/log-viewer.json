@@ -1,0 +1,27 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Application Logs",
+      "l1_time": "12:04:32",
+      "l1_level": "INFO",
+      "l1_msg": "Server started on port 3000",
+      "l2_time": "12:05:18",
+      "l2_level": "WARN",
+      "l2_msg": "Cache miss for key user_847",
+      "l3_time": "12:06:45",
+      "l3_level": "ERROR",
+      "l3_msg": "Database connection timeout",
+      "l4_time": "12:07:02",
+      "l4_level": "INFO",
+      "l4_msg": "Retry attempt 1 successful"
+    }
+  ]
+}

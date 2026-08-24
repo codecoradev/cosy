@@ -1,0 +1,19 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Q4 Roadmap Progress",
+      "percentage": "75%",
+      "milestone_label": "3 of 4 milestones shipped ahead of schedule",
+      "items_done": "12",
+      "items_total": "16"
+    }
+  ]
+}

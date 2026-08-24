@@ -1,0 +1,18 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "method": "POST",
+      "endpoint": "/api/v1/render",
+      "description": "Renders a template with provided data and returns a PNG image. Accepts JSON body with template name and slide data.",
+      "auth_required": "Bearer"
+    }
+  ]
+}

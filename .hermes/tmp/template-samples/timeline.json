@@ -1,0 +1,23 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Rust Release History",
+      "milestone1_date": "2010",
+      "milestone1_text": "Rust project announced",
+      "milestone2_date": "2015",
+      "milestone2_text": "Rust 1.0 stable release",
+      "milestone3_date": "2021",
+      "milestone3_text": "Edition 2021 launched",
+      "milestone4_date": "2024",
+      "milestone4_text": "Rust in Linux kernel"
+    }
+  ]
+}

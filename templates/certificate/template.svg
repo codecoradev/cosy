@@ -43,6 +43,6 @@
   <line x1="740" y1="750" x2="960" y2="750" stroke="#45475a" stroke-width="1"/>
   <text x="850" y="775" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" fill="#7f849c">Issued by</text>
   {% if brand.show_brand %}
-  <text x="600" y="860" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  <text x="600" y="870" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   {% endif %}
 </svg>

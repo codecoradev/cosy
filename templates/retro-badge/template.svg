@@ -42,6 +42,6 @@
   <text x="300" y="447" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="20" font-weight="700" fill="url(#acc-grad)">{{ slide.year }}</text>
   {% endif %}
   {% if brand.show_brand %}
-  <text x="300" y="555" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  <text x="300" y="570" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   {% endif %}
 </svg>

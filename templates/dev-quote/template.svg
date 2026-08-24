@@ -35,7 +35,7 @@
   <rect x="60" y="940" width="180" height="44" rx="20" fill="url(#acc-grad)" opacity="0.2"/>
   <text x="150" y="968" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="20" font-weight="600" fill="{{ brand.accent_color | default('#cba6f7') }}">{{ slide.language | default('Rust') }}</text>
   {% if brand.show_brand %}
-  <text x="940" y="1040" text-anchor="end" font-family="Inter,sans-serif" font-size="22" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  <text x="540" y="1050" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   {% endif %}
   <circle cx="1000" cy="80" r="180" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
   {% if logo_data_uri %}

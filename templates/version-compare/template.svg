@@ -41,6 +41,6 @@
   <text x="860" y="290" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="48" font-weight="800" fill="url(#acc-grad)">{{ slide.new_val }}</text>
   <text x="860" y="330" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" fill="#89b4fa">{{ slide.metric }}</text>
   {% if brand.show_brand %}
-  <text x="600" y="615" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  <text x="600" y="600" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   {% endif %}
 </svg>

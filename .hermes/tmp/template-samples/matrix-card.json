@@ -1,0 +1,25 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Feature Priority Matrix",
+      "axis_x": "Impact",
+      "axis_y": "Effort",
+      "q1_label": "Quick Wins",
+      "q1_item": "Bug fixes",
+      "q2_label": "Major Projects",
+      "q2_item": "New engine",
+      "q3_label": "Fill-ins",
+      "q3_item": "Docs update",
+      "q4_label": "Thankless",
+      "q4_item": "Refactoring"
+    }
+  ]
+}

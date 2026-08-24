@@ -1,0 +1,23 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Product Roadmap 2026",
+      "phase1": "Core",
+      "phase1_status": "Done",
+      "phase2": "API",
+      "phase2_status": "Active",
+      "phase3": "Cloud",
+      "phase3_status": "Planned",
+      "phase4": "Mobile",
+      "phase4_status": "Planned"
+    }
+  ]
+}

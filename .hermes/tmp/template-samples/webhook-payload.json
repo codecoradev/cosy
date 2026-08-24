@@ -1,0 +1,24 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Webhook Received",
+      "event": "push",
+      "source": "github.com",
+      "timestamp": "2026-08-13T10:30",
+      "delivery_id": "dpl_8472",
+      "json_line1": "{ \"ref\": \"refs/heads/main\",",
+      "json_line2": "  \"repository\": \"codecoradev/cosy\",",
+      "json_line3": "  \"pusher\": { \"name\": \"ajianaz\" },",
+      "json4": "  \"commits\": 2",
+      "json_line5": "}"
+    }
+  ]
+}

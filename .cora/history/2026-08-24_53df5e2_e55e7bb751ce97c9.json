@@ -1,0 +1,12 @@
+{
+  "timestamp": "2026-08-24T00:40:09.738512557Z",
+  "commit": "53df5e2",
+  "branch": "fix/56-anti-slop-emoji-typescale",
+  "files_reviewed": 0,
+  "lines_reviewed": null,
+  "findings": {},
+  "categories": {},
+  "quality_score": 10.0,
+  "gate_status": "disabled",
+  "duration_ms": null
+}

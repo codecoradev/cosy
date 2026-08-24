@@ -150,6 +150,6 @@
   <rect x="310" y="880" width="40" height="40" rx="8" fill="url(#acc-grad)"/>
   <text x="540" y="950" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="28" font-weight="700" fill="url(#acc-grad)">{{ slide.label }}</text>
   {% if brand.show_brand %}
-  <text x="540" y="1055" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  <text x="540" y="1050" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   {% endif %}
 </svg>

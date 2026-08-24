@@ -1,0 +1,18 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "name": "ajianaz",
+      "role": "Founder and Lead Engineer",
+      "bio": "Building developer tools and open source projects at CodeCora. Passionate about Rust, performance, and clean design.",
+      "location": "Kudus, Indonesia"
+    }
+  ]
+}

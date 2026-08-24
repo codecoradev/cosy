@@ -1,0 +1,25 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Render Benchmark",
+      "b1_name": "Cosy",
+      "b1_ops": "48,200 ops/s",
+      "b1_bar": "100",
+      "b2_name": "Node-Canvas",
+      "b2_ops": "31,500 ops/s",
+      "b2_bar": "65",
+      "b3_name": "Wand",
+      "b3_ops": "18,300 ops/s",
+      "b3_bar": "38",
+      "winner": "Cosy"
+    }
+  ]
+}

@@ -53,7 +53,7 @@
   <text x="148" y="988" font-family="Inter,sans-serif" font-size="30" font-weight="400" fill="#bac2de">{{ slide.item5 }}</text>
   {% endif %}
   {% if brand.show_brand %}
-  <text x="540" y="1280" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="400" fill="#7f849c">{{ brand.brand_name | default('') }} · {{ brand.brand_handle | default('') }}</text>
+  <text x="540" y="1320" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }} · {{ brand.brand_handle | default('') }}</text>
   {% endif %}
   <circle cx="1000" cy="80" r="180" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
   {% if logo_data_uri %}

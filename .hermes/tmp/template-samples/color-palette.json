@@ -1,0 +1,25 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "palette_name": "Catppuccin Mocha",
+      "color1_name": "Rosewater",
+      "color1_hex": "#f5e0dc",
+      "color2_name": "Mauve",
+      "color2_hex": "#cba6f7",
+      "color3_name": "Blue",
+      "color3_hex": "#89b4fa",
+      "color4_name": "Green",
+      "color4_hex": "#a6e3a1",
+      "color5_name": "Yellow",
+      "color5_hex": "#f9e2af"
+    }
+  ]
+}

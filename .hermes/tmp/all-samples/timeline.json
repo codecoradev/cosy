@@ -1,0 +1,23 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Sample Title",
+      "milestone1_date": "Sample milestone1 date",
+      "milestone1_text": "Sample milestone1 text",
+      "milestone2_date": "Sample milestone2 date",
+      "milestone2_text": "Sample milestone2 text",
+      "milestone3_date": "Sample milestone3 date",
+      "milestone3_text": "Sample milestone3 text",
+      "milestone4_date": "Sample milestone4 date",
+      "milestone4_text": "Sample milestone4 text"
+    }
+  ]
+}
