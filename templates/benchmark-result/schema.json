@@ -79,9 +79,8 @@
       "max": 15
     },
     "b1_bar": {
-      "type": "text",
-      "required": true,
-      "max": 5
+      "type": "number",
+      "required": true
     },
     "b2_name": {
       "type": "text",
@@ -94,9 +93,8 @@
       "max": 15
     },
     "b2_bar": {
-      "type": "text",
-      "required": true,
-      "max": 5
+      "type": "number",
+      "required": true
     },
     "b3_name": {
       "type": "text",
@@ -109,9 +107,8 @@
       "max": 15
     },
     "b3_bar": {
-      "type": "text",
-      "required": true,
-      "max": 5
+      "type": "number",
+      "required": true
     },
     "winner": {
       "type": "text",

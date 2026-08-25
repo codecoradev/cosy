@@ -12,15 +12,15 @@
     {
       "title": "Monthly Template Renders",
       "b1_label": "Mar",
-      "b1_value": "45",
+      "b1_value": 45,
       "b2_label": "Apr",
-      "b2_value": "62",
+      "b2_value": 62,
       "b3_label": "May",
-      "b3_value": "78",
+      "b3_value": 78,
       "b4_label": "Jun",
-      "b4_value": "94",
+      "b4_value": 94,
       "b5_label": "Jul",
-      "b5_value": "131"
+      "b5_value": 131
     }
   ]
 }

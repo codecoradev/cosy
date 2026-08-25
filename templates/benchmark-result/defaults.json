@@ -13,13 +13,13 @@
       "title": "Image Render Benchmark",
       "b1_name": "Cosy (Rust)",
       "b1_ops": "12,400/s",
-      "b1_bar": "100",
+      "b1_bar": 100,
       "b2_name": "Node.js",
       "b2_ops": "3,200/s",
-      "b2_bar": "26",
+      "b2_bar": 26,
       "b3_name": "Python",
       "b3_ops": "1,800/s",
-      "b3_bar": "15",
+      "b3_bar": 15,
       "winner": "Cosy"
     }
   ]
