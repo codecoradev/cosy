@@ -29,6 +29,13 @@ cosy render --template <TEMPLATE> --data <DATA.json> --output <OUTPUT.png>
 cosy render --template og-image --data post.json --output cover.png --scale 2.0
 ```
 
+::: tip
+`render` validates input against the template schema **before** rendering. Invalid input
+(missing required fields, over-max text, wrong field type) fails fast with field-level
+messages — e.g. `field 'b1_value' must be a number, got string`. With `--json-output`,
+validation errors are returned as machine-readable JSON.
+:::
+
 ### `serve`
 
 Start the HTTP API server.
