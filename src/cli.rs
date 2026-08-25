@@ -117,6 +117,57 @@ impl Cli {
                     }
                 };
 
+                // Validate input against the template schema before rendering.
+                // Fails fast with a clear field-level message instead of a
+                // confusing Tera "invalid float literal" engine error.
+                let tmpl_def = match crate::template::load_template(&template) {
+                    Ok(t) => t,
+                    Err(e) => {
+                        if json_output {
+                            let err = serde_json::json!({
+                                "error": format!("{:#}", e),
+                                "code": 1
+                            });
+                            println!("{}", serde_json::to_string_pretty(&err)?);
+                        } else {
+                            eprintln!("✗ Failed to load template: {:#}", e);
+                        }
+                        return Ok(ExitCode::from(2));
+                    }
+                };
+                let input_data = match crate::schema::InputData::from_file(&resolved_data) {
+                    Ok(d) => d,
+                    Err(e) => {
+                        if json_output {
+                            let err = serde_json::json!({
+                                "error": format!("{:#}", e),
+                                "code": 1
+                            });
+                            println!("{}", serde_json::to_string_pretty(&err)?);
+                        } else {
+                            eprintln!("✗ Failed to parse data: {:#}", e);
+                        }
+                        return Ok(ExitCode::from(2));
+                    }
+                };
+                let errors = crate::template::validate_input(&tmpl_def, &input_data);
+                if !errors.is_empty() {
+                    if json_output {
+                        let err = serde_json::json!({
+                            "error": format!("validation failed ({} error(s)): {}",
+                                errors.len(), errors.join("; ")),
+                            "code": 1
+                        });
+                        println!("{}", serde_json::to_string_pretty(&err)?);
+                    } else {
+                        eprintln!("✗ Validation failed ({} error(s)):", errors.len());
+                        for e in &errors {
+                            eprintln!("  - {}", e);
+                        }
+                    }
+                    return Ok(ExitCode::from(1));
+                }
+
                 if dump_svg {
                     return dump_processed_svg(&template, &resolved_data);
                 }

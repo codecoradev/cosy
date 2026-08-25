@@ -76,9 +76,8 @@
       "max": 20
     },
     "b1_value": {
-      "type": "text",
-      "required": true,
-      "max": 10
+      "type": "number",
+      "required": true
     },
     "b2_label": {
       "type": "text",
@@ -86,9 +85,8 @@
       "max": 20
     },
     "b2_value": {
-      "type": "text",
-      "required": true,
-      "max": 10
+      "type": "number",
+      "required": true
     },
     "b3_label": {
       "type": "text",
@@ -96,9 +94,8 @@
       "max": 20
     },
     "b3_value": {
-      "type": "text",
-      "required": true,
-      "max": 10
+      "type": "number",
+      "required": true
     },
     "b4_label": {
       "type": "text",
@@ -106,9 +103,8 @@
       "max": 20
     },
     "b4_value": {
-      "type": "text",
-      "required": true,
-      "max": 10
+      "type": "number",
+      "required": true
     },
     "b5_label": {
       "type": "text",
@@ -116,9 +112,8 @@
       "max": 20
     },
     "b5_value": {
-      "type": "text",
-      "required": false,
-      "max": 10
+      "type": "number",
+      "required": false
     }
   }
 }

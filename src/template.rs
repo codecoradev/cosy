@@ -213,6 +213,18 @@ pub fn list_templates(dir: &Path) -> Vec<TemplateDef> {
 
 /// Validate input data against a template schema.
 /// Returns a list of error messages (empty if valid).
+/// Short human-readable JSON value type name for validation messages.
+fn type_name(value: &serde_json::Value) -> &'static str {
+    match value {
+        serde_json::Value::Null => "null",
+        serde_json::Value::Bool(_) => "boolean",
+        serde_json::Value::Number(_) => "number",
+        serde_json::Value::String(_) => "string",
+        serde_json::Value::Array(_) => "array",
+        serde_json::Value::Object(_) => "object",
+    }
+}
+
 pub fn validate_input(template: &TemplateDef, data: &InputData) -> Vec<String> {
     let mut errors = Vec::new();
 
@@ -241,6 +253,36 @@ pub fn validate_input(template: &TemplateDef, data: &InputData) -> Vec<String> {
                             max_chars
                         ));
                     }
+                }
+            }
+            // Type check: numeric/boolean fields must not be strings.
+            // Templates use these fields in arithmetic expressions; a string
+            // value fails late inside the Tera engine with a confusing
+            // "invalid float literal" error instead of a validation message.
+            if let Some(value) = slide.get(name) {
+                match spec.field_type {
+                    FieldType::Number => {
+                        if !value.is_number() {
+                            errors.push(format!(
+                                "Slide {}: field '{}' must be a number, got {}",
+                                i + 1,
+                                name,
+                                type_name(value)
+                            ));
+                        }
+                    }
+                    FieldType::Boolean => {
+                        if value.is_boolean() {
+                            continue;
+                        }
+                        errors.push(format!(
+                            "Slide {}: field '{}' must be a boolean, got {}",
+                            i + 1,
+                            name,
+                            type_name(value)
+                        ));
+                    }
+                    _ => {}
                 }
             }
         }

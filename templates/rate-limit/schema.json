@@ -84,9 +84,8 @@
       "max": 20
     },
     "used_pct": {
-      "type": "text",
-      "required": true,
-      "max": 8
+      "type": "number",
+      "required": true
     },
     "plan": {
       "type": "text",

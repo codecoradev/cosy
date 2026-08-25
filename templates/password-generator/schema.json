@@ -74,9 +74,8 @@
       "max": 40
     },
     "length": {
-      "type": "text",
-      "required": true,
-      "max": 5
+      "type": "number",
+      "required": true
     },
     "strength": {
       "type": "text",

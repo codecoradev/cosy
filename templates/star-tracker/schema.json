@@ -68,15 +68,13 @@
       "max": 40
     },
     "current_stars": {
-      "type": "text",
+      "type": "number",
       "required": true,
-      "max": 8,
       "description": "Max 8 chars — longer values clip at this font size."
     },
     "goal_stars": {
-      "type": "text",
+      "type": "number",
       "required": true,
-      "max": 8,
       "description": "Max 8 chars — longer values clip at this font size."
     },
     "milestone": {
