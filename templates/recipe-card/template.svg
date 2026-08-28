@@ -48,7 +48,7 @@
   {% set sy = 730 + loop.index0 * 180 %}
   <circle cx="150" cy="{{ sy }}" r="24" fill="url(#acc-grad)" opacity="0.12"/>
   <text x="150" y="{{ sy + 8 }}" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="22" font-weight="800" fill="url(#acc-grad)">{{ loop.index }}</text>
-  <text x="195" y="{{ sy - 5 }}" font-family="Inter,sans-serif" font-size="22" font-weight="400" fill="#cdd6f4">{{ step }}</text>
+  <text x="195" y="{{ sy - 5 }}" font-family="Inter,sans-serif" font-size="22" font-weight="400" fill="#cdd6f4">{% for ln in step|wordwrap(66)|split('\n') %}<tspan x="195" dy="{{ 0 if loop.first else 30 }}">{{ ln }}</tspan>{% endfor %}</text>
   {% endif %}
   {% endfor %}
   {% if brand.show_brand %}

@@ -29,9 +29,7 @@
   <circle cx="128" cy="150" r="8" fill="#f9e2af"/>
   <circle cx="156" cy="150" r="8" fill="#a6e3a1"/>
   <text x="940" y="156" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="18" fill="#7f849c">{{ slide.filename | default('main.rs') }}</text>
-  <text x="100" y="260" font-family="JetBrains Mono,monospace" font-size="26" fill="#cdd6f4">
-    {% for line in code_snippet_lines %}<tspan x="100" dy="{% if loop.first %}0{% else %}38{% endif %}">{{ line }}</tspan>{% endfor %}
-  </text>
+  <text x="100" y="260" font-family="JetBrains Mono,monospace" font-size="26" fill="#cdd6f4" xml:space="preserve">{% for line in code_snippet_lines %}<tspan x="100" dy="{% if loop.first %}0{% else %}38{% endif %}">{{ line }}</tspan>{% endfor %}</text>
   <rect x="60" y="940" width="180" height="44" rx="20" fill="url(#acc-grad)" opacity="0.2"/>
   <text x="150" y="968" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="20" font-weight="600" fill="{{ brand.accent_color | default('#cba6f7') }}">{{ slide.language | default('Rust') }}</text>
   {% if brand.show_brand %}
