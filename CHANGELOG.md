@@ -5,6 +5,32 @@ All notable changes to Cosy will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] — 2026-08-28
+
+### Added
+
+- **148 templates** (up from 18) — social cards, code snippets, stats/dashboards, quotes, banners, docs graphics, all with `template.svg` + `schema.json` + `defaults.json`.
+- **Real-case defaults** for every template, validated against each schema at render time.
+- **Background image + custom logo support** with data-URI injection and overlay opacity control.
+- **Watermark/brand footer** — standardized bottom-center footer across all templates, off by default (`show_brand` toggle).
+- **Numeric schema fields** — percentages/measures are typed numbers driving proportional bar fills and progress rings (poll-result, progress-card, goal-tracker).
+- **--stdin / --json / --json-output** CLI flags for machine-driven rendering.
+- **VitePress docs site** — 148-page template gallery with MinIO-hosted previews, Pinterest-style masonry layout.
+- **Test suite grown to 126 tests** (render, CLI, schema, filters), 100% mutation score maintained.
+
+### Fixed
+
+- **XML-escaping in the renderer** — literal `&`, `<`, `>` in user data no longer abort rendering with "malformed entity reference".
+- **10 high-severity visual defects** found by a full vision audit of all 148 rendered templates (clipped/overlapping/garbled output): command-card, docker-command, tech-stack, roadmap-timeline, week-schedule, vscode-config, webhook-payload, wallpaper-quote, gradient-quote, poll-result.
+- **43 medium/low findings** — vertical balance, low-contrast elements, wrong status-color semantics, broken glyphs, non-proportional bars, YAML/code indentation, duplicated prefixes in default data (`vv2.1.0`, `votes votes`, `EP EP`).
+- **18 default-data corrections** — defaults now satisfy their own schema constraints and no longer duplicate template-rendered prefixes.
+- **Release CI** — multi-platform binary build without cargo-zigbuild.
+
+### Changed
+
+- Default branch moved to `develop` (integration); `main` is the release mirror.
+- Repository is now public.
+
 ## [0.1.0] — 2026-08-12
 
 ### Added
