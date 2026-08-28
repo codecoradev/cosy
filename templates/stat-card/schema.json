@@ -11,6 +11,12 @@
     "JetBrains Mono"
   ],
   "brand_fields": {
+    "show_brand": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Show brand name/handle watermark at bottom. Default: false."
+    },
     "brand_name": {
       "type": "text",
       "required": true,
@@ -62,7 +68,8 @@
     "stat_number": {
       "type": "text",
       "required": true,
-      "max": 20
+      "max": 8,
+      "description": "Max 8 chars — longer values clip at this font size."
     },
     "stat_label": {
       "type": "text",

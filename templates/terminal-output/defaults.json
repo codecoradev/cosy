@@ -1,0 +1,21 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Running Cosy Tests",
+      "cmd": "cargo test --release",
+      "line1": "running 142 tests",
+      "line2": "............................. 142 passed",
+      "line3": "0 failed; 0 ignored; 0 measured",
+      "line4": "Finished in 3.42s"
+    }
+  ]
+}

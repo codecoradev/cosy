@@ -1,0 +1,21 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Sample Title",
+      "todo1": "Sample todo1",
+      "todo2": "Sample todo2",
+      "doing1": "Sample doing1",
+      "doing2": "Sample doing2",
+      "done1": "Sample done1",
+      "done2": "Sample done2"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "recipe_name": "Perfect Deployment Pipeline",
+      "servings": "1 team",
+      "time": "45 min",
+      "ingredients": "1 Rust binary, 2 Docker containers, 3 CI stages, 1 health check endpoint, CDN to taste",
+      "step1": "Build your Rust binary with cargo build --release and verify all tests pass.",
+      "step2": "Package into a minimal Docker image using multi-stage build to keep it under 20MB.",
+      "step3": "Deploy to production with zero-downtime rolling update and monitor health checks."
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "id": "milestone-celebration",
+  "name": "Milestone Celebration",
+  "description": "Celebratory milestone card with big number and confetti style",
+  "dimensions": {
+    "width": 1080,
+    "height": 1080
+  },
+  "fonts": [
+    "Inter",
+    "Space Grotesk"
+  ],
+  "brand_fields": {
+    "show_brand": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Show brand name/handle watermark at bottom. Default: false."
+    },
+    "brand_name": {
+      "type": "text",
+      "required": true,
+      "max": 30
+    },
+    "brand_handle": {
+      "type": "text",
+      "required": false,
+      "max": 30
+    },
+    "bg_color": {
+      "type": "bg",
+      "required": false,
+      "default": "#1e1e2e"
+    },
+    "bg_color_end": {
+      "type": "bg",
+      "required": false,
+      "default": "#11111b"
+    },
+    "accent_color": {
+      "type": "bg",
+      "required": false,
+      "default": "#cba6f7"
+    },
+    "accent_color_end": {
+      "type": "bg",
+      "required": false,
+      "default": "#89b4fa"
+    },
+    "bg_image": {
+      "type": "image",
+      "required": false,
+      "description": "Background image path."
+    },
+    "bg_image_opacity": {
+      "type": "number",
+      "required": false,
+      "default": 0.15
+    },
+    "logo": {
+      "type": "image",
+      "required": false,
+      "description": "Brand logo path."
+    }
+  },
+  "slide_fields": {
+    "milestone": {
+      "type": "text",
+      "required": true,
+      "max": 8,
+      "description": "Max 8 chars — longer values clip at this font size."
+    },
+    "milestone_suffix": {
+      "type": "text",
+      "required": false,
+      "max": 10
+    },
+    "title": {
+      "type": "text",
+      "required": true,
+      "max": 60,
+      "wrap_width": 22
+    },
+    "message": {
+      "type": "text",
+      "required": false,
+      "max": 120,
+      "wrap_width": 32
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Cosy v1 vs v2 Feature Matrix",
+      "v1_label": "v1.x",
+      "v2_label": "v2.0",
+      "f1_name": "Render Speed",
+      "f1_v1": "3000ms",
+      "f1_v2": "150ms",
+      "f2_name": "Memory Usage",
+      "f2_v1": "300MB",
+      "f2_v2": "20MB",
+      "f3_name": "Templates",
+      "f3_v1": "18",
+      "f3_v2": "149",
+      "f4_name": "Dependencies",
+      "f4_v1": "Chromium",
+      "f4_v2": "None"
+    }
+  ]
+}

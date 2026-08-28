@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.bg_color | default('#1e1e2e') }}"/>
+      <stop offset="100%" stop-color="{{ brand.bg_color_end | default('#11111b') }}"/>
+    </linearGradient>
+    <linearGradient id="acc-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
+    </linearGradient>
+    <linearGradient id="acc-grad-h" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="75%" cy="25%" r="55%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <circle cx="20" cy="20" r="1.5" fill="#ffffff" opacity="0.06"/>
+    </pattern>
+  </defs>
+{% if bg_image_data_uri %}
+  <image href="{{ bg_image_data_uri }}" width="1200" height="630" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
+  {% endif %}
+  <rect width="1200" height="630" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect width="1200" height="630" fill="url(#dots)"/>
+  <text x="600" y="60" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="22" font-weight="700" fill="#cdd6f4">{{ slide.title }}</text>
+  {% set is_critical = slide.severity == 'critical' or slide.severity == 'CRITICAL' %}
+  {% set is_warning = slide.severity == 'warning' or slide.severity == 'WARNING' %}
+  <rect x="{% if is_critical %}980{% elif is_warning %}990{% else %}1000{% endif %}" y="40" width="{% if is_critical %}140{% elif is_warning %}130{% else %}120{% endif %}" height="36" rx="20" fill="{% if is_critical %}#f38ba8{% elif is_warning %}#f9e2af{% else %}#a6e3a1{% endif %}" opacity="0.15"/>
+  <text x="1060" y="64" text-anchor="middle" font-family="Inter,sans-serif" font-size="16" font-weight="600" fill="{% if is_critical %}#f38ba8{% elif is_warning %}#f9e2af{% else %}#a6e3a1{% endif %}">{{ slide.severity }}</text>
+  <text x="100" y="130" font-family="Inter,sans-serif" font-size="20" fill="#7f849c">Review by</text>
+  <text x="210" y="130" font-family="Space Grotesk,sans-serif" font-size="20" font-weight="700" fill="url(#acc-grad)">{{ slide.reviewer }}</text>
+  <rect x="80" y="160" width="1040" height="40" rx="12" fill="#313244" opacity="0.2"/>
+  <text x="110" y="187" font-family="JetBrains Mono,monospace" font-size="18" fill="#89b4fa">{{ slide.file }}<tspan fill="#7f849c"> : </tspan><tspan fill="#cdd6f4">L{{ slide.line }}</tspan></text>
+  <text x="100" y="270" font-family="Inter,sans-serif" font-size="24" fill="#cdd6f4">
+{% for line in comment_lines %}    <tspan x="100" dy="{% if loop.first %}0{% else %}34{% endif %}">{{ line }}</tspan>{% endfor %}
+    {% if not comment_lines %}<tspan x="100">{{ slide.comment }}</tspan>{% endif %}
+  </text>
+  {% if slide.suggestion %}
+  <rect x="80" y="460" width="1040" height="70" rx="12" fill="#0c0c14" opacity="0.85"/>
+  <text x="110" y="488" font-family="JetBrains Mono,monospace" font-size="14" fill="#7f849c">// suggested fix</text>
+  <text x="110" y="515" font-family="JetBrains Mono,monospace" font-size="18" fill="#a6e3a1">{{ slide.suggestion }}</text>
+  {% endif %}
+  {% if brand.show_brand %}
+  <text x="600" y="600" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
+</svg>

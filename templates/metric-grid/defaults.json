@@ -1,0 +1,24 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Platform Metrics",
+      "metric1_value": "131K",
+      "metric1_label": "Renders this month",
+      "metric2_value": "150ms",
+      "metric2_label": "Avg render time",
+      "metric3_value": "99.9%",
+      "metric3_label": "API uptime",
+      "metric4_value": "149",
+      "metric4_label": "Active templates"
+    }
+  ]
+}

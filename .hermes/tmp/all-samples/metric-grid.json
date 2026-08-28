@@ -1,0 +1,23 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Sample Title",
+      "metric1_value": "Sample metric1 value",
+      "metric1_label": "Sample metric1 label",
+      "metric2_value": "Sample metric2 value",
+      "metric2_label": "Sample metric2 label",
+      "metric3_value": "Sample metric3 value",
+      "metric3_label": "Sample metric3 label",
+      "metric4_value": "Sample metric4 value",
+      "metric4_label": "Sample metric4 label"
+    }
+  ]
+}

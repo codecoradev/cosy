@@ -1,0 +1,23 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Optimize render pipeline",
+      "filename": "src/renderer.rs",
+      "add_line1": "let svg = build_svg(tpl, data)?;",
+      "add_line2": "let png = resvg::render(svg)?;",
+      "del_line1": "let html = render_html(tpl, data)?;",
+      "del_line2": "let png = browser.screenshot(html)?;",
+      "additions": "24",
+      "deletions": "18"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "version": "v1.0.0",
+      "title": "First Stable Release",
+      "date": "2026-08-13",
+      "changelog1": "Added 88 production-ready templates",
+      "changelog2": "CLI and REST API support",
+      "changelog3": "Multi-arch Docker images"
+    }
+  ]
+}

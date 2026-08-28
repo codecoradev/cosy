@@ -1,0 +1,24 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "question": "Sample question",
+      "option_a": "Sample option a",
+      "option_a_pct": "Sample opt",
+      "option_b": "Sample option b",
+      "option_b_pct": "Sample opt",
+      "option_c": "Sample option c",
+      "option_c_pct": "Sample opt",
+      "option_d": "Sample option d",
+      "option_d_pct": "Sample opt",
+      "total_votes": "Sample total votes"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Cosy Dev Settings",
+      "key1": "rust-analyzer.checkOnSave",
+      "value1": "clippy",
+      "key2": "editor.formatOnSave",
+      "value2": "true",
+      "key3": "rust-analyzer.cargo.features",
+      "value3": "all"
+    }
+  ]
+}

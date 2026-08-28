@@ -1,0 +1,22 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "TLS Certificate",
+      "domain": "*.ajianaz.dev",
+      "issuer": "Let us Encrypt R3",
+      "valid_from": "2026-08-01",
+      "valid_to": "2026-11-01",
+      "serial": "04:8e:72:a1:9f:3b",
+      "algo": "RSA-2048",
+      "status": "valid"
+    }
+  ]
+}

@@ -11,6 +11,12 @@
     "JetBrains Mono"
   ],
   "brand_fields": {
+    "show_brand": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Show brand name/handle watermark at bottom. Default: false."
+    },
     "brand_name": {
       "type": "text",
       "required": true,
@@ -63,7 +69,7 @@
       "type": "text",
       "required": true,
       "max": 500,
-      "wrap_width": 45
+      "wrap_width": 50
     },
     "language": {
       "type": "text",

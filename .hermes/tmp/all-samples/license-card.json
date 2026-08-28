@@ -1,0 +1,22 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "license_name": "Sample license name",
+      "license_spdx": "Sample license ",
+      "description": "A descriptive text that demonstrates how this template looks with real content.",
+      "permissions": "Sample permissions",
+      "conditions": "Sample conditions",
+      "limitations": "Sample limitations",
+      "copyright_year": "Sample cop",
+      "copyright_holder": "Sample copyright holder"
+    }
+  ]
+}

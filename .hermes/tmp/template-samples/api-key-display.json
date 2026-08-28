@@ -1,0 +1,20 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Your API Key",
+      "key_prefix": "cosy_",
+      "key_body": "sk_live_8472aJ1an4z",
+      "created": "2026-08-13",
+      "permissions": "read:write",
+      "last_used": "2 hours ago"
+    }
+  ]
+}

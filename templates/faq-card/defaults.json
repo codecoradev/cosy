@@ -1,0 +1,17 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "question": "Do I need Chromium or a browser installed to use Cosy?",
+      "answer": "No. Cosy renders SVG directly to PNG using the resvg engine in pure Rust. No headless browser, no Node.js, no external dependencies beyond a single binary."
+    }
+  ]
+}

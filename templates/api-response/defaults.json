@@ -1,0 +1,25 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Template Render Response",
+      "status_code": "200 OK",
+      "key1": "render_id",
+      "value1": "rdr_8f3a2b1c",
+      "key2": "status",
+      "value2": "completed",
+      "key3": "output_url",
+      "value3": "cdn.ajianaz.dev/r/8f3a.png",
+      "key4": "render_ms",
+      "value4": "142"
+    }
+  ]
+}

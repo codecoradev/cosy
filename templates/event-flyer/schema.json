@@ -1,0 +1,102 @@
+{
+  "id": "event-flyer",
+  "name": "Event Flyer",
+  "description": "Event flyer with date, location, and speaker info",
+  "dimensions": {
+    "width": 1080,
+    "height": 1350
+  },
+  "fonts": [
+    "Inter",
+    "Space Grotesk"
+  ],
+  "brand_fields": {
+    "show_brand": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Show brand name/handle watermark at bottom. Default: false."
+    },
+    "brand_name": {
+      "type": "text",
+      "required": true,
+      "max": 30
+    },
+    "brand_handle": {
+      "type": "text",
+      "required": false,
+      "max": 30
+    },
+    "bg_color": {
+      "type": "bg",
+      "required": false,
+      "default": "#1e1e2e"
+    },
+    "bg_color_end": {
+      "type": "bg",
+      "required": false,
+      "default": "#11111b"
+    },
+    "accent_color": {
+      "type": "bg",
+      "required": false,
+      "default": "#cba6f7"
+    },
+    "accent_color_end": {
+      "type": "bg",
+      "required": false,
+      "default": "#89b4fa"
+    },
+    "bg_image": {
+      "type": "image",
+      "required": false,
+      "description": "Background image path (PNG/JPG/WebP)."
+    },
+    "bg_image_opacity": {
+      "type": "number",
+      "required": false,
+      "default": 0.15,
+      "description": "Opacity of background image (0.0-1.0)."
+    },
+    "logo": {
+      "type": "image",
+      "required": false,
+      "description": "Brand logo path (PNG/SVG)."
+    }
+  },
+  "slide_fields": {
+    "event_name": {
+      "type": "text",
+      "required": true,
+      "max": 80,
+      "wrap_width": 20
+    },
+    "date": {
+      "type": "text",
+      "required": true,
+      "max": 40
+    },
+    "time": {
+      "type": "text",
+      "required": false,
+      "max": 30
+    },
+    "location": {
+      "type": "text",
+      "required": true,
+      "max": 60,
+      "wrap_width": 30
+    },
+    "speaker": {
+      "type": "text",
+      "required": false,
+      "max": 50
+    },
+    "description": {
+      "type": "text",
+      "required": false,
+      "max": 200,
+      "wrap_width": 40
+    }
+  }
+}

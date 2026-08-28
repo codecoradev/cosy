@@ -1,0 +1,19 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Manual vs Automated",
+      "before_label": "Before",
+      "before_text": "Open Figma, design from scratch, export, repeat for every post",
+      "after_label": "After",
+      "after_text": "JSON in, PNG out. 200ms per image. No design skills needed."
+    }
+  ]
+}

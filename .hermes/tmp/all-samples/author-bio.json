@@ -1,0 +1,20 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "name": "Sample Name",
+      "role": "Sample role",
+      "bio": "Sample bio",
+      "tag1": "Sample tag1",
+      "tag2": "Sample tag2",
+      "tag3": "Sample tag3"
+    }
+  ]
+}

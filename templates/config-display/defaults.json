@@ -1,0 +1,28 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Cosy Configuration",
+      "k1": "render_engine",
+      "v1": "resvg",
+      "k2": "output_format",
+      "v2": "png",
+      "k3": "max_width",
+      "v3": "2400",
+      "k4": "default_quality",
+      "v4": "95",
+      "k5": "template_dir",
+      "v5": "templates/",
+      "k6": "concurrency",
+      "v6": "32"
+    }
+  ]
+}

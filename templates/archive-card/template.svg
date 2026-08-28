@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350" viewBox="0 0 1080 1350">
+  <defs>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.bg_color | default('#1e1e2e') }}"/>
+      <stop offset="100%" stop-color="{{ brand.bg_color_end | default('#11111b') }}"/>
+    </linearGradient>
+    <linearGradient id="acc-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
+    </linearGradient>
+    <linearGradient id="acc-grad-h" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="75%" cy="25%" r="55%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <circle cx="20" cy="20" r="1.5" fill="#ffffff" opacity="0.06"/>
+    </pattern>
+  </defs>
+{% if bg_image_data_uri %}
+  <image href="{{ bg_image_data_uri }}" width="1080" height="1350" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
+  {% endif %}
+  <rect width="1080" height="1350" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
+  <rect width="1080" height="1350" fill="url(#glow)"/>
+  <rect width="1080" height="1350" fill="url(#dots)"/>
+  <rect x="80" y="410" width="220" height="54" rx="14" fill="url(#acc-grad)" opacity="0.12"/>
+  <text x="190" y="446" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="20" font-weight="700" fill="url(#acc-grad)">{{ slide.category }}</text>
+  <text x="80" y="550" font-family="Space Grotesk,sans-serif" font-size="40" font-weight="800" fill="#cdd6f4">{{ slide.title }}</text>
+  <rect x="80" y="595" width="920" height="2" rx="8" fill="url(#acc-grad-h)" opacity="0.2"/>
+  <text x="80" y="710" font-family="Inter,sans-serif" font-size="30" fill="#a6adc8">
+{% for line in description_lines %}    <tspan x="80" dy="{% if loop.first %}0{% else %}50{% endif %}">{{ line }}</tspan>{% endfor %}
+    {% if not description_lines %}<tspan x="80">{{ slide.description }}</tspan>{% endif %}
+  </text>
+  <rect x="80" y="1100" width="920" height="1" fill="#313244" opacity="0.15"/>
+  <text x="80" y="1170" font-family="Inter,sans-serif" font-size="22" fill="#7f849c">{{ slide.date }}  ·  {{ slide.read_time }} read</text>
+  {% if slide.author %}
+  <text x="1000" y="1170" text-anchor="end" font-family="Inter,sans-serif" font-size="22" font-weight="600" fill="#89b4fa">{{ slide.author }}</text>
+  {% endif %}
+  {% if brand.show_brand %}
+  <text x="540" y="1320" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
+</svg>

@@ -1,0 +1,21 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "product_name": "Cosy Image Engine",
+      "rating": "4.8",
+      "max_rating": "5",
+      "review_text": "We replaced our entire Puppeteer pipeline with Cosy. Renders are 20x faster and we no longer need to maintain a Chromium cluster. The template system is incredibly flexible.",
+      "reviewer": "Marcus Lee",
+      "source": "Product Hunt"
+    }
+  ]
+}

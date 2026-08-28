@@ -1,0 +1,26 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Image Render Benchmark",
+      "b1_name": "Cosy (Rust)",
+      "b1_ops": "12,400/s",
+      "b1_bar": 100,
+      "b2_name": "Node.js",
+      "b2_ops": "3,200/s",
+      "b2_bar": 26,
+      "b3_name": "Python",
+      "b3_ops": "1,800/s",
+      "b3_bar": 15,
+      "winner": "Cosy"
+    }
+  ]
+}

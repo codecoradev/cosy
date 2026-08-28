@@ -1,17 +1,18 @@
 {
   "brand": {
-    "brand_name": "CodeCora",
-    "brand_handle": "@codecoradev",
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
     "bg_color": "#1e1e2e",
     "bg_color_end": "#11111b",
     "accent_color": "#cba6f7",
-    "accent_color_end": "#89b4fa"
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
   },
   "slides": [
     {
       "quote": "Build things that solve real problems. Everything else is just noise.",
-      "author": "Anaz",
-      "author_title": "Founder, CodeCora"
+      "author": "ajianaz",
+      "author_title": "Founder, ajianaz"
     }
   ]
 }

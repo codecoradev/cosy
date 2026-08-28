@@ -1,0 +1,26 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Top Contributors",
+      "e1_name": "ajianaz",
+      "e1_score": "847",
+      "e2_name": "dev_ferry",
+      "e2_score": "312",
+      "e3_name": "rustacean",
+      "e3_score": "204",
+      "e4_name": "svg_ninja",
+      "e4_score": "156",
+      "e5_name": "pixel_art",
+      "e5_score": "98"
+    }
+  ]
+}

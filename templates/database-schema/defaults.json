@@ -1,0 +1,31 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "table_name": "templates",
+      "c1_name": "id",
+      "c1_type": "TEXT",
+      "c1_key": "PK",
+      "c2_name": "name",
+      "c2_type": "TEXT",
+      "c2_key": "UNQ",
+      "c3_name": "schema_json",
+      "c3_type": "JSON",
+      "c3_key": "",
+      "c4_name": "created_at",
+      "c4_type": "TIMESTAMP",
+      "c4_key": "",
+      "c5_name": "is_active",
+      "c5_type": "BOOLEAN",
+      "c5_key": ""
+    }
+  ]
+}

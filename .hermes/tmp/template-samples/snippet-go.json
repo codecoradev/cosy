@@ -1,0 +1,21 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Go HTTP Handler",
+      "filename": "main.go",
+      "line1": "func handler(w http.ResponseWriter, r *Request) {",
+      "line2": "    data := parseRequest(r)",
+      "line3": "    result := process(data)",
+      "line4": "    json.NewEncoder(w).Encode(result)",
+      "line5": "}"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Performance Before vs After",
+      "before_label": "Before (Browser)",
+      "before_value": "500ms",
+      "after_label": "After (Cosy)",
+      "after_value": "3ms",
+      "improvement": "166x faster",
+      "metric": "Average render time per image"
+    }
+  ]
+}

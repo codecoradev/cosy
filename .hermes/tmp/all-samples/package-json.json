@@ -1,0 +1,23 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Sample Title",
+      "dep1_name": "Sample dep1 name",
+      "dep1_version": "Sample dep1 ver",
+      "dep2_name": "Sample dep2 name",
+      "dep2_version": "Sample dep2 ver",
+      "dep3_name": "Sample dep3 name",
+      "dep3_version": "Sample dep3 ver",
+      "dep4_name": "Sample dep4 name",
+      "dep4_version": "Sample dep4 ver"
+    }
+  ]
+}

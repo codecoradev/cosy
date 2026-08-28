@@ -1,0 +1,22 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Shell Script",
+      "filename": "deploy.sh",
+      "line1": "#!/bin/bash",
+      "line2": "set -euo pipefail",
+      "line3": "echo \"Building project...\"",
+      "line4": "cargo build --release",
+      "line5": "echo \"Deploying to server...\"",
+      "line6": "scp target/release/app server:/opt/app"
+    }
+  ]
+}

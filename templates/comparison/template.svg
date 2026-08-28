@@ -22,23 +22,24 @@
   <rect width="1080" height="1350" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
   <rect width="1080" height="1350" fill="url(#glow)"/>
   <rect width="1080" height="1350" fill="url(#dots)"/>
-  <text x="540" y="130" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="44" font-weight="700" fill="#cdd6f4">
+  <text x="540" y="180" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="44" font-weight="700" fill="#cdd6f4">
     {% for line in title_lines %}<tspan x="540" dy="{% if loop.first %}0{% else %}54{% endif %}">{{ line }}</tspan>{% endfor %}
     {% if not title_lines %}<tspan x="540" dy="0">{{ slide.title }}</tspan>{% endif %}
   </text>
-  <line x1="540" y1="350" x2="540" y2="1150" stroke="#45475a" stroke-width="2"/>
+  <line x1="540" y1="390" x2="540" y2="1190" stroke="#45475a" stroke-width="2"/>
   <!-- Left: Before -->
-  <text x="270" y="420" text-anchor="middle" font-family="Inter,sans-serif" font-size="28" font-weight="600" fill="#6c7086">{{ slide.before_label | default('Before') }}</text>
-  <text x="270" y="560" text-anchor="middle" font-family="Inter,sans-serif" font-size="30" font-weight="400" fill="#7f849c">
-    {% for line in before_text_lines %}<tspan x="270" dy="{% if loop.first %}0{% else %}42{% endif %}">{{ line }}</tspan>{% endfor %}
+  <text x="270" y="580" text-anchor="middle" font-family="Inter,sans-serif" font-size="28" font-weight="600" fill="#a6adc8">{{ slide.before_label | default('Before') }}</text>
+  <text x="270" y="780" text-anchor="middle" font-family="Inter,sans-serif" font-size="30" font-weight="400" fill="#a6adc8">
+    {% set bn = before_text_lines|length %}{% set pitch = [370 / (bn - 1), 150]|min|int if bn > 1 else 0 %}{% for line in before_text_lines %}<tspan x="270" dy="{{ 0 if loop.first else pitch }}">{{ line }}</tspan>{% endfor %}
   </text>
   <!-- Right: After -->
-  <rect x="810" y="380" width="160" height="6" rx="3" fill="url(#acc-grad)"/>
-  <text x="810" y="420" text-anchor="middle" font-family="Inter,sans-serif" font-size="28" font-weight="600" fill="{{ brand.accent_color | default('#cba6f7') }}">{{ slide.after_label | default('After') }}</text>
-  <text x="810" y="560" text-anchor="middle" font-family="Inter,sans-serif" font-size="30" font-weight="400" fill="#cdd6f4">
-    {% for line in after_text_lines %}<tspan x="810" dy="{% if loop.first %}0{% else %}42{% endif %}">{{ line }}</tspan>{% endfor %}
+  <text x="810" y="580" text-anchor="middle" font-family="Inter,sans-serif" font-size="28" font-weight="600" fill="{{ brand.accent_color | default('#cba6f7') }}">{{ slide.after_label | default('After') }}</text>
+  <text x="810" y="780" text-anchor="middle" font-family="Inter,sans-serif" font-size="30" font-weight="400" fill="#cdd6f4">
+    {% set an = after_text_lines|length %}{% set apitch = [370 / (an - 1), 150]|min|int if an > 1 else 0 %}{% for line in after_text_lines %}<tspan x="810" dy="{{ 0 if loop.first else apitch }}">{{ line }}</tspan>{% endfor %}
   </text>
-  <text x="540" y="1280" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="400" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% if brand.show_brand %}
+  <text x="540" y="1320" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
   <circle cx="1000" cy="80" r="180" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
   {% if logo_data_uri %}
   <image href="{{ logo_data_uri }}" x="952" y="1222" height="48" preserveAspectRatio="xMidYMid meet"/>

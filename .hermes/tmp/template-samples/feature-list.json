@@ -1,0 +1,24 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Why Choose Cosy",
+      "subtitle": "Fast, reliable, and developer-friendly image generation",
+      "f1_title": "Lightning Fast",
+      "f1_desc": "Renders SVG to PNG in milliseconds using Rust",
+      "f2_title": "58+ Templates",
+      "f2_desc": "Pre-built templates for social media, blogs, and more",
+      "f3_title": "Self-Hosted",
+      "f3_desc": "Run on your own infrastructure with full control",
+      "f4_title": "No Browser Needed",
+      "f4_desc": "Pure Rust rendering, no headless Chrome required"
+    }
+  ]
+}

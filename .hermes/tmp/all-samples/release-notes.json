@@ -1,0 +1,21 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "version": "Sample version",
+      "date": "Aug 13, 2026",
+      "new1": "Sample new1",
+      "new2": "Sample new2",
+      "new3": "Sample new3",
+      "fix1": "Sample fix1",
+      "fix2": "Sample fix2"
+    }
+  ]
+}

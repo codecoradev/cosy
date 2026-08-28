@@ -22,8 +22,10 @@
   <rect width="1200" height="675" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
   <rect width="1200" height="675" fill="url(#glow)"/>
   <rect width="1200" height="675" fill="url(#dots)"/>
-  <rect x="80" y="80" width="6" height="80" rx="3" fill="url(#acc-grad)"/>
-  <text x="110" y="120" font-family="Inter,sans-serif" font-size="28" font-weight="600" fill="{{ brand.accent_color | default('#cba6f7') }}">{{ brand.brand_name | default('') }}</text>
+  <rect x="80" y="80" width="6" height="80" rx="8" fill="url(#acc-grad)"/>
+  {% if brand.show_brand %}
+  <text x="600" y="645" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}{% if brand.brand_handle %} · {{ brand.brand_handle }}{% endif %}</text>
+  {% endif %}
   <text x="80" y="280" font-family="Space Grotesk,sans-serif" font-size="42" font-weight="700" fill="#cdd6f4">
     {% for line in quote_lines %}<tspan x="80" dy="{% if loop.first %}0{% else %}55{% endif %}">{{ line }}</tspan>{% endfor %}
     {% if not quote_lines %}<tspan x="80" dy="0">{{ slide.quote }}</tspan>{% endif %}

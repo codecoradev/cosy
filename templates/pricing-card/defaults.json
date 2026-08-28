@@ -1,0 +1,24 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "tier_name": "Pro",
+      "price": "$29",
+      "period": "/month",
+      "feature1": "50,000 renders / month",
+      "feature2": "All templates included",
+      "feature3": "Background image overlay",
+      "feature4": "Custom logo watermark",
+      "feature5": "Priority email support",
+      "cta_text": "Start Pro Trial"
+    }
+  ]
+}

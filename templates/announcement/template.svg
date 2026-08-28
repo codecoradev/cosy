@@ -23,10 +23,10 @@
   <rect width="1200" height="630" fill="url(#glow)"/>
   <rect width="1200" height="630" fill="url(#dots)"/>
   {% if slide.tag %}
-  <rect x="80" y="60" width="180" height="44" rx="22" fill="url(#acc-grad)" opacity="0.2"/>
+  <rect x="80" y="60" width="180" height="44" rx="20" fill="url(#acc-grad)" opacity="0.2"/>
   <text x="170" y="88" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="{{ brand.accent_color | default('#cba6f7') }}">{{ slide.tag }}</text>
   {% endif %}
-  <text x="80" y="260" font-family="Space Grotesk,sans-serif" font-size="46" font-weight="700" fill="#cdd6f4">
+  <text x="80" y="260" font-family="Space Grotesk,sans-serif" font-size="48" font-weight="700" fill="#cdd6f4">
     {% for line in headline_lines %}<tspan x="80" dy="{% if loop.first %}0{% else %}56{% endif %}">{{ line }}</tspan>{% endfor %}
     {% if not headline_lines %}<tspan x="80" dy="0">{{ slide.headline }}</tspan>{% endif %}
   </text>
@@ -38,7 +38,9 @@
   {% if slide.date %}
   <text x="1120" y="580" text-anchor="end" font-family="Inter,sans-serif" font-size="20" font-weight="400" fill="#7f849c">{{ slide.date }}</text>
   {% endif %}
-  <text x="80" y="580" font-family="Inter,sans-serif" font-size="22" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% if brand.show_brand %}
+  <text x="600" y="600" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
   <circle cx="1120" cy="80" r="105" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
   {% if logo_data_uri %}
   <image href="{{ logo_data_uri }}" x="1072" y="502" height="48" preserveAspectRatio="xMidYMid meet"/>

@@ -1,0 +1,21 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Get User Profile",
+      "method": "GET",
+      "path": "/api/v1/users/{id}",
+      "description": "Retrieve detailed user profile including avatar, bio, and recent activity stats.",
+      "auth": "Bearer JWT",
+      "response_code": "200",
+      "response_desc": "User profile object with all fields"
+    }
+  ]
+}

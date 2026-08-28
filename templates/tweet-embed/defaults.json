@@ -1,0 +1,19 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "name": "ajianaz",
+      "handle": "@ajianaz",
+      "tweet": "Just shipped Cosy v2.0. JSON to PNG in 150ms with pure Rust. No Chromium, no Puppeteer, no 300MB memory bills. 149 templates and a schema-driven API. This is the way.",
+      "date": "Aug 1, 2026"
+    }
+  ]
+}

@@ -25,15 +25,17 @@
   {% if slide.episode_num %}
   <text x="200" y="150" font-family="JetBrains Mono,monospace" font-size="24" font-weight="700" fill="{{ brand.accent_color | default('#cba6f7') }}">{{ slide.episode_num }}</text>
   {% endif %}
-  <rect x="200" y="190" width="120" height="8" rx="4" fill="url(#acc-grad)"/>
-  <text x="200" y="520" font-family="Inter,sans-serif" font-size="22" font-weight="800" fill="#cdd6f4">
-    {% for line in title_lines %}<tspan x="200" dy="{% if loop.first %}0{% else %}170{% endif %}">{{ line }}</tspan>{% endfor %}
+  <rect x="200" y="190" width="120" height="8" rx="8" fill="url(#acc-grad)"/>
+  <text x="200" y="520" font-family="Inter,sans-serif" font-size="28" font-weight="800" fill="#cdd6f4">
+    {% for line in title_lines %}<tspan x="200" dy="{% if loop.first %}0{% else %}56{% endif %}">{{ line }}</tspan>{% endfor %}
     {% if not title_lines %}<tspan x="200" dy="0">{{ slide.title }}</tspan>{% endif %}
   </text>
   {% if slide.guest %}
   <text x="200" y="900" font-family="Inter,sans-serif" font-size="22" font-weight="600" fill="#a6adc8">with {{ slide.guest }}</text>
   {% endif %}
-  <text x="2800" y="1000" text-anchor="end" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% if brand.show_brand %}
+  <text x="540" y="1050" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
   <circle cx="1000" cy="80" r="180" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
   {% if logo_data_uri %}
   <image href="{{ logo_data_uri }}" x="952" y="952" height="48" preserveAspectRatio="xMidYMid meet"/>

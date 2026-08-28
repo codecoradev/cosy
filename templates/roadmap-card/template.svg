@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+  <defs>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.bg_color | default('#1e1e2e') }}"/>
+      <stop offset="100%" stop-color="{{ brand.bg_color_end | default('#11111b') }}"/>
+    </linearGradient>
+    <linearGradient id="acc-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
+    </linearGradient>
+    <linearGradient id="acc-grad-h" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="75%" cy="25%" r="55%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <circle cx="20" cy="20" r="1.5" fill="#ffffff" opacity="0.06"/>
+    </pattern>
+  </defs>
+{% if bg_image_data_uri %}
+  <image href="{{ bg_image_data_uri }}" width="1080" height="1080" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
+  {% endif %}
+  <rect width="1080" height="1080" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
+  <rect width="1080" height="1080" fill="url(#glow)"/>
+  <rect width="1080" height="1080" fill="url(#dots)"/>
+  <text x="540" y="130" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="44" font-weight="700" fill="#cdd6f4">
+{% for line in title_lines %}    <tspan x="540" dy="{% if loop.first %}0{% else %}54{% endif %}">{{ line }}</tspan>{% endfor %}
+    {% if not title_lines %}<tspan x="540">{{ slide.title }}</tspan>{% endif %}
+  </text>
+  <line x1="160" y1="560" x2="920" y2="560" stroke="url(#acc-grad-h)" stroke-width="5" opacity="0.3"/>
+  {% set phases = [
+    (slide.phase1, slide.phase1_status),
+    (slide.phase2, slide.phase2_status),
+    (slide.phase3, slide.phase3_status),
+    (slide.phase4, slide.phase4_status)
+  ] %}
+  {% set xs = [195, 435, 675, 915] %}
+  {% for ph in phases %}
+  {% if ph[0] %}
+  {% set cx = xs[loop.index0] %}
+  <circle cx="{{ cx }}" cy="560" r="36" fill="url(#acc-grad)" opacity="0.2"/>
+  <circle cx="{{ cx }}" cy="560" r="18" fill="url(#acc-grad)"/>
+  <text x="{{ cx }}" y="470" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="22" font-weight="700" fill="#cdd6f4">{{ ph[0] }}</text>
+  <text x="{{ cx }}" y="665" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="500" fill="url(#acc-grad)">{{ ph[1] }}</text>
+  {% endif %}
+  {% endfor %}
+  <text x="195" y="740" text-anchor="middle" font-family="Inter,sans-serif" font-size="16" font-weight="400" fill="#7f849c">Q1</text>
+  <text x="435" y="740" text-anchor="middle" font-family="Inter,sans-serif" font-size="16" font-weight="400" fill="#7f849c">Q2</text>
+  <text x="675" y="740" text-anchor="middle" font-family="Inter,sans-serif" font-size="16" font-weight="400" fill="#7f849c">Q3</text>
+  <text x="915" y="740" text-anchor="middle" font-family="Inter,sans-serif" font-size="16" font-weight="400" fill="#7f849c">Q4</text>
+  {% if brand.show_brand %}
+  <text x="540" y="1050" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
+  {% if logo_data_uri %}
+  <image href="{{ logo_data_uri }}" x="952" y="1012" height="48" preserveAspectRatio="xMidYMid meet"/>
+  {% endif %}
+</svg>

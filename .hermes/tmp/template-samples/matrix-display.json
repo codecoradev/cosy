@@ -1,0 +1,30 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Framework Comparison",
+      "col1": "Speed",
+      "col2": "Memory",
+      "col3": "DX",
+      "r1_label": "Rust",
+      "r1c1": "A+",
+      "r1c2": "A",
+      "r1c3": "B",
+      "r2_label": "Go",
+      "r2c1": "A",
+      "r2c2": "A+",
+      "r2c3": "A",
+      "r3_label": "Python",
+      "r3c1": "C",
+      "r3c2": "B",
+      "r3c3": "A+"
+    }
+  ]
+}

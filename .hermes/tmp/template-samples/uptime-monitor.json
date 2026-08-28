@@ -1,0 +1,24 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "System Status",
+      "overall_uptime": "99.98%",
+      "s1_name": "API Gateway",
+      "s1_status": "up",
+      "s2_name": "Database",
+      "s2_status": "up",
+      "s3_name": "Redis Cache",
+      "s3_status": "up",
+      "s4_name": "Queue Worker",
+      "s4_status": "down"
+    }
+  ]
+}

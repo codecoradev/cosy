@@ -1,0 +1,23 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "TLS Certificate",
+      "domain": "api.ajianaz.dev",
+      "issuer": "Let's Encrypt R3",
+      "valid_from": "Aug 01, 2026",
+      "valid_to": "Oct 30, 2026",
+      "serial": "04:8A:F2:3B:1C:9D",
+      "algo": "ECDSA-SHA256",
+      "status": "Valid"
+    }
+  ]
+}

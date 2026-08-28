@@ -1,0 +1,24 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Why Cosy",
+      "f1_title": "Blazing Fast",
+      "f1_desc": "150ms average render time with pure Rust",
+      "f2_title": "Zero Dependencies",
+      "f2_desc": "Single binary, no Chromium or Node needed",
+      "f3_title": "Schema Driven",
+      "f3_desc": "149 templates with JSON validation built in",
+      "f4_title": "Brand Ready",
+      "f4_desc": "Custom colors, logos, and background images"
+    }
+  ]
+}

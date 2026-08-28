@@ -1,0 +1,25 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Rust async render handler",
+      "language": "rust",
+      "line1": "pub async fn render_template(",
+      "line2": "    data: RenderRequest,",
+      "line3": ") -> Result, AppError {",
+      "line4": "    let svg = build_svg(data.template, data.fields)?;",
+      "line5": "    let png = resvg::render(svg, opts)?;",
+      "line6": "    Ok(RenderResponse { png })",
+      "line7": "}",
+      "line8": ""
+    }
+  ]
+}

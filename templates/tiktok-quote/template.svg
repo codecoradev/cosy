@@ -26,9 +26,11 @@
     {% for line in quote_lines %}<tspan x="540" dy="{% if loop.first %}0{% else %}72{% endif %}">{{ line }}</tspan>{% endfor %}
     {% if not quote_lines %}<tspan x="540" dy="0">{{ slide.quote }}</tspan>{% endif %}
   </text>
-  <rect x="440" y="1050" width="200" height="6" rx="3" fill="url(#acc-grad)"/>
+  <rect x="440" y="1050" width="200" height="6" rx="8" fill="url(#acc-grad)"/>
   <text x="540" y="1120" text-anchor="middle" font-family="Inter,sans-serif" font-size="32" font-weight="600" fill="{{ brand.accent_color | default('#cba6f7') }}">{{ slide.author }}</text>
-  <text x="540" y="1250" text-anchor="middle" font-family="Inter,sans-serif" font-size="24" font-weight="400" fill="#7f849c">{{ brand.brand_name | default('') }} · {{ brand.brand_handle | default('') }}</text>
+  {% if brand.show_brand %}
+  <text x="540" y="1320" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }} · {{ brand.brand_handle | default('') }}</text>
+  {% endif %}
   <circle cx="1000" cy="80" r="180" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
   {% if logo_data_uri %}
   <image href="{{ logo_data_uri }}" x="952" y="1222" height="48" preserveAspectRatio="xMidYMid meet"/>

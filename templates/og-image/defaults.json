@@ -1,17 +1,19 @@
 {
   "brand": {
-    "brand_name": "CodeCora",
+    "brand_name": "ajianaz",
     "bg_color": "#1e1e2e",
     "bg_color_end": "#11111b",
     "accent_color": "#cba6f7",
-    "accent_color_end": "#89b4fa"
+    "accent_color_end": "#89b4fa",
+    "brand_handle": "@ajianaz",
+    "show_brand": false
   },
   "slides": [
     {
       "title": "Building Cosy: A Template-Based Image Generation Tool in Rust",
       "subtitle": "How we use SVG templates, minijinja, and resvg to generate branded visuals from JSON",
-      "author": "Anaz",
-      "url": "blog.codecora.dev"
+      "author": "ajianaz",
+      "url": "blog.ajianaz.dev"
     }
   ]
 }

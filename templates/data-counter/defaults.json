@@ -1,0 +1,24 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Cosy Platform Stats",
+      "m1_value": "149",
+      "m1_label": "Templates",
+      "m2_value": "131K",
+      "m2_label": "Renders / month",
+      "m3_value": "150ms",
+      "m3_label": "Avg render time",
+      "m4_value": "99.9%",
+      "m4_label": "Uptime SLA"
+    }
+  ]
+}

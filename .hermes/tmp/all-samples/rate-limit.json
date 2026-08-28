@@ -1,0 +1,21 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "API Rate Limit",
+      "remaining": "847",
+      "limit": "1000",
+      "used": "153",
+      "used_pct": "15",
+      "plan": "Pro",
+      "reset": "12m 34s"
+    }
+  ]
+}

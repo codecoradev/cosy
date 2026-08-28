@@ -1,0 +1,26 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Cosy Makefile",
+      "t1_name": "build",
+      "t1_desc": "cargo build --release",
+      "t2_name": "run",
+      "t2_desc": "Run the API server on port 3000",
+      "t3_name": "test",
+      "t3_desc": "Run all unit and integration tests",
+      "t4_name": "lint",
+      "t4_desc": "Run clippy with strict flags",
+      "t5_name": "docker",
+      "t5_desc": "Build and tag Docker image"
+    }
+  ]
+}

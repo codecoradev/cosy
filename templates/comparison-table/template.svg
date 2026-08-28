@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+  <defs>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.bg_color | default('#1e1e2e') }}"/>
+      <stop offset="100%" stop-color="{{ brand.bg_color_end | default('#11111b') }}"/>
+    </linearGradient>
+    <linearGradient id="acc-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
+    </linearGradient>
+    <linearGradient id="acc-grad-h" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="75%" cy="25%" r="55%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <circle cx="20" cy="20" r="1.5" fill="#ffffff" opacity="0.06"/>
+    </pattern>
+  </defs>
+{% if bg_image_data_uri %}
+  <image href="{{ bg_image_data_uri }}" width="1080" height="1080" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
+  {% endif %}
+  <rect width="1080" height="1080" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
+  <rect width="1080" height="1080" fill="url(#glow)"/>
+  <rect width="1080" height="1080" fill="url(#dots)"/>
+  <text x="540" y="120" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="44" font-weight="700" fill="#cdd6f4">
+{% for line in title_lines %}    <tspan x="540" dy="{% if loop.first %}0{% else %}54{% endif %}">{{ line }}</tspan>{% endfor %}
+    {% if not title_lines %}<tspan x="540">{{ slide.title }}</tspan>{% endif %}
+  </text>
+  <!-- Header row -->
+  <rect x="80" y="220" width="920" height="70" rx="12" fill="#313244" opacity="0.6"/>
+  <text x="300" y="263" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="28" font-weight="700" fill="#a6adc8">Feature</text>
+  <text x="600" y="263" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="28" font-weight="700" fill="url(#acc-grad)">{{ slide.option_a_name }}</text>
+  <text x="880" y="263" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="28" font-weight="700" fill="#89dceb">{{ slide.option_b_name }}</text>
+  <!-- Rows -->
+  {% set rows = [
+    (slide.row1_label, slide.row1_a, slide.row1_b),
+    (slide.row2_label, slide.row2_a, slide.row2_b),
+    (slide.row3_label, slide.row3_a, slide.row3_b),
+    (slide.row4_label, slide.row4_a, slide.row4_b)
+  ] %}
+  {% for row in rows %}
+  {% if row[0] %}
+  {% set ry = 320 + loop.index0 * 130 %}
+  {% if loop.index is divisibleby 2 %}
+  <rect x="80" y="{{ ry - 10 }}" width="920" height="120" rx="12" fill="#313244" opacity="0.25"/>
+  {% endif %}
+  <text x="300" y="{{ ry + 50 }}" text-anchor="middle" font-family="Inter,sans-serif" font-size="24" font-weight="600" fill="#cdd6f4">{{ row[0] }}</text>
+  <text x="600" y="{{ ry + 50 }}" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="500" fill="#a6adc8">{{ row[1] }}</text>
+  <text x="880" y="{{ ry + 50 }}" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="500" fill="#a6adc8">{{ row[2] }}</text>
+  {% endif %}
+  {% endfor %}
+  <line x1="440" y1="230" x2="440" y2="{{ 320 + 4 * 130 }}" stroke="#45475a" stroke-width="1" opacity="0.5"/>
+  <line x1="740" y1="230" x2="740" y2="{{ 320 + 4 * 130 }}" stroke="#45475a" stroke-width="1" opacity="0.5"/>
+  {% if brand.show_brand %}
+  <text x="540" y="1050" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
+  {% if logo_data_uri %}
+  <image href="{{ logo_data_uri }}" x="952" y="1012" height="48" preserveAspectRatio="xMidYMid meet"/>
+  {% endif %}
+</svg>

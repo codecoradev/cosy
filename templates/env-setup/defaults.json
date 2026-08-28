@@ -1,0 +1,21 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "title": "Local Development Setup",
+      "step1": "git clone github.com/codecoradev/cosy",
+      "step2": "cd cosy",
+      "step3": "cargo build --release",
+      "step4": "cp .env.example .env",
+      "step5": "Set COSY_API_KEY in .env"
+    }
+  ]
+}

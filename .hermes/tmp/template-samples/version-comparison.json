@@ -1,0 +1,29 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Cosy Version Comparison",
+      "v1_label": "v0.9.0",
+      "v2_label": "v1.0.0",
+      "f1_name": "Templates",
+      "f1_v1": "18 templates",
+      "f1_v2": "98 templates",
+      "f2_name": "API",
+      "f2_v1": "Basic",
+      "f2_v2": "REST + Auth",
+      "f3_name": "Docker",
+      "f3_v1": "Single arch",
+      "f3_v2": "Multi-arch",
+      "f4_name": "Tests",
+      "f4_v1": "45 tests",
+      "f4_v2": "123 tests"
+    }
+  ]
+}
