@@ -38,14 +38,14 @@
   {% if q[0] %}
   {% set cy = 200 + loop.index0 * 370 %}
   <rect x="160" y="{{ cy - 80 }}" width="760" height="340" rx="20" fill="#313244" opacity="0.25"/>
-  <text x="220" y="{{ cy + 20 }}" font-size="60" fill="url(#acc-grad)" opacity="0.3">&#x26;</text>
+  <text x="220" y="{{ cy - 15 }}" font-size="60" fill="url(#acc-grad)" opacity="0.3">&#x26;</text>
   {% set ql = q[2] %}
   {% if ql %}
     {% for line in ql %}
-  <text x="220" y="{{ cy + 30 + loop.index0 * 38 }}" font-family="Inter,sans-serif" font-size="24" font-weight="500" fill="#cdd6f4">{{ line }}</text>
+  <text x="220" y="{{ cy + 55 + loop.index0 * 38 }}" font-family="Inter,sans-serif" font-size="24" font-weight="500" fill="#cdd6f4">{{ line }}</text>
     {% endfor %}
   {% else %}
-  <text x="220" y="{{ cy + 30 }}" font-family="Inter,sans-serif" font-size="24" font-weight="500" fill="#cdd6f4">{{ q[0] }}</text>
+  <text x="220" y="{{ cy + 55 }}" font-family="Inter,sans-serif" font-size="24" font-weight="500" fill="#cdd6f4">{{ q[0] }}</text>
   {% endif %}
   <rect x="220" y="{{ cy + 180 }}" width="80" height="2" fill="url(#acc-grad-h)"/>
   <text x="220" y="{{ cy + 210 }}" font-family="Space Grotesk,sans-serif" font-size="22" font-weight="700" fill="url(#acc-grad)">{{ q[1] }}</text>

@@ -28,17 +28,20 @@
   <rect width="1080" height="1080" fill="url(#dots)"/>
   <text x="540" y="80" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="32" font-weight="700" fill="#cdd6f4">{{ slide.title }}</text>
   {% set benchs = [(slide.b1_name, slide.b1_ops, slide.b1_bar), (slide.b2_name, slide.b2_ops, slide.b2_bar), (slide.b3_name, slide.b3_ops, slide.b3_bar)] %}
+  {% set ns = namespace(last_bottom = 660) %}
   {% for b in benchs %}
   {% if b[0] %}
   <text x="100" y="{{ 200 + loop.index0 * 200 }}" font-family="Space Grotesk,sans-serif" font-size="26" font-weight="600" fill="#cdd6f4">{{ b[0] }}</text>
   <text x="980" y="{{ 200 + loop.index0 * 200 }}" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="26" font-weight="700" fill="url(#acc-grad)">{{ b[1] }}</text>
   <rect x="100" y="{{ 220 + loop.index0 * 200 }}" width="880" height="40" rx="20" fill="#313244" opacity="0.15"/>
   <rect x="100" y="{{ 220 + loop.index0 * 200 }}" width="{{ (b[2] | float) * 880 / 100 }}" height="40" rx="20" fill="url(#acc-grad-h)" opacity="0.5"/>
+  {% set ns.last_bottom = 260 + loop.index0 * 200 %}
   {% endif %}
   {% endfor %}
   {% if slide.winner %}
-  <rect x="300" y="850" width="480" height="60" rx="30" fill="#a6e3a1" opacity="0.1"/>
-  <text x="540" y="890" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="22" font-weight="700" fill="#a6e3a1">Winner: {{ slide.winner }}</text>
+  {% set wy = ns.last_bottom + 60 %}
+  <rect x="300" y="{{ wy }}" width="480" height="60" rx="30" fill="#a6e3a1" opacity="0.1"/>
+  <text x="540" y="{{ wy + 40 }}" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="22" font-weight="700" fill="#a6e3a1">Winner: {{ slide.winner }}</text>
   {% endif %}
   {% if brand.show_brand %}
   <text x="540" y="1050" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>

@@ -26,11 +26,11 @@
   <rect width="1200" height="630" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
   <rect width="1200" height="630" fill="url(#glow)"/>
   <rect width="1200" height="630" fill="url(#dots)"/>
-  <text x="600" y="65" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="24" font-weight="700" fill="#cdd6f4">Table: {{ slide.table_name }}</text>
+  <text x="600" y="65" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="24" font-weight="700" fill="#cdd6f4">Schema — {{ slide.table_name }}</text>
   <rect x="300" y="100" width="600" height="430" rx="12" fill="#313244" opacity="0.15"/>
   <rect x="300" y="100" width="600" height="50" rx="12" fill="url(#acc-grad)" opacity="0.2"/>
   <text x="350" y="132" font-family="JetBrains Mono,monospace" font-size="20" font-weight="700" fill="url(#acc-grad)">{{ slide.table_name }}</text>
-  <text x="350" y="132" font-family="JetBrains Mono,monospace" font-size="16" fill="#7f849c">  table</text>
+  <text x="860" y="132" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="16" fill="#7f849c">table</text>
   <line x1="320" y1="170" x2="880" y2="170" stroke="#313244" stroke-width="1" opacity="0.5"/>
   {% set cols = [(slide.c1_name, slide.c1_type, slide.c1_key), (slide.c2_name, slide.c2_type, slide.c2_key), (slide.c3_name, slide.c3_type, slide.c3_key), (slide.c4_name, slide.c4_type, slide.c4_key), (slide.c5_name, slide.c5_type, slide.c5_key)] %}
   {% for c in cols %}

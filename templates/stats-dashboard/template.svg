@@ -37,7 +37,7 @@
   <rect x="{{ x }}" y="{{ y }}" width="380" height="320" rx="20" fill="#313244" opacity="0.12"/>
   <rect x="{{ x }}" y="{{ y }}" width="380" height="6" rx="8" fill="url(#acc-grad-h)" opacity="0.5"/>
   <text x="{{ x + 30 }}" y="{{ y + 60 }}" font-family="Inter,sans-serif" font-size="22" fill="#7f849c">{{ m[0] }}</text>
-  <text x="{{ x + 30 }}" y="{{ y + 160 }}" font-family="Space Grotesk,sans-serif" font-size="72" font-weight="800" fill="url(#acc-grad)">{{ m[1] }}</text>
+  <text x="{{ x + 30 }}" y="{{ y + 160 }}" font-family="Inter,sans-serif" font-size="72" font-weight="800" letter-spacing="2" fill="url(#acc-grad)">{{ m[1] }}</text>
   {% if m[2] %}
   {% set is_up = m[2][0] == '+' %}
   <text x="{{ x + 30 }}" y="{{ y + 220 }}" font-family="Inter,sans-serif" font-size="22" font-weight="600" fill="{% if is_up %}#a6e3a1{% else %}#f38ba8{% endif %}">{{ m[2] }}</text>

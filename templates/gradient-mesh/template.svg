@@ -19,29 +19,36 @@
     <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
       <circle cx="20" cy="20" r="1.5" fill="#ffffff" opacity="0.06"/>
     </pattern>
-    <radialGradient id="mesh1" cx="20%" cy="30%" r="40%">
-      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0.3"/>
+    <radialGradient id="mesh1" cx="14%" cy="12%" r="38%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0.38"/>
       <stop offset="100%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0"/>
     </radialGradient>
-    <radialGradient id="mesh2" cx="80%" cy="20%" r="35%">
-      <stop offset="0%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}" stop-opacity="0.25"/>
+    <radialGradient id="mesh2" cx="88%" cy="8%" r="36%">
+      <stop offset="0%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}" stop-opacity="0.32"/>
       <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}" stop-opacity="0"/>
     </radialGradient>
-    <radialGradient id="mesh3" cx="60%" cy="80%" r="45%">
-      <stop offset="0%" stop-color="#f9e2af" stop-opacity="0.1"/>
+    <radialGradient id="mesh3" cx="45%" cy="92%" r="48%">
+      <stop offset="0%" stop-color="#f9e2af" stop-opacity="0.16"/>
       <stop offset="100%" stop-color="#f9e2af" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="text-shade" cx="50%" cy="50%" r="52%">
+      <stop offset="0%" stop-color="#11111b" stop-opacity="0.45"/>
+      <stop offset="60%" stop-color="#11111b" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#11111b" stop-opacity="0"/>
     </radialGradient>
   </defs>
   <rect width="1080" height="1080" fill="url(#bg-grad)"/>
   <rect width="1080" height="1080" fill="url(#mesh1)"/>
   <rect width="1080" height="1080" fill="url(#mesh2)"/>
   <rect width="1080" height="1080" fill="url(#mesh3)"/>
-  <text x="540" y="400" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="52" font-weight="800" fill="#cdd6f4" opacity="0.95">{{ slide.title }}</text>
+  <!-- Darken the center so the copy keeps contrast over the mesh -->
+  <rect width="1080" height="1080" fill="url(#text-shade)"/>
+  <text x="540" y="460" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="52" font-weight="800" fill="#cdd6f4">{{ slide.title }}</text>
   {% if slide.subtitle %}
-  <text x="540" y="460" text-anchor="middle" font-family="Inter,sans-serif" font-size="24" fill="#a6adc8">{{ slide.subtitle }}</text>
+  <text x="540" y="522" text-anchor="middle" font-family="Inter,sans-serif" font-size="24" fill="#bac2de">{{ slide.subtitle }}</text>
   {% endif %}
   {% if slide.quote %}
-  <text x="540" y="600" text-anchor="middle" font-family="Inter,sans-serif" font-size="26" fill="#7f849c">
+  <text x="540" y="640" text-anchor="middle" font-family="Inter,sans-serif" font-size="26" fill="#9399b2">
 {% for line in quote_lines %}    <tspan x="540" dy="{% if loop.first %}0{% else %}38{% endif %}">{{ line }}</tspan>{% endfor %}
     {% if not quote_lines %}<tspan x="540">{{ slide.quote }}</tspan>{% endif %}
   </text>

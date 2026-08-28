@@ -26,8 +26,8 @@
   <rect width="1080" height="1350" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
   <rect width="1080" height="1350" fill="url(#glow)"/>
   <rect width="1080" height="1350" fill="url(#dots)"/>
-  <rect x="390" y="120" width="300" height="420" rx="12" fill="#313244" opacity="0.3"/>
-  <rect x="390" y="120" width="300" height="420" rx="12" fill="none" stroke="url(#acc-grad)" stroke-width="2" opacity="0.15"/>
+  <rect x="390" y="120" width="300" height="420" rx="12" fill="#313244" opacity="0.45"/>
+  <rect x="390" y="120" width="300" height="420" rx="12" fill="none" stroke="url(#acc-grad)" stroke-width="2" opacity="0.4"/>
   <text x="540" y="320" text-anchor="middle" font-size="80" fill="url(#acc-grad)" opacity="0.08">&#x1F4DA;</text>
   <text x="540" y="360" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">BOOK COVER</text>
   <text x="540" y="620" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="36" font-weight="700" fill="#cdd6f4">
