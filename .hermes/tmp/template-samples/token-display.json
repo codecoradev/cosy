@@ -1,0 +1,27 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Design Tokens",
+      "t1_name": "--primary",
+      "t1_value": "#cba6f7",
+      "t1_color": "#cba6f7",
+      "t2_name": "--blue",
+      "t2_value": "#89b4fa",
+      "t2_color": "#89b4fa",
+      "t3_name": "--green",
+      "t3_value": "#a6e3a1",
+      "t3_color": "#a6e3a1",
+      "t4_name": "--red",
+      "t4_value": "#f38ba8",
+      "t4_color": "#f38ba8"
+    }
+  ]
+}

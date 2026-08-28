@@ -1,0 +1,20 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "repo": "codecoradev/cosy",
+      "current_stars": "207",
+      "goal_stars": "500",
+      "milestone": "Top 10 Rust image tools",
+      "forks": "18",
+      "watchers": "12"
+    }
+  ]
+}

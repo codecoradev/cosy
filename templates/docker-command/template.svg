@@ -40,6 +40,6 @@
   {% endif %}
   <text x="600" y="520" text-anchor="middle" font-size="48" fill="#89b4fa" opacity="0.08">&#x1F40B;</text>
   {% if brand.show_brand %}
-  <text x="600" y="615" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  <text x="600" y="600" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   {% endif %}
 </svg>

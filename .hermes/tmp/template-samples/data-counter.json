@@ -1,0 +1,23 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Project Stats 2026",
+      "m1_value": "68",
+      "m1_label": "Templates",
+      "m2_value": "123",
+      "m2_label": "Tests",
+      "m3_value": "1.2k",
+      "m3_label": "Downloads",
+      "m4_value": "99",
+      "m4_label": "Coverage"
+    }
+  ]
+}

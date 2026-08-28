@@ -1,0 +1,12 @@
+{
+  "timestamp": "2026-08-24T00:37:07.589338267Z",
+  "commit": "53df5e2",
+  "branch": "fix/54-radius-standard-doc",
+  "files_reviewed": 0,
+  "lines_reviewed": null,
+  "findings": {},
+  "categories": {},
+  "quality_score": 10.0,
+  "gate_status": "disabled",
+  "duration_ms": null
+}

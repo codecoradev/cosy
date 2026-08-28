@@ -31,7 +31,7 @@
   <text x="100" y="970" font-family="Inter,sans-serif" font-size="28" font-weight="700" fill="#cdd6f4">{{ slide.author_name }}</text>
   <text x="100" y="1010" font-family="Inter,sans-serif" font-size="22" font-weight="400" fill="#a6adc8">{{ slide.author_role | default('') }}{% if slide.author_company %} · {% endif %}{{ slide.author_company | default('') }}</text>
   {% if brand.show_brand %}
-  <text x="100" y="1130" font-family="Inter,sans-serif" font-size="20" font-weight="400" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  <text x="540" y="1170" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   {% endif %}
   <circle cx="1000" cy="80" r="180" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
   {% if logo_data_uri %}

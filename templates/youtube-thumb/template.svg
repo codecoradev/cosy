@@ -34,7 +34,7 @@
   <text x="1200" y="620" text-anchor="end" font-family="Inter,sans-serif" font-size="28" font-weight="600" fill="{{ brand.accent_color | default('#cba6f7') }}">{{ slide.tag }}</text>
   {% endif %}
   {% if brand.show_brand %}
-  <text x="80" y="690" font-family="Inter,sans-serif" font-size="24" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  <text x="640" y="690" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   {% endif %}
   <circle cx="1200" cy="80" r="120" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
   {% if logo_data_uri %}

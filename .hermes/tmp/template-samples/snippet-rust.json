@@ -1,0 +1,22 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Rust Pattern Matching",
+      "filename": "match.rs",
+      "line1": "match event {",
+      "line2": "    Event::Push(p) => handle_push(p),",
+      "line3": "    Event::Pull(p) => handle_pull(p),",
+      "line4": "    Event::Release(r) => {",
+      "line5": "        publish(r)?;",
+      "line6": "    }"
+    }
+  ]
+}

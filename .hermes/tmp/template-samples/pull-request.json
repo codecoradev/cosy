@@ -1,0 +1,22 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "pr_number": "#42",
+      "pr_title": "feat: add 10 new dev-infra templates batch 8",
+      "author": "ajianaz",
+      "branch": "feat/new-templates-batch8",
+      "base_branch": "develop",
+      "status": "Merged",
+      "additions": "1498",
+      "deletions": "0"
+    }
+  ]
+}

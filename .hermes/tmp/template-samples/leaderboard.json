@@ -1,0 +1,25 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Top Contributors",
+      "e1_name": "ajianaz",
+      "e1_score": "1,247",
+      "e2_name": "devflux",
+      "e2_score": "892",
+      "e3_name": "codemaster",
+      "e3_score": "743",
+      "e4_name": "rustacean",
+      "e4_score": "521",
+      "e5_name": "webdev",
+      "e5_score": "388"
+    }
+  ]
+}

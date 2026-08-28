@@ -1,0 +1,27 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Platform Overview",
+      "m1_label": "Active Users",
+      "m1_value": "12.4k",
+      "m1_delta": "+18.2%",
+      "m2_label": "API Calls",
+      "m2_value": "847k",
+      "m2_delta": "+12.5%",
+      "m3_label": "Templates",
+      "m3_value": "108",
+      "m3_delta": "+90",
+      "m4_label": "Uptime",
+      "m4_value": "99.9%",
+      "m4_delta": "+0.3%"
+    }
+  ]
+}

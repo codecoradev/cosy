@@ -1,0 +1,28 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "CPU Flame Graph",
+      "total_time": "2.4s",
+      "l1_func": "main()",
+      "l1_width": "100",
+      "l1_pct": "100%",
+      "l2_func": "handle_request()",
+      "l2_width": "60",
+      "l2_pct": "60%",
+      "l3_func": "parse_json()",
+      "l3_width": "30",
+      "l3_pct": "30%",
+      "l4_func": "write_output()",
+      "l4_width": "20",
+      "l4_pct": "20%"
+    }
+  ]
+}

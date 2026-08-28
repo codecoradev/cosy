@@ -1,0 +1,21 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "API Outage Post-Mortem",
+      "severity": "SEV1",
+      "status": "resolved",
+      "duration": "47m",
+      "affected": "API Gateway, Auth Service",
+      "summary": "A misconfigured rate limiter caused cascading failures in the auth service. The issue was traced to a recent config deploy that lacked proper circuit breaker settings.",
+      "timestamp": "2026-08-13 14:00 UTC"
+    }
+  ]
+}

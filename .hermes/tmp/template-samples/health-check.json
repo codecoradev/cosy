@@ -1,0 +1,28 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "System Health",
+      "overall": "healthy",
+      "s1_name": "API Server",
+      "s1_status": "up",
+      "s1_latency": "12ms",
+      "s2_name": "PostgreSQL",
+      "s2_status": "up",
+      "s2_latency": "3ms",
+      "s3_name": "Redis",
+      "s3_status": "up",
+      "s3_latency": "1ms",
+      "s4_name": "MinIO",
+      "s4_status": "up",
+      "s4_latency": "8ms"
+    }
+  ]
+}

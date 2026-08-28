@@ -1,0 +1,28 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Which framework?",
+      "opt1": "SvelteKit",
+      "opt1_pct": "45",
+      "opt1_votes": "423",
+      "opt2": "Next.js",
+      "opt2_pct": "32",
+      "opt2_votes": "301",
+      "opt3": "Nuxt",
+      "opt3_pct": "15",
+      "opt3_votes": "141",
+      "opt4": "Astro",
+      "opt4_pct": "8",
+      "opt4_votes": "75",
+      "total_votes": "940"
+    }
+  ]
+}

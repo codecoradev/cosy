@@ -52,7 +52,7 @@
   <text x="675" y="650" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="400" fill="#7f849c">Q3</text>
   <text x="915" y="650" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="400" fill="#7f849c">Q4</text>
   {% if brand.show_brand %}
-  <text x="540" y="1000" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  <text x="540" y="1050" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   {% endif %}
   {% if logo_data_uri %}
   <image href="{{ logo_data_uri }}" x="952" y="1012" height="48" preserveAspectRatio="xMidYMid meet"/>

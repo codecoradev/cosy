@@ -1,0 +1,27 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Our Tech Stack 2026",
+      "t1_name": "Rust",
+      "t1_desc": "Backend API",
+      "t2_name": "SvelteKit",
+      "t2_desc": "Frontend",
+      "t3_name": "PostgreSQL",
+      "t3_desc": "Database",
+      "t4_name": "Docker",
+      "t4_desc": "Deployment",
+      "t5_name": "Redis",
+      "t5_desc": "Cache Layer",
+      "t6_name": "MinIO",
+      "t6_desc": "Object Storage"
+    }
+  ]
+}

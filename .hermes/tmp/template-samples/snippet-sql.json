@@ -1,0 +1,22 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "SQL Query",
+      "filename": "query.sql",
+      "line1": "SELECT u.name, COUNT(o.id) as orders",
+      "line2": "FROM users u",
+      "line3": "LEFT JOIN orders o ON u.id = o.user_id",
+      "line4": "WHERE u.active = true",
+      "line5": "GROUP BY u.name",
+      "line6": "ORDER BY orders DESC"
+    }
+  ]
+}

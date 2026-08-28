@@ -1,0 +1,29 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Cosy vs Browser Rendering",
+      "option_a_name": "Cosy",
+      "option_b_name": "Browser",
+      "row1_label": "Speed",
+      "row1_a": "3ms",
+      "row1_b": "500ms",
+      "row2_label": "Memory",
+      "row2_a": "12MB",
+      "row2_b": "150MB",
+      "row3_label": "Dependencies",
+      "row3_a": "1 binary",
+      "row3_b": "Node + Chromium",
+      "row4_label": "Offline",
+      "row4_a": "Yes",
+      "row4_b": "No"
+    }
+  ]
+}

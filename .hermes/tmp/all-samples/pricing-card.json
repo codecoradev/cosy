@@ -1,0 +1,23 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "tier_name": "Sample tier name",
+      "price": "Sample price",
+      "period": "Sample period",
+      "feature1": "Sample feature1",
+      "feature2": "Sample feature2",
+      "feature3": "Sample feature3",
+      "feature4": "Sample feature4",
+      "feature5": "Sample feature5",
+      "cta_text": "Sample cta text"
+    }
+  ]
+}

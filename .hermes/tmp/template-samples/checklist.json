@@ -1,0 +1,20 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Pre-launch Checklist",
+      "item1": "Write unit tests",
+      "item2": "Run cargo clippy",
+      "item3": "Update CHANGELOG",
+      "item4": "Tag release",
+      "item5": "Publish to GHCR"
+    }
+  ]
+}

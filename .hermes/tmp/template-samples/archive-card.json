@@ -1,0 +1,20 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Building a Template Engine in Rust",
+      "category": "Engineering",
+      "date": "Aug 13, 2026",
+      "read_time": "8 min",
+      "description": "How we built Cosy, a blazingly fast template-based image generation tool in pure Rust using minijinja and resvg. From concept to 138 templates in one sprint.",
+      "author": "ajianaz"
+    }
+  ]
+}

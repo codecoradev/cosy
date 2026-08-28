@@ -1,0 +1,25 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Project Makefile",
+      "t1_name": "build",
+      "t1_desc": "Build the project in release mode",
+      "t2_name": "test",
+      "t2_desc": "Run all tests with single thread",
+      "t3_name": "lint",
+      "t3_desc": "Run clippy and fmt check",
+      "t4_name": "docs",
+      "t4_desc": "Build VitePress documentation",
+      "t5_name": "docker",
+      "t5_desc": "Build and push Docker image"
+    }
+  ]
+}

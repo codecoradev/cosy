@@ -1,0 +1,21 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "command": "Sample command",
+      "exit_code": "Sampl",
+      "duration": "Sample duration",
+      "stdout_line1": "Sample stdout line1",
+      "stdout_line2": "Sample stdout line2",
+      "stdout_line3": "Sample stdout line3",
+      "stderr_line1": "Sample stderr line1"
+    }
+  ]
+}
