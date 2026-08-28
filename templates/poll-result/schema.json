@@ -78,9 +78,10 @@
       "max": 60
     },
     "option_a_pct": {
-      "type": "text",
+      "type": "number",
       "required": true,
-      "max": 10
+      "default": 0,
+      "description": "Percentage value 0-100, drives bar fill width"
     },
     "option_b": {
       "type": "text",
@@ -88,9 +89,10 @@
       "max": 60
     },
     "option_b_pct": {
-      "type": "text",
+      "type": "number",
       "required": true,
-      "max": 10
+      "default": 0,
+      "description": "Percentage value 0-100, drives bar fill width"
     },
     "option_c": {
       "type": "text",
@@ -98,9 +100,10 @@
       "max": 60
     },
     "option_c_pct": {
-      "type": "text",
+      "type": "number",
       "required": false,
-      "max": 10
+      "default": 0,
+      "description": "Percentage value 0-100, drives bar fill width"
     },
     "option_d": {
       "type": "text",
@@ -108,9 +111,10 @@
       "max": 60
     },
     "option_d_pct": {
-      "type": "text",
+      "type": "number",
       "required": false,
-      "max": 10
+      "default": 0,
+      "description": "Percentage value 0-100, drives bar fill width"
     },
     "total_votes": {
       "type": "text",

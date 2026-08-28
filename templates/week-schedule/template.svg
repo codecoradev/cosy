@@ -42,8 +42,8 @@
   <rect x="{{ cx }}" y="180" width="120" height="50" rx="12" fill="url(#acc-grad)" opacity="0.1"/>
   <text x="{{ cx + 60 }}" y="212" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="18" font-weight="700" fill="url(#acc-grad)">{{ d[0] }}</text>
   {% if d[1] %}
-  <rect x="{{ cx + 8 }}" y="260" width="104" height="50" rx="12" fill="url(#acc-grad)" opacity="0.06"/>
-  <text x="{{ cx + 60 }}" y="290" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="500" fill="#cdd6f4">{{ d[1] }}</text>
+  <rect x="{{ cx + 8 }}" y="260" width="104" height="66" rx="12" fill="url(#acc-grad)" opacity="0.06"/>
+  <text x="{{ cx + 60 }}" y="288" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="500" fill="#cdd6f4">{% for ln in d[1]|wordwrap(14)|split('\n') %}<tspan x="{{ cx + 60 }}" dy="{{ 0 if loop.first else 22 }}">{{ ln }}</tspan>{% endfor %}</text>
   {% endif %}
   {% endfor %}
   {% if brand.show_brand %}

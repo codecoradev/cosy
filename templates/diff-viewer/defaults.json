@@ -12,12 +12,12 @@
     {
       "title": "Optimize render pipeline",
       "filename": "src/renderer.rs",
-      "add_line1": "+ let svg = build_svg(tpl, data)?;",
-      "add_line2": "+ let png = resvg::render(svg)?;",
-      "del_line1": "- let html = render_html(tpl, data)?;",
-      "del_line2": "- let png = browser.screenshot(html)?;",
-      "additions": "+24",
-      "deletions": "-18"
+      "add_line1": "let svg = build_svg(tpl, data)?;",
+      "add_line2": "let png = resvg::render(svg)?;",
+      "del_line1": "let html = render_html(tpl, data)?;",
+      "del_line2": "let png = browser.screenshot(html)?;",
+      "additions": "24",
+      "deletions": "18"
     }
   ]
 }

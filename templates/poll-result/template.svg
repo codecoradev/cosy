@@ -46,11 +46,11 @@
   <!-- Option label -->
   <text x="140" y="{{ y_row - 10 }}" font-family="Inter,sans-serif" font-size="26" font-weight="600" fill="#cdd6f4">{{ opt[0] }}</text>
   <!-- Percentage -->
-  <text x="940" y="{{ y_row - 10 }}" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="30" font-weight="700" fill="url(#acc-grad)">{{ opt[1] }}</text>
+  <text x="940" y="{{ y_row - 10 }}" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="30" font-weight="700" fill="url(#acc-grad)">{{ opt[1]|default(0) }}%</text>
   <!-- Bar background -->
   <rect x="140" y="{{ y_row + 10 }}" width="800" height="16" rx="12" fill="#313244"/>
-  <!-- Bar fill (full width for demo) -->
-  <rect x="140" y="{{ y_row + 10 }}" width="800" height="16" rx="12" fill="url(#acc-grad-h)" opacity="0.7"/>
+  <!-- Bar fill, proportional to percentage (800px = 100%) -->
+  <rect x="140" y="{{ y_row + 10 }}" width="{{ (opt[1]|default(0) * 8)|int }}" height="16" rx="12" fill="url(#acc-grad-h)" opacity="0.7"/>
 {% endif %}
 {% endfor %}
 

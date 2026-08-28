@@ -13,7 +13,7 @@
       "title": "Render Complete Webhook",
       "event": "render.completed",
       "source": "cosy-engine",
-      "timestamp": "2026-08-13T14:32:01Z",
+      "timestamp": "2026-08-13 14:32",
       "delivery_id": "dlv_8f3a2b1c",
       "json_line1": "{",
       "json_line2": "  \"render_id\": \"rdr_8f3a2b1c\",",

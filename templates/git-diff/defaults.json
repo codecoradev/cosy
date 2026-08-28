@@ -11,9 +11,9 @@
   "slides": [
     {
       "title": "Fix SVG wrapping for long URLs",
-      "added1": "+ let wrapped = wrap_text(line, max_width);",
-      "added2": "+ svg.add_text(wrapped, x, y + offset);",
-      "removed1": "- svg.add_text(line, x, y + offset);",
+      "added1": "let wrapped = wrap_text(line, max_width);",
+      "added2": "svg.add_text(wrapped, x, y + offset);",
+      "removed1": "svg.add_text(line, x, y + offset);",
       "removed2": ""
     }
   ]

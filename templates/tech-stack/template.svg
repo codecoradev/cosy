@@ -32,7 +32,7 @@
   {% if t[0] %}
   {% set col = loop.index0 % 3 %}
   {% set row = loop.index0 // 3 %}
-  {% set cx = 180 + col * 360 %}
+  {% set cx = 60 + col * 340 %}
   {% set cy = 220 + row * 300 %}
   <rect x="{{ cx }}" y="{{ cy }}" width="280" height="220" rx="20" fill="#313244" opacity="0.15"/>
   <rect x="{{ cx }}" y="{{ cy }}" width="280" height="6" rx="8" fill="url(#acc-grad)" opacity="0.5"/>

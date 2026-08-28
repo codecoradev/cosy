@@ -13,9 +13,9 @@
       "title": "Gradient background for hero cards",
       "selector": ".hero-gradient",
       "property1": "background",
-      "value1": "linear-gradient(135deg, #1e1e2e, #11111b)",
-      "property2": "border-image",
-      "value2": "linear-gradient(135deg, #cba6f7, #89b4fa) 1",
+      "value1": "linear-gradient(#111, #cba6f7)",
+      "property2": "border",
+      "value2": "2px solid #cba6f7",
       "property3": "color",
       "value3": "#cdd6f4"
     }

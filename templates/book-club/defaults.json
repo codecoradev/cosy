@@ -12,7 +12,7 @@
     {
       "book_title": "Designing Data-Intensive Applications",
       "author": "Martin Kleppmann",
-      "rating": "5/5",
+      "rating": "5",
       "takeaway": "The chapter on replication and consensus is essential reading for anyone building distributed systems.",
       "genre": "Systems Engineering",
       "pages": "616"

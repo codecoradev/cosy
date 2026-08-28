@@ -36,7 +36,7 @@
   {% if slide.timestamp %}
   <rect x="720" y="80" width="180" height="80" rx="12" fill="#313244" opacity="0.12"/>
   <text x="740" y="115" font-family="Inter,sans-serif" font-size="16" fill="#7f849c">Timestamp</text>
-  <text x="740" y="142" font-family="JetBrains Mono,monospace" font-size="18" fill="#cdd6f4">{{ slide.timestamp }}</text>
+  <text x="740" y="142" font-family="JetBrains Mono,monospace" font-size="15" fill="#cdd6f4">{{ slide.timestamp }}</text>
   {% endif %}
   {% if slide.delivery_id %}
   <rect x="920" y="80" width="180" height="80" rx="12" fill="#313244" opacity="0.12"/>

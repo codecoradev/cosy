@@ -31,7 +31,7 @@
   <rect x="100" y="150" width="1000" height="100" rx="12" fill="none" stroke="#313244" stroke-width="1"/>
   <rect x="100" y="150" width="8" height="100" rx="8" fill="#89b4fa" opacity="0.3"/>
   <text x="140" y="215" font-family="JetBrains Mono,monospace" font-size="24" font-weight="500" fill="#89b4fa">$</text>
-  <text x="175" y="215" font-family="JetBrains Mono,monospace" font-size="24" font-weight="500" fill="#cdd6f4">{{ slide.command }}</text>
+  <text x="175" y="215" font-family="JetBrains Mono,monospace" font-size="19" font-weight="500" fill="#cdd6f4">{{ slide.command }}</text>
   {% if slide.description %}
   <text x="600" y="350" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="400" fill="#a6adc8">
 {% for line in description_lines %}    <tspan x="600" dy="{% if loop.first %}0{% else %}32{% endif %}">{{ line }}</tspan>{% endfor %}
