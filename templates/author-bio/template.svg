@@ -51,12 +51,19 @@
 
   <!-- Tags -->
   {% set tags = [slide.tag1, slide.tag2, slide.tag3] %}
-  {% set tag_x = [340, 500, 660] %}
+  {% set gap = 18 %}
+  {% set ns = namespace(total = -gap) %}
   {% for tag in tags %}
-  {% if tag %}
-  <rect x="{{ tag_x[loop.index0] - 70 }}" y="900" width="140" height="42" rx="20" fill="url(#acc-grad)" opacity="0.15"/>
-  <text x="{{ tag_x[loop.index0] }}" y="927" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" font-weight="600" fill="url(#acc-grad)">{{ tag }}</text>
-  {% endif %}
+    {% if tag %}{% set ns.total = ns.total + (tag | length) * 9.8 + 36 + gap %}{% endif %}
+  {% endfor %}
+  {% set ns = namespace(x = 540 - ns.total / 2) %}
+  {% for tag in tags %}
+    {% if tag %}
+    {% set w = (tag | length) * 9.8 + 36 %}
+  <rect x="{{ ns.x }}" y="900" width="{{ w }}" height="42" rx="21" fill="url(#acc-grad)" opacity="0.15"/>
+  <text x="{{ ns.x + w / 2 }}" y="927" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" font-weight="600" fill="url(#acc-grad)">{{ tag }}</text>
+    {% set ns.x = ns.x + w + gap %}
+    {% endif %}
   {% endfor %}
   {% if brand.show_brand %}
   <text x="540" y="1050" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>

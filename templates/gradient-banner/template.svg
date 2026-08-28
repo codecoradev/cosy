@@ -40,7 +40,7 @@
     {% if not subtext_lines %}<tspan x="100">{{ slide.subtext }}</tspan>{% endif %}
   </text>
   {% endif %}
-  <rect x="100" y="540" width="60" height="3" rx="1.5" fill="url(#acc-grad-h)" opacity="0.5"/>
+  <rect x="100" y="580" width="60" height="3" rx="1.5" fill="url(#acc-grad-h)" opacity="0.5"/>
   {% if brand.show_brand %}
   <text x="600" y="600" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   {% endif %}
