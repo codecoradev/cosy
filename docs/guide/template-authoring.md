@@ -530,3 +530,19 @@ The default Cosy color scheme:
 6. text content
 7. logo (bottom-right)
 ```
+
+## Watermark / Footer
+
+All templates must render the brand watermark with an identical spec:
+
+```svg
+{% if brand.show_brand %}
+<text x="{width/2}" y="{height-30}" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+{% endif %}
+```
+
+Rules:
+- Position: bottom-center, 30px bottom margin (never top/corners)
+- Typography: Inter 20px, weight 600, fill `#7f849c`
+- Default: `show_brand: false` in `defaults.json`
+- `brand_handle` may be appended as `{{ brand.brand_name }} · {{ brand.brand_handle }}` when present

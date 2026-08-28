@@ -1,0 +1,22 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Gradient Button Style",
+      "selector": ".btn-primary",
+      "property1": "background",
+      "value1": "linear-gradient(135deg, #cba6f7, #89b4fa)",
+      "property2": "padding",
+      "value2": "16px 32px",
+      "property3": "border-radius",
+      "value3": "12px"
+    }
+  ]
+}

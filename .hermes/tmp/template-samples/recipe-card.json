@@ -1,0 +1,21 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "recipe_name": "Rust Async Soup",
+      "servings": "Serves 4",
+      "time": "30 min",
+      "ingredients": "2 cups tokio runtime\n1 cup axum framework\n3 tbsp serde macros\nPin of thiserror\nSalt to taste",
+      "step1": "Set up your Cargo.toml with tokio and axum dependencies.",
+      "step2": "Write your first async handler using the axum router.",
+      "step3": "Test thoroughly with cargo test and ship it."
+    }
+  ]
+}

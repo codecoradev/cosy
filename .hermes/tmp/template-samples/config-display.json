@@ -1,0 +1,27 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Application Config",
+      "k1": "port",
+      "v1": "8080",
+      "k2": "database_url",
+      "v2": "postgres://localhost",
+      "k3": "redis_url",
+      "v3": "redis://localhost",
+      "k4": "log_level",
+      "v4": "info",
+      "k5": "max_workers",
+      "v5": "16",
+      "k6": "cache_ttl",
+      "v6": "3600s"
+    }
+  ]
+}

@@ -39,7 +39,7 @@
   <text x="1120" y="580" text-anchor="end" font-family="Inter,sans-serif" font-size="20" font-weight="400" fill="#7f849c">{{ slide.date }}</text>
   {% endif %}
   {% if brand.show_brand %}
-  <text x="80" y="580" font-family="Inter,sans-serif" font-size="22" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  <text x="600" y="600" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   {% endif %}
   <circle cx="1120" cy="80" r="105" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
   {% if logo_data_uri %}

@@ -34,7 +34,7 @@
   <text x="120" y="900" font-family="Inter,sans-serif" font-size="32" font-weight="400" fill="#a6adc8">Speaker: {{ slide.speaker }}</text>
   {% endif %}
   {% if brand.show_brand %}
-  <text x="1800" y="1000" text-anchor="end" font-family="Inter,sans-serif" font-size="28" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  <text x="960" y="1050" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   {% endif %}
   <circle cx="1840" cy="80" r="180" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
   {% if logo_data_uri %}

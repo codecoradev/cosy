@@ -1,0 +1,26 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "2026 Reading Goals",
+      "current": "12",
+      "target": "24",
+      "unit": "books",
+      "goal1": "Read 24 books",
+      "goal1_done": "no",
+      "goal2": "Finish Rust book",
+      "goal2_done": "yes",
+      "goal3": "Read 5 sci-fi",
+      "goal3_done": "no",
+      "goal4": "Write reviews",
+      "goal4_done": "no"
+    }
+  ]
+}

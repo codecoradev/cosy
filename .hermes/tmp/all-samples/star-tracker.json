@@ -1,0 +1,21 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "GitHub Stars",
+      "current_stars": "1284",
+      "new_stars": "42",
+      "period": "this week",
+      "trend": "up",
+      "goal": "1500",
+      "goal_pct": "86"
+    }
+  ]
+}

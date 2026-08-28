@@ -1,0 +1,20 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "command": "cargo build --release",
+      "exit_code": "0",
+      "duration": "47.2s",
+      "stdout_line1": "Compiling cosy v0.2.0",
+      "stdout_line2": "Finished release optimized target(s)",
+      "stdout_line3": "Running target/release/cosy"
+    }
+  ]
+}

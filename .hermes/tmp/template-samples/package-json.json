@@ -1,0 +1,23 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Frontend Dependencies",
+      "dep1_name": "svelte",
+      "dep1_version": "5.0.0",
+      "dep2_name": "vite",
+      "dep2_version": "6.0.0",
+      "dep3_name": "tailwindcss",
+      "dep3_version": "4.0.0",
+      "dep4_name": "axios",
+      "dep4_version": "1.7.0"
+    }
+  ]
+}

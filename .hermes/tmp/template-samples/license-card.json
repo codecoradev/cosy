@@ -1,0 +1,22 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "license_name": "MIT License",
+      "license_spdx": "SPDX-Identifier: MIT",
+      "description": "A short and permissive license allowing reuse with minimal conditions. Requires preserving copyright notice.",
+      "permissions": "Commercial use, modification, distribution, private use",
+      "conditions": "Include license and copyright notice",
+      "limitations": "No liability, no warranty",
+      "copyright_year": "2026",
+      "copyright_holder": "PT Azfirazka Digital Kreatif"
+    }
+  ]
+}

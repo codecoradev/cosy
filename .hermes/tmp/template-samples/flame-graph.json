@@ -1,0 +1,28 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Performance Profile",
+      "f1_name": "render()",
+      "f1_pct": "45.2",
+      "f1_width": "0.90",
+      "f2_name": "parse_svg()",
+      "f2_pct": "28.1",
+      "f2_width": "0.60",
+      "f3_name": "resvg_usvg()",
+      "f3_pct": "15.5",
+      "f3_width": "0.40",
+      "f4_name": "text_layout()",
+      "f4_pct": "8.3",
+      "f4_width": "0.25",
+      "total_time": "2.4s"
+    }
+  ]
+}

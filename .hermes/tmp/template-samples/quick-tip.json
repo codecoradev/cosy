@@ -1,0 +1,17 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "tip_title": "Use cargo clippy in CI",
+      "tip_body": "Catch common Rust mistakes before they reach production. Add it to your GitHub Actions workflow for automatic linting on every push.",
+      "tip_number": "#42"
+    }
+  ]
+}

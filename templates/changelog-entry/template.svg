@@ -43,6 +43,6 @@
   <text x="110" y="485" font-family="Inter,sans-serif" font-size="20" fill="#cdd6f4">{{ slide.breaking }}</text>
   {% endif %}
   {% if brand.show_brand %}
-  <text x="600" y="615" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  <text x="600" y="600" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   {% endif %}
 </svg>

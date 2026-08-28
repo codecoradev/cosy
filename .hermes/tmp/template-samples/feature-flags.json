@@ -1,0 +1,25 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Feature Flags",
+      "f1_name": "new_renderer",
+      "f1_status": "on",
+      "f2_name": "dark_mode",
+      "f2_status": "on",
+      "f3_name": "beta_api",
+      "f3_status": "off",
+      "f4_name": "metrics",
+      "f4_status": "on",
+      "f5_name": "ai_cache",
+      "f5_status": "off"
+    }
+  ]
+}

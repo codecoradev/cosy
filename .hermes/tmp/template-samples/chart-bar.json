@@ -1,0 +1,25 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Monthly Downloads 2026",
+      "b1_label": "Jan",
+      "b1_value": "45",
+      "b2_label": "Feb",
+      "b2_value": "62",
+      "b3_label": "Mar",
+      "b3_value": "85",
+      "b4_label": "Apr",
+      "b4_value": "120",
+      "b5_label": "May",
+      "b5_value": "150"
+    }
+  ]
+}

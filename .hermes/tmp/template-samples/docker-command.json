@@ -1,0 +1,17 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Build and Push Multi-Arch Image",
+      "command": "docker buildx build --platform linux/amd64,linux/arm64 -t myapp:latest --push .",
+      "description": "Builds a multi-architecture Docker image and pushes it to the registry in one command."
+    }
+  ]
+}

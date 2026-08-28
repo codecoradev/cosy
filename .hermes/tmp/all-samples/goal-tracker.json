@@ -1,0 +1,26 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Sample Title",
+      "current": "Sample cur",
+      "target": "Sample tar",
+      "unit": "Sample unit",
+      "goal1": "Sample goal1",
+      "goal1_done": "Sample goa",
+      "goal2": "Sample goal2",
+      "goal2_done": "Sample goa",
+      "goal3": "Sample goal3",
+      "goal3_done": "Sample goa",
+      "goal4": "Sample goal4",
+      "goal4_done": "Sample goa"
+    }
+  ]
+}

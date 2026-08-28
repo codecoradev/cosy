@@ -1,0 +1,20 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Async Handler with Axum",
+      "code_line1": "async fn handler(",
+      "code_line2": "  State(state): State,",
+      "code_line3": ") -> Result, Error {",
+      "code_line4": "  let data = state.db.query().await?;",
+      "code_line5": "  Ok(Json(data))"
+    }
+  ]
+}

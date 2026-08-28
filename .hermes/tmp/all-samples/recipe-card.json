@@ -1,0 +1,21 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "recipe_name": "Sample recipe name",
+      "servings": "Sample servings",
+      "time": "Sample time",
+      "ingredients": "Sample ingredients",
+      "step1": "Sample step1",
+      "step2": "Sample step2",
+      "step3": "Sample step3"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Why Cosy",
+      "f1_title": "128 Templates",
+      "f1_desc": "Pre-built templates for every use case",
+      "f2_title": "SVG Engine",
+      "f2_desc": "Crisp rendering at any resolution",
+      "f3_title": "REST API",
+      "f3_desc": "Integrate with any tech stack",
+      "f4_title": "Self-Hosted",
+      "f4_desc": "Full control over your data"
+    }
+  ]
+}

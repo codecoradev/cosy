@@ -1,0 +1,27 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Database Migrations",
+      "m1_name": "001_create_users",
+      "m1_status": "done",
+      "m2_name": "002_add_sessions",
+      "m2_status": "done",
+      "m3_name": "003_add_templates",
+      "m3_status": "done",
+      "m4_name": "004_add_brands",
+      "m4_status": "running",
+      "m5_name": "005_add_audit",
+      "m5_status": "pending",
+      "m6_name": "006_add_indexes",
+      "m6_status": "pending"
+    }
+  ]
+}

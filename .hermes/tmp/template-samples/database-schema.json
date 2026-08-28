@@ -1,0 +1,27 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "table_name": "users",
+      "c1_name": "id",
+      "c1_type": "UUID",
+      "c1_key": "PK",
+      "c2_name": "email",
+      "c2_type": "VARCHAR",
+      "c2_key": "UNIQUE",
+      "c3_name": "created_at",
+      "c3_type": "TIMESTAMP",
+      "c4_name": "plan",
+      "c4_type": "ENUM",
+      "c5_name": "active",
+      "c5_type": "BOOLEAN"
+    }
+  ]
+}

@@ -49,6 +49,6 @@
   {% endfor %}
   <text x="140" y="{{ 310 + props | length * 55 }}" font-family="JetBrains Mono,monospace" font-size="28" fill="#7f849c">}</text>
   {% if brand.show_brand %}
-  <text x="600" y="610" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  <text x="600" y="600" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   {% endif %}
 </svg>

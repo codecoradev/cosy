@@ -39,7 +39,7 @@
     {% for line in after_text_lines %}<tspan x="810" dy="{% if loop.first %}0{% else %}42{% endif %}">{{ line }}</tspan>{% endfor %}
   </text>
   {% if brand.show_brand %}
-  <text x="540" y="1280" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="400" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  <text x="540" y="1320" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   {% endif %}
   <circle cx="1000" cy="80" r="180" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
   {% if logo_data_uri %}

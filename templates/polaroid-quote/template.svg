@@ -40,6 +40,6 @@
   <text x="540" y="780" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" font-weight="400" fill="#6c7086" transform="rotate(-2 540 540)">{{ slide.context }}</text>
   {% endif %}
   {% if brand.show_brand %}
-  <text x="540" y="1020" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  <text x="540" y="1050" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   {% endif %}
 </svg>

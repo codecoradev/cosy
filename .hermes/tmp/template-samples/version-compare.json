@@ -1,0 +1,22 @@
+{
+  "brand": {
+    "brand_name": "Ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa"
+  },
+  "slides": [
+    {
+      "title": "Performance Boost",
+      "v_old": "v0.1.0",
+      "v_new": "v0.2.0",
+      "metric": "ops/sec",
+      "old_val": "12,400",
+      "new_val": "18,600",
+      "delta": "50%",
+      "delta_dir": "up"
+    }
+  ]
+}

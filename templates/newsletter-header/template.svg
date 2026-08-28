@@ -34,4 +34,7 @@
   {% if logo_data_uri %}
   <image href="{{ logo_data_uri }}" x="1072" y="272" height="48" preserveAspectRatio="xMidYMid meet"/>
   {% endif %}
+  {% if brand.show_brand %}
+  <text x="600" y="370" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
 </svg>
