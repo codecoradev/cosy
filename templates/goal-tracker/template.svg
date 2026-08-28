@@ -27,10 +27,11 @@
   <rect width="1080" height="1080" fill="url(#glow)"/>
   <rect width="1080" height="1080" fill="url(#dots)"/>
   <text x="540" y="110" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="36" font-weight="700" fill="#cdd6f4">{{ slide.title }}</text>
-  <circle cx="320" cy="540" r="160" fill="none" stroke="#313244" stroke-width="20"/>
-  <circle cx="320" cy="540" r="160" fill="none" stroke="url(#acc-grad)" stroke-width="20" stroke-dasharray="754" stroke-dashoffset="377" stroke-linecap="round" transform="rotate(-90 320 540)"/>
-  <text x="320" y="530" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="64" font-weight="800" fill="url(#acc-grad)">{{ slide.current }}</text>
-  <text x="320" y="575" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="400" fill="#7f849c">/ {{ slide.target }}{% if slide.unit %} {{ slide.unit }}{% endif %}</text>
+  {% set ring_circumference = 1131 %}{% set arc = (ring_circumference * slide.current / slide.target)|int if slide.target else 0 %}
+  <circle cx="320" cy="575" r="180" fill="none" stroke="#313244" stroke-width="22"/>
+  <circle cx="320" cy="575" r="180" fill="none" stroke="url(#acc-grad)" stroke-width="22" stroke-dasharray="{{ arc }}" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 320 575)"/>
+  <text x="320" y="580" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="68" font-weight="800" fill="url(#acc-grad)">{{ slide.current }}</text>
+  <text x="320" y="625" text-anchor="middle" font-family="Inter,sans-serif" font-size="24" font-weight="400" fill="#7f849c">/ {{ slide.target }}{% if slide.unit %} {{ slide.unit }}{% endif %}</text>
   {% set goals = [
     (slide.goal1, slide.goal1_done),
     (slide.goal2, slide.goal2_done),
@@ -39,14 +40,14 @@
   ] %}
   {% for g in goals %}
   {% if g[0] %}
-  {% set gy = 330 + loop.index0 * 80 %}
+  {% set gy = 410 + loop.index0 * 110 %}
   {% if g[1] | lower == 'yes' %}
-  <circle cx="580" cy="{{ gy - 5 }}" r="16" fill="url(#acc-grad)" opacity="0.2"/>
-  <text x="580" y="2" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" fill="url(#acc-grad)" opacity="0">&#x2713;</text>
-  <text x="620" y="{{ gy }}" font-family="Inter,sans-serif" font-size="24" font-weight="400" fill="#7f849c" text-decoration="line-through">{{ g[0] }}</text>
+  <circle cx="580" cy="{{ gy - 8 }}" r="18" fill="url(#acc-grad)" opacity="0.25"/>
+  <text x="580" y="{{ gy - 2 }}" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" font-weight="700" fill="url(#acc-grad)">&#x2713;</text>
+  <text x="620" y="{{ gy }}" font-family="Inter,sans-serif" font-size="26" font-weight="400" fill="#7f849c" text-decoration="line-through">{{ g[0] }}</text>
   {% else %}
-  <circle cx="580" cy="{{ gy - 5 }}" r="16" fill="none" stroke="#45475a" stroke-width="2"/>
-  <text x="620" y="{{ gy }}" font-family="Inter,sans-serif" font-size="24" font-weight="500" fill="#cdd6f4">{{ g[0] }}</text>
+  <circle cx="580" cy="{{ gy - 8 }}" r="18" fill="none" stroke="#45475a" stroke-width="2"/>
+  <text x="620" y="{{ gy }}" font-family="Inter,sans-serif" font-size="26" font-weight="500" fill="#cdd6f4">{{ g[0] }}</text>
   {% endif %}
   {% endif %}
   {% endfor %}

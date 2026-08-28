@@ -71,14 +71,16 @@
       "wrap_width": 25
     },
     "current": {
-      "type": "text",
+      "type": "number",
       "required": true,
-      "max": 10
+      "default": 0,
+      "description": "Progress numbers; arc renders current/target of the ring"
     },
     "target": {
-      "type": "text",
+      "type": "number",
       "required": true,
-      "max": 10
+      "default": 0,
+      "description": "Progress numbers; arc renders current/target of the ring"
     },
     "unit": {
       "type": "text",

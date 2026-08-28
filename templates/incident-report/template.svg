@@ -39,11 +39,13 @@
   {% if slide.timestamp %}
   <text x="780" y="153" font-family="Inter,sans-serif" font-size="16" fill="#7f849c">{{ slide.timestamp }}</text>
   {% endif %}
-  <rect x="100" y="220" width="880" height="80" rx="12" fill="#313244" opacity="0.12"/>
-  <text x="130" y="255" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">Affected Services</text>
-  <text x="130" y="285" font-family="Inter,sans-serif" font-size="22" fill="#f38ba8">{{ slide.affected }}</text>
-  <text x="540" y="400" text-anchor="middle" font-family="Inter,sans-serif" font-size="24" fill="#a6adc8">
-{% for line in summary_lines %}    <tspan x="540" dy="{% if loop.first %}0{% else %}34{% endif %}">{{ line }}</tspan>{% endfor %}
+  <rect x="100" y="230" width="880" height="120" rx="16" fill="#313244" opacity="0.16"/>
+  <text x="140" y="278" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">Affected Services</text>
+  <text x="140" y="322" font-family="Inter,sans-serif" font-size="26" fill="#f38ba8">{{ slide.affected }}</text>
+  <rect x="100" y="420" width="880" height="500" rx="16" fill="#313244" opacity="0.08"/>
+  <rect x="100" y="444" width="5" height="452" rx="2.5" fill="url(#acc-grad)" opacity="0.5"/>
+  <text x="540" y="640" text-anchor="middle" font-family="Inter,sans-serif" font-size="28" fill="#a6adc8">
+{% for line in summary_lines %}    <tspan x="540" dy="{% if loop.first %}0{% else %}48{% endif %}">{{ line }}</tspan>{% endfor %}
     {% if not summary_lines %}<tspan x="540">{{ slide.summary }}</tspan>{% endif %}
   </text>
   {% if brand.show_brand %}

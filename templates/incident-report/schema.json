@@ -91,7 +91,7 @@
       "type": "text",
       "required": true,
       "max": 100,
-      "wrap_width": 35
+      "wrap_width": 44
     },
     "timestamp": {
       "type": "text",

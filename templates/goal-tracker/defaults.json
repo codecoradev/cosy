@@ -11,8 +11,8 @@
   "slides": [
     {
       "title": "Q3 2026 OKR Progress",
-      "current": "68%",
-      "target": "100%",
+      "current": 68,
+      "target": 100,
       "unit": "complete",
       "goal1": "Ship 150 templates",
       "goal1_done": "149/150",

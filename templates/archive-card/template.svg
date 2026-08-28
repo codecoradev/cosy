@@ -26,12 +26,12 @@
   <rect width="1080" height="1350" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
   <rect width="1080" height="1350" fill="url(#glow)"/>
   <rect width="1080" height="1350" fill="url(#dots)"/>
-  <rect x="80" y="80" width="200" height="50" rx="12" fill="url(#acc-grad)" opacity="0.12"/>
-  <text x="180" y="113" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="20" font-weight="700" fill="url(#acc-grad)">{{ slide.category }}</text>
-  <text x="80" y="220" font-family="Space Grotesk,sans-serif" font-size="40" font-weight="800" fill="#cdd6f4">{{ slide.title }}</text>
-  <rect x="80" y="260" width="920" height="2" rx="8" fill="url(#acc-grad-h)" opacity="0.2"/>
-  <text x="80" y="350" font-family="Inter,sans-serif" font-size="24" fill="#a6adc8">
-{% for line in description_lines %}    <tspan x="80" dy="{% if loop.first %}0{% else %}36{% endif %}">{{ line }}</tspan>{% endfor %}
+  <rect x="80" y="410" width="220" height="54" rx="14" fill="url(#acc-grad)" opacity="0.12"/>
+  <text x="190" y="446" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="20" font-weight="700" fill="url(#acc-grad)">{{ slide.category }}</text>
+  <text x="80" y="550" font-family="Space Grotesk,sans-serif" font-size="40" font-weight="800" fill="#cdd6f4">{{ slide.title }}</text>
+  <rect x="80" y="595" width="920" height="2" rx="8" fill="url(#acc-grad-h)" opacity="0.2"/>
+  <text x="80" y="710" font-family="Inter,sans-serif" font-size="30" fill="#a6adc8">
+{% for line in description_lines %}    <tspan x="80" dy="{% if loop.first %}0{% else %}50{% endif %}">{{ line }}</tspan>{% endfor %}
     {% if not description_lines %}<tspan x="80">{{ slide.description }}</tspan>{% endif %}
   </text>
   <rect x="80" y="1100" width="920" height="1" fill="#313244" opacity="0.15"/>

@@ -33,7 +33,8 @@
   {% set services = [(slide.s1_name, slide.s1_status, slide.s1_latency), (slide.s2_name, slide.s2_status, slide.s2_latency), (slide.s3_name, slide.s3_status, slide.s3_latency), (slide.s4_name, slide.s4_status, slide.s4_latency)] %}
   {% for svc in services %}
   {% if svc[0] %}
-  {% set svc_ok = svc[1] == 'up' or svc[1] == 'Up' or svc[1] == 'UP' %}
+  {% set svc_status = svc[1] | lower %}
+  {% set svc_ok = svc[1] == 'up' or svc[1] == 'Up' or svc[1] == 'UP' or svc_status == 'ok' or svc_status == 'healthy' or svc_status == 'online' %}
   <rect x="100" y="{{ 340 + loop.index0 * 120 }}" width="880" height="80" rx="12" fill="#313244" opacity="0.12"/>
   <circle cx="160" cy="{{ 380 + loop.index0 * 120 }}" r="14" fill="{% if svc_ok %}#a6e3a1{% else %}#f38ba8{% endif %}" opacity="0.8"/>
   <text x="210" y="{{ 376 + loop.index0 * 120 }}" font-family="Space Grotesk,sans-serif" font-size="24" font-weight="600" fill="#cdd6f4">{{ svc[0] }}</text>

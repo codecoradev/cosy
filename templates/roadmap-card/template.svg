@@ -30,7 +30,7 @@
 {% for line in title_lines %}    <tspan x="540" dy="{% if loop.first %}0{% else %}54{% endif %}">{{ line }}</tspan>{% endfor %}
     {% if not title_lines %}<tspan x="540">{{ slide.title }}</tspan>{% endif %}
   </text>
-  <line x1="160" y1="500" x2="920" y2="500" stroke="url(#acc-grad-h)" stroke-width="4" opacity="0.3"/>
+  <line x1="160" y1="560" x2="920" y2="560" stroke="url(#acc-grad-h)" stroke-width="5" opacity="0.3"/>
   {% set phases = [
     (slide.phase1, slide.phase1_status),
     (slide.phase2, slide.phase2_status),
@@ -41,16 +41,16 @@
   {% for ph in phases %}
   {% if ph[0] %}
   {% set cx = xs[loop.index0] %}
-  <circle cx="{{ cx }}" cy="500" r="30" fill="url(#acc-grad)" opacity="0.2"/>
-  <circle cx="{{ cx }}" cy="500" r="16" fill="url(#acc-grad)"/>
-  <text x="{{ cx }}" y="430" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="22" font-weight="700" fill="#cdd6f4">{{ ph[0] }}</text>
-  <text x="{{ cx }}" y="580" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" font-weight="500" fill="url(#acc-grad)">{{ ph[1] }}</text>
+  <circle cx="{{ cx }}" cy="560" r="36" fill="url(#acc-grad)" opacity="0.2"/>
+  <circle cx="{{ cx }}" cy="560" r="18" fill="url(#acc-grad)"/>
+  <text x="{{ cx }}" y="470" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="22" font-weight="700" fill="#cdd6f4">{{ ph[0] }}</text>
+  <text x="{{ cx }}" y="665" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="500" fill="url(#acc-grad)">{{ ph[1] }}</text>
   {% endif %}
   {% endfor %}
-  <text x="195" y="650" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="400" fill="#7f849c">Q1</text>
-  <text x="435" y="650" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="400" fill="#7f849c">Q2</text>
-  <text x="675" y="650" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="400" fill="#7f849c">Q3</text>
-  <text x="915" y="650" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="400" fill="#7f849c">Q4</text>
+  <text x="195" y="740" text-anchor="middle" font-family="Inter,sans-serif" font-size="16" font-weight="400" fill="#7f849c">Q1</text>
+  <text x="435" y="740" text-anchor="middle" font-family="Inter,sans-serif" font-size="16" font-weight="400" fill="#7f849c">Q2</text>
+  <text x="675" y="740" text-anchor="middle" font-family="Inter,sans-serif" font-size="16" font-weight="400" fill="#7f849c">Q3</text>
+  <text x="915" y="740" text-anchor="middle" font-family="Inter,sans-serif" font-size="16" font-weight="400" fill="#7f849c">Q4</text>
   {% if brand.show_brand %}
   <text x="540" y="1050" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   {% endif %}
