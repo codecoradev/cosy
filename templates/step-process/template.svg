@@ -47,22 +47,22 @@
   {% set col = (num - 1) % 2 %}
   {% set row = (num - 1) // 2 %}
   {% set x_center = 280 + col * 520 %}
-  {% set y_center = 400 + row * 280 %}
+  {% set y_center = 460 + row * 330 %}
   <!-- Step box -->
-  <rect x="{{ x_center - 200 }}" y="{{ y_center - 90 }}" width="400" height="180" rx="20" fill="#313244" opacity="0.5"/>
+  <rect x="{{ x_center - 220 }}" y="{{ y_center - 110 }}" width="440" height="220" rx="20" fill="#313244" opacity="0.5"/>
   <!-- Step number badge -->
-  <circle cx="{{ x_center - 160 }}" y="{{ y_center - 50 }}" r="32" fill="url(#acc-grad)" opacity="0.2"/>
-  <text x="{{ x_center - 160 }}" y="{{ y_center - 38 }}" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="28" font-weight="800" fill="url(#acc-grad)">{{ num }}</text>
+  <circle cx="{{ x_center - 180 }}" cy="{{ y_center - 60 }}" r="34" fill="url(#acc-grad)" opacity="0.2"/>
+  <text x="{{ x_center - 180 }}" y="{{ y_center - 48 }}" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="28" font-weight="800" fill="url(#acc-grad)">{{ num }}</text>
   <!-- Step title -->
-  <text x="{{ x_center - 110 }}" y="{{ y_center - 45 }}" font-family="Inter,sans-serif" font-size="24" font-weight="700" fill="#cdd6f4">{{ step[0] }}</text>
+  <text x="{{ x_center - 128 }}" y="{{ y_center - 50 }}" font-family="Inter,sans-serif" font-size="26" font-weight="700" fill="#cdd6f4">{{ step[0] }}</text>
   <!-- Step desc -->
   {% set desc_lines = step_lines_arr[num - 1] %}
   {% if desc_lines %}
     {% for line in desc_lines %}
-  <text x="{{ x_center - 160 }}" y="{{ y_center + 10 + loop.index0 * 30 }}" font-family="Inter,sans-serif" font-size="18" font-weight="400" fill="#a6adc8">{{ line }}</text>
+  <text x="{{ x_center - 180 }}" y="{{ y_center + 15 + loop.index0 * 34 }}" font-family="Inter,sans-serif" font-size="19" font-weight="400" fill="#a6adc8">{{ line }}</text>
     {% endfor %}
   {% elif step[1] %}
-  <text x="{{ x_center - 160 }}" y="{{ y_center + 20 }}" font-family="Inter,sans-serif" font-size="18" font-weight="400" fill="#a6adc8">{{ step[1] }}</text>
+  <text x="{{ x_center - 180 }}" y="{{ y_center + 15 }}" font-family="Inter,sans-serif" font-size="19" font-weight="400" fill="#a6adc8">{{ step[1] }}</text>
   {% endif %}
   {% endif %}
   {% endfor %}

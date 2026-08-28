@@ -33,10 +33,10 @@
   {% set feats = [(slide.f1_name, slide.f1_v1, slide.f1_v2), (slide.f2_name, slide.f2_v1, slide.f2_v2), (slide.f3_name, slide.f3_v1, slide.f3_v2), (slide.f4_name, slide.f4_v1, slide.f4_v2)] %}
   {% for f in feats %}
   {% if f[0] %}
-  <rect x="80" y="{{ 220 + loop.index0 * 140 }}" width="920" height="100" rx="12" fill="#313244" opacity="0.12"/>
-  <text x="540" y="{{ 265 + loop.index0 * 140 }}" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="600" fill="#cdd6f4">{{ f[0] }}</text>
-  <text x="320" y="{{ 305 + loop.index0 * 140 }}" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" fill="#7f849c">{{ f[1] }}</text>
-  <text x="650" y="{{ 305 + loop.index0 * 140 }}" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="url(#acc-grad)">{{ f[2] }}</text>
+  <rect x="80" y="{{ 220 + loop.index0 * 190 }}" width="920" height="150" rx="16" fill="#313244" opacity="0.12"/>
+  <text x="540" y="{{ 285 + loop.index0 * 190 }}" text-anchor="middle" font-family="Inter,sans-serif" font-size="24" font-weight="600" fill="#cdd6f4">{{ f[0] }}</text>
+  <text x="320" y="{{ 335 + loop.index0 * 190 }}" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" fill="#7f849c">{{ f[1] }}</text>
+  <text x="650" y="{{ 335 + loop.index0 * 190 }}" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="600" fill="url(#acc-grad)">{{ f[2] }}</text>
   {% endif %}
   {% endfor %}
   {% if brand.show_brand %}

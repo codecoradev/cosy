@@ -29,22 +29,23 @@
   {% set is_success = slide.exit_code == '0' %}
   <rect x="80" y="80" width="920" height="60" rx="12" fill="#0c0c14" opacity="0.85"/>
   <text x="110" y="120" font-family="JetBrains Mono,monospace" font-size="22" fill="#cdd6f4">$ {{ slide.command }}</text>
-  <rect x="80" y="170" width="920" height="700" rx="12" fill="#0c0c14" opacity="0.75"/>
+  <rect x="80" y="170" width="920" height="770" rx="12" fill="#0c0c14" opacity="0.75"/>
   {% if is_success %}
   <rect x="80" y="170" width="920" height="6" rx="8" fill="#a6e3a1" opacity="0.5"/>
   {% else %}
   <rect x="80" y="170" width="920" height="6" rx="8" fill="#f38ba8" opacity="0.5"/>
   {% endif %}
-  {% if slide.stdout_line1 %}<text x="110" y="230" font-family="JetBrains Mono,monospace" font-size="18" fill="#a6adc8">{{ slide.stdout_line1 }}</text>{% endif %}
-  {% if slide.stdout_line2 %}<text x="110" y="270" font-family="JetBrains Mono,monospace" font-size="18" fill="#a6adc8">{{ slide.stdout_line2 }}</text>{% endif %}
-  {% if slide.stdout_line3 %}<text x="110" y="310" font-family="JetBrains Mono,monospace" font-size="18" fill="#a6adc8">{{ slide.stdout_line3 }}</text>{% endif %}
-  {% if slide.stderr_line1 %}<text x="110" y="370" font-family="JetBrains Mono,monospace" font-size="18" fill="#f38ba8">{{ slide.stderr_line1 }}</text>{% endif %}
-  <line x1="110" y1="780" x2="970" y2="780" stroke="#313244" stroke-width="1" opacity="0.3"/>
-  <text x="110" y="830" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">Exit Code:</text>
-  <text x="230" y="830" font-family="JetBrains Mono,monospace" font-size="22" font-weight="700" fill="{% if is_success %}#a6e3a1{% else %}#f38ba8{% endif %}">{{ slide.exit_code }}</text>
+  {% if slide.stdout_line1 %}<text x="110" y="380" font-family="JetBrains Mono,monospace" font-size="22" fill="#a6adc8">{{ slide.stdout_line1 }}</text>{% endif %}
+  {% if slide.stdout_line2 %}<text x="110" y="440" font-family="JetBrains Mono,monospace" font-size="22" fill="#a6adc8">{{ slide.stdout_line2 }}</text>{% endif %}
+  {% if slide.stdout_line3 %}<text x="110" y="500" font-family="JetBrains Mono,monospace" font-size="22" fill="#a6adc8">{{ slide.stdout_line3 }}</text>{% endif %}
+  {% if slide.stderr_line1 %}<text x="110" y="575" font-family="JetBrains Mono,monospace" font-size="22" fill="#f38ba8">{{ slide.stderr_line1 }}</text>{% endif %}
+  <text x="110" y="650" font-family="JetBrains Mono,monospace" font-size="22" fill="#a6adc8" opacity="0.85">$ <tspan fill="{% if is_success %}#a6e3a1{% else %}#f38ba8{% endif %}">&#x258A;</tspan></text>
+  <line x1="110" y1="850" x2="970" y2="850" stroke="#313244" stroke-width="1" opacity="0.3"/>
+  <text x="110" y="900" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">Exit Code:</text>
+  <text x="230" y="900" font-family="JetBrains Mono,monospace" font-size="22" font-weight="700" fill="{% if is_success %}#a6e3a1{% else %}#f38ba8{% endif %}">{{ slide.exit_code }}</text>
   {% if slide.duration %}
-  <text x="400" y="830" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">Duration:</text>
-  <text x="520" y="830" font-family="JetBrains Mono,monospace" font-size="22" fill="#cdd6f4">{{ slide.duration }}</text>
+  <text x="400" y="900" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">Duration:</text>
+  <text x="520" y="900" font-family="JetBrains Mono,monospace" font-size="22" fill="#cdd6f4">{{ slide.duration }}</text>
   {% endif %}
   {% if brand.show_brand %}
   <text x="540" y="1050" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
