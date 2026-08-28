@@ -27,18 +27,11 @@
   <rect width="1080" height="1080" fill="url(#glow)"/>
   <rect width="1080" height="1080" fill="url(#dots)"/>
   <text x="540" y="110" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="36" font-weight="700" fill="#cdd6f4">{{ slide.title }}</text>
-<<<<<<< Updated upstream
+  {% set ring_circumference = 1131 %}{% set arc = (ring_circumference * slide.current / slide.target)|int if slide.target else 0 %}
   <circle cx="320" cy="575" r="180" fill="none" stroke="#313244" stroke-width="22"/>
-  <circle cx="320" cy="575" r="180" fill="none" stroke="url(#acc-grad)" stroke-width="22" stroke-dasharray="769" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 320 575)"/>
+  <circle cx="320" cy="575" r="180" fill="none" stroke="url(#acc-grad)" stroke-width="22" stroke-dasharray="{{ arc }}" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 320 575)"/>
   <text x="320" y="580" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="68" font-weight="800" fill="url(#acc-grad)">{{ slide.current }}</text>
   <text x="320" y="625" text-anchor="middle" font-family="Inter,sans-serif" font-size="24" font-weight="400" fill="#7f849c">/ {{ slide.target }}{% if slide.unit %} {{ slide.unit }}{% endif %}</text>
-=======
-  {% set ring_circumference = 1005 %}{% set arc = (ring_circumference * slide.current / slide.target)|int if slide.target else 0 %}
-  <circle cx="320" cy="540" r="160" fill="none" stroke="#313244" stroke-width="20"/>
-  <circle cx="320" cy="540" r="160" fill="none" stroke="url(#acc-grad)" stroke-width="20" stroke-dasharray="{{ arc }}" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 320 540)"/>
-  <text x="320" y="530" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="64" font-weight="800" fill="url(#acc-grad)">{{ slide.current }}</text>
-  <text x="320" y="575" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="400" fill="#7f849c">/ {{ slide.target }}{% if slide.unit %} {{ slide.unit }}{% endif %}</text>
->>>>>>> Stashed changes
   {% set goals = [
     (slide.goal1, slide.goal1_done),
     (slide.goal2, slide.goal2_done),

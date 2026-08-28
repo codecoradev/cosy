@@ -30,12 +30,12 @@
   <!-- Left: Before -->
   <text x="270" y="580" text-anchor="middle" font-family="Inter,sans-serif" font-size="28" font-weight="600" fill="#a6adc8">{{ slide.before_label | default('Before') }}</text>
   <text x="270" y="780" text-anchor="middle" font-family="Inter,sans-serif" font-size="30" font-weight="400" fill="#a6adc8">
-    {% for line in before_text_lines %}<tspan x="270" dy="{% if loop.first %}0{% else %}150{% endif %}">{{ line }}</tspan>{% endfor %}
+    {% set bn = before_text_lines|length %}{% set pitch = [370 / (bn - 1), 150]|min|int if bn > 1 else 0 %}{% for line in before_text_lines %}<tspan x="270" dy="{{ 0 if loop.first else pitch }}">{{ line }}</tspan>{% endfor %}
   </text>
   <!-- Right: After -->
   <text x="810" y="580" text-anchor="middle" font-family="Inter,sans-serif" font-size="28" font-weight="600" fill="{{ brand.accent_color | default('#cba6f7') }}">{{ slide.after_label | default('After') }}</text>
   <text x="810" y="780" text-anchor="middle" font-family="Inter,sans-serif" font-size="30" font-weight="400" fill="#cdd6f4">
-    {% for line in after_text_lines %}<tspan x="810" dy="{% if loop.first %}0{% else %}150{% endif %}">{{ line }}</tspan>{% endfor %}
+    {% set an = after_text_lines|length %}{% set apitch = [370 / (an - 1), 150]|min|int if an > 1 else 0 %}{% for line in after_text_lines %}<tspan x="810" dy="{{ 0 if loop.first else apitch }}">{{ line }}</tspan>{% endfor %}
   </text>
   {% if brand.show_brand %}
   <text x="540" y="1320" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
