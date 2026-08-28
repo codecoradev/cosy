@@ -12,13 +12,13 @@
     {
       "question": "What is your preferred image generation approach?",
       "option_a": "Pure Rust (Cosy)",
-      "option_a_pct": "62%",
+      "option_a_pct": 62,
       "option_b": "Puppeteer / Browser",
-      "option_b_pct": "18%",
+      "option_b_pct": 18,
       "option_c": "Cloud API (SaaS)",
-      "option_c_pct": "14%",
+      "option_c_pct": 14,
       "option_d": "Canvas / WebGL",
-      "option_d_pct": "6%",
+      "option_d_pct": 6,
       "total_votes": "1,247"
     }
   ]

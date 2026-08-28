@@ -37,9 +37,9 @@
   {% set kvs = [(slide.key1, slide.value1), (slide.key2, slide.value2), (slide.key3, slide.value3)] %}
   {% for kv in kvs %}
   {% if kv[0] %}
-  <text x="160" y="{{ 260 + loop.index0 * 55 }}" font-family="JetBrains Mono,monospace" font-size="24" fill="#89b4fa">"{{ kv[0] }}"</text>
-  <text x="430" y="{{ 260 + loop.index0 * 55 }}" font-family="JetBrains Mono,monospace" font-size="24" fill="#7f849c">:</text>
-  <text x="460" y="{{ 260 + loop.index0 * 55 }}" font-family="JetBrains Mono,monospace" font-size="24" fill="#a6e3a1">"{{ kv[1] }}"</text>
+  <text x="160" y="{{ 260 + loop.index0 * 55 }}" font-family="JetBrains Mono,monospace" font-size="20" fill="#89b4fa">"{{ kv[0] }}"</text>
+  <text x="560" y="{{ 260 + loop.index0 * 55 }}" font-family="JetBrains Mono,monospace" font-size="20" fill="#7f849c">:</text>
+  <text x="590" y="{{ 260 + loop.index0 * 55 }}" font-family="JetBrains Mono,monospace" font-size="20" fill="#a6e3a1">"{{ kv[1] }}"</text>
   {% endif %}
   {% endfor %}
   <text x="120" y="{{ 260 + kvs | length * 55 }}" font-family="JetBrains Mono,monospace" font-size="26" fill="#f9e2af">}</text>

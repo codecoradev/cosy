@@ -67,7 +67,7 @@
       "type": "text",
       "required": true,
       "max": 200,
-      "wrap_width": 16
+      "wrap_width": 28
     },
     "author": {
       "type": "text",

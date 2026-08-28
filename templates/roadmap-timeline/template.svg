@@ -34,7 +34,7 @@
   <text x="{{ q[2] }}" y="357" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="14" font-weight="800" fill="#11111b">{{ loop.index }}</text>
   <text x="{{ q[2] }}" y="280" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="24" font-weight="700" fill="#cdd6f4">{{ q[0] }}</text>
   <rect x="{{ q[2] - 100 }}" y="400" width="200" height="120" rx="12" fill="#313244" opacity="0.12"/>
-  <text x="{{ q[2] }}" y="450" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" fill="#a6adc8">{{ q[1] }}</text>
+  <text x="{{ q[2] }}" y="445" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" fill="#a6adc8">{% for ln in q[1]|wordwrap(22)|split('\n') %}<tspan x="{{ q[2] }}" dy="{{ 0 if loop.first else 24 }}">{{ ln }}</tspan>{% endfor %}</text>
   {% endfor %}
   {% if brand.show_brand %}
   <text x="540" y="1050" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>

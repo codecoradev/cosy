@@ -33,7 +33,7 @@
   <circle cx="155" cy="190" r="8" fill="#f9e2af" opacity="0.7"/>
   <circle cx="180" cy="190" r="8" fill="#a6e3a1" opacity="0.7"/>
   <text x="130" y="245" font-family="JetBrains Mono,monospace" font-size="26" font-weight="500" fill="#a6e3a1">$</text>
-  <text x="165" y="245" font-family="JetBrains Mono,monospace" font-size="26" font-weight="500" fill="#cdd6f4">{{ slide.command }}</text>
+  <text x="165" y="245" font-family="JetBrains Mono,monospace" font-size="21" font-weight="500" fill="#cdd6f4">{{ slide.command }}</text>
   {% if slide.description %}
   <text x="600" y="400" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="400" fill="#a6adc8">
 {% for line in description_lines %}    <tspan x="600" dy="{% if loop.first %}0{% else %}32{% endif %}">{{ line }}</tspan>{% endfor %}
