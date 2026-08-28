@@ -73,14 +73,12 @@
       "max": 20
     },
     "f1_pct": {
-      "type": "text",
-      "required": true,
-      "max": 8
+      "type": "number",
+      "required": true
     },
     "f1_width": {
-      "type": "text",
-      "required": true,
-      "max": 8
+      "type": "number",
+      "required": true
     },
     "f2_name": {
       "type": "text",
@@ -88,14 +86,12 @@
       "max": 20
     },
     "f2_pct": {
-      "type": "text",
-      "required": true,
-      "max": 8
+      "type": "number",
+      "required": true
     },
     "f2_width": {
-      "type": "text",
-      "required": true,
-      "max": 8
+      "type": "number",
+      "required": true
     },
     "f3_name": {
       "type": "text",
@@ -103,14 +99,12 @@
       "max": 20
     },
     "f3_pct": {
-      "type": "text",
-      "required": true,
-      "max": 8
+      "type": "number",
+      "required": true
     },
     "f3_width": {
-      "type": "text",
-      "required": true,
-      "max": 8
+      "type": "number",
+      "required": true
     },
     "f4_name": {
       "type": "text",
@@ -118,14 +112,12 @@
       "max": 20
     },
     "f4_pct": {
-      "type": "text",
-      "required": false,
-      "max": 8
+      "type": "number",
+      "required": false
     },
     "f4_width": {
-      "type": "text",
-      "required": false,
-      "max": 8
+      "type": "number",
+      "required": false
     },
     "total_time": {
       "type": "text",

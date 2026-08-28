@@ -12,11 +12,11 @@
     {
       "question": "Which feature should we build next?",
       "opt1": "Video output from templates",
-      "opt1_pct": "47",
+      "opt1_pct": 47,
       "opt2": "More social media templates",
-      "opt2_pct": "31",
+      "opt2_pct": 31,
       "opt3": "AI-generated descriptions",
-      "opt3_pct": "22"
+      "opt3_pct": 22
     }
   ]
 }

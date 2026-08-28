@@ -12,17 +12,17 @@
     {
       "title": "Render Profile",
       "f1_name": "svg_build",
-      "f1_pct": "42",
-      "f1_width": "100",
+      "f1_pct": 42,
+      "f1_width": 100,
       "f2_name": "resvg_parse",
-      "f2_pct": "28",
-      "f2_width": "67",
+      "f2_pct": 28,
+      "f2_width": 67,
       "f3_name": "png_encode",
-      "f3_pct": "18",
-      "f3_width": "43",
+      "f3_pct": 18,
+      "f3_width": 43,
       "f4_name": "json_parse",
-      "f4_pct": "12",
-      "f4_width": "29",
+      "f4_pct": 12,
+      "f4_width": 29,
       "total_time": "148ms"
     }
   ]

@@ -12,7 +12,7 @@
     {
       "title": "Generated API Secret",
       "password": "cza_sk_9F2a4B8c1E7d3F6a0B5c2E8d",
-      "length": "32",
+      "length": 32,
       "strength": "Strong",
       "entropy": "190 bits",
       "crack_time": "centuries to brute force"

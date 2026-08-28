@@ -14,7 +14,7 @@
       "limit": "1000",
       "remaining": "847",
       "reset": "12 min",
-      "used_pct": "15",
+      "used_pct": 15,
       "plan": "Pro"
     }
   ]

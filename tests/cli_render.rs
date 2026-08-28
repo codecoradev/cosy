@@ -338,9 +338,9 @@ fn test_render_multi_slide_carousel() {
     let json_data = serde_json::json!({
         "brand": {"brand_name": "CodeCora", "brand_handle": "@codecoradev"},
         "slides": [
-            {"title": "Slide 1", "body": "Content 1"},
-            {"title": "Slide 2", "body": "Content 2"},
-            {"title": "Slide 3", "body": "Content 3"},
+            {"headline": "Slide 1"},
+            {"headline": "Slide 2"},
+            {"headline": "Slide 3"},
         ]
     })
     .to_string();
