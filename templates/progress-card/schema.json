@@ -72,9 +72,10 @@
       "wrap_width": 28
     },
     "percentage": {
-      "type": "text",
+      "type": "number",
       "required": true,
-      "max": 10
+      "default": 0,
+      "description": "Percentage value 0-100, drives bar fill width"
     },
     "milestone_label": {
       "type": "text",

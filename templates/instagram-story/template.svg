@@ -23,15 +23,15 @@
   <rect width="1080" height="1920" fill="url(#glow)"/>
   <rect width="1080" height="1920" fill="url(#dots)"/>
   {% if slide.tag %}
-  <rect x="80" y="160" width="300" height="60" rx="30" fill="url(#acc-grad)" opacity="0.2"/>
-  <text x="230" y="198" text-anchor="middle" font-family="Inter,sans-serif" font-size="24" font-weight="600" fill="{{ brand.accent_color | default('#cba6f7') }}">{{ slide.tag }}</text>
+  <rect x="390" y="690" width="300" height="60" rx="30" fill="url(#acc-grad)" opacity="0.2"/>
+  <text x="540" y="728" text-anchor="middle" font-family="Inter,sans-serif" font-size="24" font-weight="600" fill="{{ brand.accent_color | default('#cba6f7') }}">{{ slide.tag }}</text>
   {% endif %}
-  <text x="540" y="860" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="64" font-weight="700" fill="#cdd6f4">
+  <text x="540" y="880" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="64" font-weight="700" fill="#cdd6f4">
     {% for line in headline_lines %}<tspan x="540" dy="{% if loop.first %}0{% else %}80{% endif %}">{{ line }}</tspan>{% endfor %}
     {% if not headline_lines %}<tspan x="540" dy="0">{{ slide.headline }}</tspan>{% endif %}
   </text>
   {% if slide.subtext %}
-  <text x="540" y="1150" text-anchor="middle" font-family="Inter,sans-serif" font-size="32" font-weight="400" fill="#a6adc8">
+  <text x="540" y="1120" text-anchor="middle" font-family="Inter,sans-serif" font-size="32" font-weight="400" fill="#a6adc8">
     {% for line in subtext_lines %}<tspan x="540" dy="{% if loop.first %}0{% else %}46{% endif %}">{{ line }}</tspan>{% endfor %}
   </text>
   {% endif %}
