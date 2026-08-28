@@ -15,7 +15,7 @@
       "status": "Resolved",
       "duration": "23 min",
       "affected": "Batch rendering API",
-      "summary": "A sudden spike in batch requests caused the render queue to backlog. Scaled workers and processed pending jobs.",
+      "summary": "Sudden spike in batch requests backlogged the render queue. Scaled workers to clear pending jobs.",
       "timestamp": "Aug 12, 14:32 WIB"
     }
   ]

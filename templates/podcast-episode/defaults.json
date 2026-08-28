@@ -10,7 +10,7 @@
   },
   "slides": [
     {
-      "episode_number": "EP 042",
+      "episode_number": "042",
       "episode_title": "Ditching Chromium for Pure Rust Image Generation",
       "guest": "ajianaz",
       "duration": "47 min",

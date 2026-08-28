@@ -10,10 +10,10 @@
   },
   "slides": [
     {
-      "version": "v2.1.0",
+      "version": "2.1.0",
       "date": "Aug 10, 2026",
       "type": "Feature",
-      "item1": "Added 60 new templates including deploy-status and ci-pipeline",
+      "item1": "Added 60 new templates incl. deploy-status, ci-pipeline",
       "item2": "Background image overlay support for all card templates",
       "item3": "Custom logo rendering at bottom-right corner",
       "item4": "Gradient color support for accent borders",

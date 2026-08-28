@@ -11,7 +11,7 @@
   "slides": [
     {
       "title": "Template registration",
-      "code_line1": "pub fn register_template(name: andstr, schema: Schema) {",
+      "code_line1": "pub fn register_template(name: &str, schema: Schema) {",
       "code_line2": "    let validated = schema.validate();",
       "code_line3": "    TEMPLATES.write().insert(name, validated);",
       "code_line4": "}",

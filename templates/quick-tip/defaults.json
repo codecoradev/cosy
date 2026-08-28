@@ -11,7 +11,7 @@
   "slides": [
     {
       "tip_title": "Use SVG-safe characters",
-      "tip_body": "When writing text for templates, always use Unicode characters directly instead of HTML entities like andapos or andamp. This prevents SVG parsing errors during rendering.",
+      "tip_body": "When writing text for templates, always use Unicode characters directly instead of HTML entities like &apos; or &amp;. This prevents SVG parsing errors during rendering.",
       "tip_number": "#42"
     }
   ]
