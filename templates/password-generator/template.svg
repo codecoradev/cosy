@@ -26,26 +26,26 @@
   <rect width="1080" height="1080" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
   <rect width="1080" height="1080" fill="url(#glow)"/>
   <rect width="1080" height="1080" fill="url(#dots)"/>
-  <text x="540" y="100" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="32" font-weight="700" fill="#cdd6f4">{{ slide.title }}</text>
-  <rect x="100" y="180" width="880" height="120" rx="20" fill="#0c0c14" opacity="0.85"/>
-  <text x="540" y="258" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="36" fill="#a6e3a1">{{ slide.password }}</text>
+  <text x="540" y="128" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="32" font-weight="700" fill="#cdd6f4">{{ slide.title }}</text>
+  <rect x="100" y="248" width="880" height="180" rx="20" fill="#0c0c14" opacity="0.85"/>
+  <text x="540" y="351" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="36" fill="#a6e3a1">{{ slide.password }}</text>
   {% set is_strong = slide.strength == 'strong' or slide.strength == 'Strong' %}
   {% set is_medium = slide.strength == 'medium' or slide.strength == 'Medium' %}
-  <rect x="100" y="360" width="880" height="50" rx="30" fill="#313244" opacity="0.2"/>
-  <rect x="100" y="360" width="{{ (slide.length | int) * 880 / 64 }}" height="50" rx="30" fill="{% if is_strong %}#a6e3a1{% elif is_medium %}#f9e2af{% else %}#f38ba8{% endif %}" opacity="0.4"/>
-  <text x="540" y="393" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="700" fill="{% if is_strong %}#a6e3a1{% elif is_medium %}#f9e2af{% else %}#f38ba8{% endif %}">{{ slide.strength | upper }}</text>
-  <rect x="100" y="500" width="280" height="120" rx="12" fill="#313244" opacity="0.12"/>
-  <text x="240" y="550" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">Length</text>
-  <text x="240" y="595" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="42" font-weight="800" fill="url(#acc-grad)">{{ slide.length }}</text>
+  <rect x="100" y="543" width="880" height="58" rx="29" fill="#313244" opacity="0.2"/>
+  <rect x="100" y="543" width="{{ (slide.length | int) * 880 / 64 }}" height="58" rx="29" fill="{% if is_strong %}#a6e3a1{% elif is_medium %}#f9e2af{% else %}#f38ba8{% endif %}" opacity="0.4"/>
+  <text x="{{ 100 + (slide.length | int) * 880 / 128 }}" y="580" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="700" fill="{% if is_strong %}#a6e3a1{% elif is_medium %}#f9e2af{% else %}#f38ba8{% endif %}">{{ slide.strength | upper }}</text>
+  <rect x="100" y="716" width="280" height="230" rx="12" fill="#313244" opacity="0.12"/>
+  <text x="240" y="796" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">Length</text>
+  <text x="240" y="871" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="42" font-weight="800" fill="url(#acc-grad)">{{ slide.length }}</text>
   {% if slide.entropy %}
-  <rect x="400" y="500" width="280" height="120" rx="12" fill="#313244" opacity="0.12"/>
-  <text x="540" y="550" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">Entropy</text>
-  <text x="540" y="595" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="42" font-weight="800" fill="url(#acc-grad)">{{ slide.entropy }}</text>
+  <rect x="400" y="716" width="280" height="230" rx="12" fill="#313244" opacity="0.12"/>
+  <text x="540" y="796" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">Entropy</text>
+  <text x="540" y="871" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="42" font-weight="800" fill="url(#acc-grad)">{{ slide.entropy }}</text>
   {% endif %}
   {% if slide.crack_time %}
-  <rect x="700" y="500" width="280" height="120" rx="12" fill="#313244" opacity="0.12"/>
-  <text x="840" y="550" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">Crack Time</text>
-  <text x="840" y="590" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="24" font-weight="700" fill="#a6e3a1">{{ slide.crack_time }}</text>
+  <rect x="700" y="716" width="280" height="230" rx="12" fill="#313244" opacity="0.12"/>
+  <text x="840" y="796" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" fill="#7f849c">Crack Time</text>
+  <text x="840" y="826" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="20" font-weight="700" fill="#a6e3a1">{% for ln in slide.crack_time|wordwrap(15)|split('\n') %}<tspan x="840" dy="{{ 0 if loop.first else 26 }}">{{ ln }}</tspan>{% endfor %}</text>
   {% endif %}
   {% if brand.show_brand %}
   <text x="540" y="1050" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>

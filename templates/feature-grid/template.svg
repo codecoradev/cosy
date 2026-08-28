@@ -32,14 +32,14 @@
   {% if f[0] %}
   {% set col = loop.index0 % 2 %}
   {% set row = loop.index0 // 2 %}
-  {% set x = 80 + col * 470 %}
+  {% set x = 60 + col * 480 %}
   {% set y = 140 + row * 420 %}
-  <rect x="{{ x }}" y="{{ y }}" width="420" height="360" rx="20" fill="#313244" opacity="0.1"/>
-  <rect x="{{ x }}" y="{{ y }}" width="420" height="6" rx="8" fill="url(#acc-grad-h)" opacity="0.4"/>
+  <rect x="{{ x }}" y="{{ y }}" width="440" height="360" rx="20" fill="#313244" opacity="0.1"/>
+  <rect x="{{ x }}" y="{{ y }}" width="440" height="6" rx="8" fill="url(#acc-grad-h)" opacity="0.4"/>
   <circle cx="{{ x + 60 }}" cy="{{ y + 80 }}" r="28" fill="url(#acc-grad)" opacity="0.15"/>
   <text x="{{ x + 60 }}" y="{{ y + 90 }}" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="28" font-weight="800" fill="url(#acc-grad)">{{ loop.index }}</text>
   <text x="{{ x + 30 }}" y="{{ y + 170 }}" font-family="Space Grotesk,sans-serif" font-size="26" font-weight="700" fill="#cdd6f4">{{ f[0] }}</text>
-  <text x="{{ x + 30 }}" y="{{ y + 220 }}" font-family="Inter,sans-serif" font-size="20" fill="#a6adc8">{{ f[1] }}</text>
+  <text x="{{ x + 30 }}" y="{{ y + 220 }}" font-family="Inter,sans-serif" font-size="18" fill="#a6adc8">{% for ln in f[1]|default('')|wordwrap(38)|split('\n') %}<tspan x="{{ x + 30 }}" dy="{{ 0 if loop.first else 26 }}">{{ ln }}</tspan>{% endfor %}</text>
   {% endif %}
   {% endfor %}
   {% if brand.show_brand %}

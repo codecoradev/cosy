@@ -30,18 +30,22 @@
 {% for line in headline_lines %}    <tspan x="540" dy="{% if loop.first %}0{% else %}68{% endif %}">{{ line }}</tspan>{% endfor %}
     {% if not headline_lines %}<tspan x="540">{{ slide.headline }}</tspan>{% endif %}
   </text>
+  {% set hl_n = 1 %}{% if headline_lines %}{% set hl_n = headline_lines|length %}{% endif %}
+  {% set value_y = 320 + (hl_n - 1) * 68 + 90 %}
   {% if slide.value %}
-  <text x="540" y="520" text-anchor="middle" font-family="Inter,sans-serif" font-size="26" font-weight="400" fill="#a6adc8">
+  <text x="540" y="{{ value_y }}" text-anchor="middle" font-family="Inter,sans-serif" font-size="26" font-weight="400" fill="#a6adc8">
 {% for line in value_lines %}    <tspan x="540" dy="{% if loop.first %}0{% else %}36{% endif %}">{{ line }}</tspan>{% endfor %}
     {% if not value_lines %}<tspan x="540">{{ slide.value }}</tspan>{% endif %}
   </text>
   {% endif %}
-  <rect x="290" y="640" width="500" height="60" rx="30" fill="#313244" opacity="0.6"/>
-  <text x="320" y="678" font-family="JetBrains Mono,monospace" font-size="22" font-weight="400" fill="#7f849c">you@example.com</text>
-  <rect x="650" y="648" width="120" height="44" rx="20" fill="url(#acc-grad)"/>
-  <text x="710" y="676" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" font-weight="700" fill="#1e1e2e">Subscribe</text>
+  {% set vl_n = 1 %}{% if value_lines %}{% set vl_n = value_lines|length %}{% endif %}
+  {% set input_y = value_y + (vl_n - 1) * 36 + 100 %}
+  <rect x="290" y="{{ input_y }}" width="500" height="60" rx="30" fill="#313244" opacity="0.6"/>
+  <text x="320" y="{{ input_y + 38 }}" font-family="JetBrains Mono,monospace" font-size="22" font-weight="400" fill="#7f849c">you@example.com</text>
+  <rect x="650" y="{{ input_y + 8 }}" width="120" height="44" rx="20" fill="url(#acc-grad)"/>
+  <text x="710" y="{{ input_y + 36 }}" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" font-weight="700" fill="#1e1e2e">Subscribe</text>
   {% if slide.subscriber_count %}
-  <text x="540" y="780" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="500" fill="url(#acc-grad)">{{ slide.subscriber_count }} subscribers{% if slide.frequency %} &#xB7; {{ slide.frequency }}{% endif %}</text>
+  <text x="540" y="{{ input_y + 150 }}" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="500" fill="url(#acc-grad)">{{ slide.subscriber_count }} subscribers{% if slide.frequency %} &#xB7; {{ slide.frequency }}{% endif %}</text>
   {% endif %}
   {% if brand.show_brand %}
   <text x="540" y="1050" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>

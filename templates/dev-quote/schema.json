@@ -69,7 +69,7 @@
       "type": "text",
       "required": true,
       "max": 500,
-      "wrap_width": 45
+      "wrap_width": 50
     },
     "language": {
       "type": "text",
