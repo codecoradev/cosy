@@ -43,8 +43,8 @@
   <text x="200" y="183" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="22" font-weight="800" fill="{{ mc }}">{{ slide.method }}</text>
   <text x="330" y="183" font-family="JetBrains Mono,monospace" font-size="26" font-weight="500" fill="#cdd6f4">{{ slide.endpoint }}</text>
   {% if slide.auth_required %}
-  <rect x="1000" y="150" width="120" height="50" rx="12" fill="#313244" opacity="0.4"/>
-  <text x="1060" y="183" text-anchor="middle" font-family="Inter,sans-serif" font-size="16" font-weight="500" fill="#7f849c">Auth: {{ slide.auth_required }}</text>
+  <rect x="964" y="150" width="120" height="50" rx="12" fill="#313244" opacity="0.4"/>
+  <text x="1024" y="183" text-anchor="middle" font-family="Inter,sans-serif" font-size="16" font-weight="500" fill="#7f849c">Auth: {{ slide.auth_required }}</text>
   {% endif %}
   <rect x="100" y="150" width="1000" height="50" rx="12" fill="none" stroke="#313244" stroke-width="1"/>
   <rect x="100" y="260" width="1000" height="220" rx="12" fill="#11111b" opacity="0.5"/>

@@ -41,8 +41,7 @@
   <text x="110" y="450" font-family="JetBrains Mono,monospace" font-size="22" font-weight="500" fill="#a6e3a1">{{ slide.status_code }} OK</text>
   {% if slide.response_field %}
   <text x="110" y="490" font-family="JetBrains Mono,monospace" font-size="20" fill="#7f849c">{</text>
-  <text x="140" y="520" font-family="JetBrains Mono,monospace" font-size="20" fill="#89b4fa">"{{ slide.response_field }}":</text>
-  <text x="440" y="520" font-family="JetBrains Mono,monospace" font-size="20" fill="#f9e2af">"{{ slide.response_type | default('string') }}"</text>
+  <text x="140" y="520" font-family="JetBrains Mono,monospace" font-size="20" fill="#89b4fa">"{{ slide.response_field }}":<tspan dx="12" fill="#f9e2af">"{{ slide.response_type | default('string') }}"</tspan></text>
   <text x="110" y="550" font-family="JetBrains Mono,monospace" font-size="20" fill="#7f849c">}</text>
   {% endif %}
   {% if brand.show_brand %}

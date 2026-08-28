@@ -29,8 +29,8 @@
   <rect x="290" y="140" width="500" height="560" rx="20" fill="#313244" opacity="0.4"/>
   <rect x="290" y="140" width="500" height="120" rx="20" fill="url(#acc-grad)" opacity="0.15"/>
   <text x="540" y="215" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="36" font-weight="700" fill="url(#acc-grad)">{{ slide.month | upper }}</text>
-  <text x="540" y="420" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="160" font-weight="900" fill="#cdd6f4">{{ slide.day }}</text>
-  <text x="540" y="500" text-anchor="middle" font-family="Inter,sans-serif" font-size="28" font-weight="500" fill="#a6adc8">{{ slide.day_of_week }}</text>
+  <text x="540" y="485" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="160" font-weight="900" fill="#cdd6f4">{{ slide.day }}</text>
+  <text x="540" y="565" text-anchor="middle" font-family="Inter,sans-serif" font-size="28" font-weight="500" fill="#a6adc8">{{ slide.day_of_week }}</text>
   <rect x="340" y="740" width="400" height="3" rx="1.5" fill="url(#acc-grad-h)"/>
   <text x="540" y="810" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="36" font-weight="700" fill="#cdd6f4">
 {% for line in event_name_lines %}    <tspan x="540" dy="{% if loop.first %}0{% else %}44{% endif %}">{{ line }}</tspan>{% endfor %}
