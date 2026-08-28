@@ -161,11 +161,46 @@ pub fn process_template(
         }
     }
 
+    // Escape XML-special characters in every context string. Values land in
+    // SVG text nodes and attributes; without this, a literal `&` in user data
+    // produces malformed XML and the render fails.
+    let mut context_value = serde_json::Value::Object(context);
+    xml_escape_value(&mut context_value);
+    let context = match context_value {
+        serde_json::Value::Object(map) => map,
+        _ => unreachable!("context was built as an object"),
+    };
+
     // Render
     let tmpl = env.get_template("slide")?;
     let rendered = tmpl.render(serde_json::Value::Object(context))?;
 
     Ok(rendered)
+}
+
+/// Recursively XML-escape all string values in a JSON value.
+fn xml_escape_value(value: &mut serde_json::Value) {
+    match value {
+        serde_json::Value::String(s) => {
+            *s = s
+                .replace('&', "&amp;")
+                .replace('<', "&lt;")
+                .replace('>', "&gt;")
+                .replace('"', "&quot;")
+                .replace('\'', "&apos;");
+        }
+        serde_json::Value::Array(items) => {
+            for item in items {
+                xml_escape_value(item);
+            }
+        }
+        serde_json::Value::Object(map) => {
+            for v in map.values_mut() {
+                xml_escape_value(v);
+            }
+        }
+        _ => {}
+    }
 }
 
 // ─── Custom minijinja Filters ───────────────────────────────────────
@@ -294,6 +329,35 @@ pub fn validate_input(template: &TemplateDef, data: &InputData) -> Vec<String> {
 #[cfg(test)]
 mod filter_tests {
     use super::*;
+
+    #[test]
+    fn test_xml_escape_value_escapes_strings() {
+        let mut v = serde_json::json!({"a": "x & y < z > w \"q\" 'p'", "b": ["&"], "c": {"d": "<"}});
+        xml_escape_value(&mut v);
+        assert_eq!(v["a"], "x &amp; y &lt; z &gt; w &quot;q&quot; &apos;p&apos;");
+        assert_eq!(v["b"][0], "&amp;");
+        assert_eq!(v["c"]["d"], "&lt;");
+    }
+
+    #[test]
+    fn test_xml_escape_value_leaves_non_strings() {
+        let mut v = serde_json::json!({"n": 42, "f": 1.5, "t": true, "z": null});
+        xml_escape_value(&mut v);
+        assert_eq!(v, serde_json::json!({"n": 42, "f": 1.5, "t": true, "z": null}));
+    }
+
+    #[test]
+    fn test_process_template_escapes_ampersand_in_data() {
+        let dir = std::path::Path::new("templates/stat-card");
+        let template = crate::template::load_template("stat-card").expect("template def");
+        let brand = serde_json::json!({});
+        let slide = serde_json::json!({"stat_number": "R&D & Co", "stat_label": "x", "source": "y"});
+        let result = process_template(&template, dir, &brand, &slide);
+        match result {
+            Ok(svg) => assert!(svg.contains("R&amp;D &amp; Co"), "ampersand must be escaped in SVG"),
+            Err(_) => panic!("render with '&' in data must not fail"),
+        }
+    }
 
     #[test]
     fn test_filter_wordwrap_returns_wrapped_text() {
