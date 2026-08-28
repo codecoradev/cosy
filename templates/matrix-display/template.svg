@@ -27,20 +27,20 @@
   <rect width="1080" height="1080" fill="url(#glow)"/>
   <rect width="1080" height="1080" fill="url(#dots)"/>
   <text x="540" y="80" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="32" font-weight="700" fill="#cdd6f4">{{ slide.title }}</text>
-  <text x="380" y="200" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="24" font-weight="700" fill="#89b4fa">{{ slide.col1 }}</text>
-  <text x="540" y="200" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="24" font-weight="700" fill="#89b4fa">{{ slide.col2 }}</text>
-  <text x="700" y="200" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="24" font-weight="700" fill="#89b4fa">{{ slide.col3 }}</text>
-  <line x1="100" y1="220" x2="980" y2="220" stroke="url(#acc-grad-h)" stroke-width="2" opacity="0.3"/>
+  <text x="380" y="280" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="24" font-weight="700" fill="#89b4fa">{{ slide.col1 }}</text>
+  <text x="540" y="280" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="24" font-weight="700" fill="#89b4fa">{{ slide.col2 }}</text>
+  <text x="700" y="280" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="24" font-weight="700" fill="#89b4fa">{{ slide.col3 }}</text>
+  <line x1="100" y1="300" x2="980" y2="300" stroke="url(#acc-grad-h)" stroke-width="2" opacity="0.3"/>
   {% set rows = [(slide.r1_label, slide.r1c1, slide.r1c2, slide.r1c3), (slide.r2_label, slide.r2c1, slide.r2c2, slide.r2c3), (slide.r3_label, slide.r3c1, slide.r3c2, slide.r3c3)] %}
   {% for r in rows %}
   {% if r[0] %}
-  <text x="180" y="{{ 300 + loop.index0 * 180 }}" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="600" fill="#cdd6f4">{{ r[0] }}</text>
-  <rect x="290" y="{{ 260 + loop.index0 * 180 }}" width="140" height="80" rx="12" fill="#313244" opacity="0.12"/>
-  <text x="360" y="{{ 310 + loop.index0 * 180 }}" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="28" font-weight="700" fill="url(#acc-grad)">{{ r[1] }}</text>
-  <rect x="460" y="{{ 260 + loop.index0 * 180 }}" width="140" height="80" rx="12" fill="#313244" opacity="0.12"/>
-  <text x="530" y="{{ 310 + loop.index0 * 180 }}" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="28" font-weight="700" fill="url(#acc-grad)">{{ r[2] }}</text>
-  <rect x="630" y="{{ 260 + loop.index0 * 180 }}" width="140" height="80" rx="12" fill="#313244" opacity="0.12"/>
-  <text x="700" y="{{ 310 + loop.index0 * 180 }}" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="28" font-weight="700" fill="url(#acc-grad)">{{ r[3] }}</text>
+  <text x="180" y="{{ 408 + loop.index0 * 200 }}" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="600" fill="#cdd6f4">{{ r[0] }}</text>
+  <rect x="290" y="{{ 360 + loop.index0 * 200 }}" width="140" height="80" rx="12" fill="#313244" opacity="0.12"/>
+  <text x="360" y="{{ 410 + loop.index0 * 200 }}" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="28" font-weight="700" fill="url(#acc-grad)">{{ r[1] }}</text>
+  <rect x="460" y="{{ 360 + loop.index0 * 200 }}" width="140" height="80" rx="12" fill="#313244" opacity="0.12"/>
+  <text x="530" y="{{ 410 + loop.index0 * 200 }}" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="28" font-weight="700" fill="url(#acc-grad)">{{ r[2] }}</text>
+  <rect x="630" y="{{ 360 + loop.index0 * 200 }}" width="140" height="80" rx="12" fill="#313244" opacity="0.12"/>
+  <text x="700" y="{{ 410 + loop.index0 * 200 }}" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="28" font-weight="700" fill="url(#acc-grad)">{{ r[3] }}</text>
   {% endif %}
   {% endfor %}
   {% if brand.show_brand %}

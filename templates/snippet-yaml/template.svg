@@ -33,12 +33,12 @@
   <circle cx="120" cy="98" r="5" fill="#f9e2af" opacity="0.6"/>
   <circle cx="135" cy="98" r="5" fill="#a6e3a1" opacity="0.6"/>
   <text x="170" y="103" font-family="JetBrains Mono,monospace" font-size="14" fill="#7f849c">{{ slide.filename }}</text>
-  <text x="120" y="170" font-family="JetBrains Mono,monospace" font-size="18" fill="#cba6f7">{{ slide.line1 }}</text>
-  {% if slide.line2 %}<text x="120" y="215" font-family="JetBrains Mono,monospace" font-size="18" fill="#89b4fa">{{ slide.line2 }}</text>{% endif %}
-  {% if slide.line3 %}<text x="120" y="260" font-family="JetBrains Mono,monospace" font-size="18" fill="#cdd6f4">{{ slide.line3 }}</text>{% endif %}
-  {% if slide.line4 %}<text x="120" y="305" font-family="JetBrains Mono,monospace" font-size="18" fill="#a6e3a1">{{ slide.line4 }}</text>{% endif %}
-  {% if slide.line5 %}<text x="120" y="350" font-family="JetBrains Mono,monospace" font-size="18" fill="#cdd6f4">{{ slide.line5 }}</text>{% endif %}
-  {% if slide.line6 %}<text x="120" y="395" font-family="JetBrains Mono,monospace" font-size="18" fill="#f9e2af">{{ slide.line6 }}</text>{% endif %}
+  <text x="120" y="170" xml:space="preserve" font-family="JetBrains Mono,monospace" font-size="18" fill="#cba6f7">{{ slide.line1 }}</text>
+  {% if slide.line2 %}<text x="120" y="215" xml:space="preserve" font-family="JetBrains Mono,monospace" font-size="18" fill="#89b4fa">{{ slide.line2 }}</text>{% endif %}
+  {% if slide.line3 %}<text x="120" y="260" xml:space="preserve" font-family="JetBrains Mono,monospace" font-size="18" fill="#cdd6f4">{{ slide.line3 }}</text>{% endif %}
+  {% if slide.line4 %}<text x="120" y="305" xml:space="preserve" font-family="JetBrains Mono,monospace" font-size="18" fill="#a6e3a1">{{ slide.line4 }}</text>{% endif %}
+  {% if slide.line5 %}<text x="120" y="350" xml:space="preserve" font-family="JetBrains Mono,monospace" font-size="18" fill="#cdd6f4">{{ slide.line5 }}</text>{% endif %}
+  {% if slide.line6 %}<text x="120" y="395" xml:space="preserve" font-family="JetBrains Mono,monospace" font-size="18" fill="#f9e2af">{{ slide.line6 }}</text>{% endif %}
   {% if brand.show_brand %}
   <text x="600" y="600" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   {% endif %}

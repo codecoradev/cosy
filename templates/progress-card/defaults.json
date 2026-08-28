@@ -11,7 +11,7 @@
   "slides": [
     {
       "title": "Cosy v2.1 Development",
-      "percentage": "78%",
+      "percentage": 78,
       "milestone_label": "60 new templates added, batch rendering optimized",
       "items_done": "47",
       "items_total": "60"
