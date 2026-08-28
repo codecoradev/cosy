@@ -332,9 +332,13 @@ mod filter_tests {
 
     #[test]
     fn test_xml_escape_value_escapes_strings() {
-        let mut v = serde_json::json!({"a": "x & y < z > w \"q\" 'p'", "b": ["&"], "c": {"d": "<"}});
+        let mut v =
+            serde_json::json!({"a": "x & y < z > w \"q\" 'p'", "b": ["&"], "c": {"d": "<"}});
         xml_escape_value(&mut v);
-        assert_eq!(v["a"], "x &amp; y &lt; z &gt; w &quot;q&quot; &apos;p&apos;");
+        assert_eq!(
+            v["a"],
+            "x &amp; y &lt; z &gt; w &quot;q&quot; &apos;p&apos;"
+        );
         assert_eq!(v["b"][0], "&amp;");
         assert_eq!(v["c"]["d"], "&lt;");
     }
@@ -343,7 +347,10 @@ mod filter_tests {
     fn test_xml_escape_value_leaves_non_strings() {
         let mut v = serde_json::json!({"n": 42, "f": 1.5, "t": true, "z": null});
         xml_escape_value(&mut v);
-        assert_eq!(v, serde_json::json!({"n": 42, "f": 1.5, "t": true, "z": null}));
+        assert_eq!(
+            v,
+            serde_json::json!({"n": 42, "f": 1.5, "t": true, "z": null})
+        );
     }
 
     #[test]
@@ -351,10 +358,14 @@ mod filter_tests {
         let dir = std::path::Path::new("templates/stat-card");
         let template = crate::template::load_template("stat-card").expect("template def");
         let brand = serde_json::json!({});
-        let slide = serde_json::json!({"stat_number": "R&D & Co", "stat_label": "x", "source": "y"});
+        let slide =
+            serde_json::json!({"stat_number": "R&D & Co", "stat_label": "x", "source": "y"});
         let result = process_template(&template, dir, &brand, &slide);
         match result {
-            Ok(svg) => assert!(svg.contains("R&amp;D &amp; Co"), "ampersand must be escaped in SVG"),
+            Ok(svg) => assert!(
+                svg.contains("R&amp;D &amp; Co"),
+                "ampersand must be escaped in SVG"
+            ),
             Err(_) => panic!("render with '&' in data must not fail"),
         }
     }
