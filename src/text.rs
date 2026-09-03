@@ -4,7 +4,6 @@ use base64::Engine;
 use std::io::Read;
 use std::net::{IpAddr, SocketAddr, ToSocketAddrs};
 use std::path::Path;
-use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Duration;
 
 /// Refuse to download remote images larger than this (10 MB).
@@ -13,18 +12,36 @@ const MAX_REMOTE_IMAGE_BYTES: u64 = 10 * 1024 * 1024;
 /// Timeout for fetching a remote image.
 const FETCH_TIMEOUT: Duration = Duration::from_secs(10);
 
-/// Whether private/internal addresses may be fetched. Defaults to `false` so
-/// the HTTP server cannot be abused for SSRF against internal services.
-/// The standalone CLI enables it (a local user is already trusted), the
-/// server only via the explicit `--allow-private-images` flag.
-static ALLOW_PRIVATE_IMAGES: AtomicBool = AtomicBool::new(false);
-
-pub fn set_allow_private_images(allow: bool) {
-    ALLOW_PRIVATE_IMAGES.store(allow, Ordering::SeqCst);
+/// Image source permissions for one render call. `Default` is the secure
+/// posture used by `cosy serve`: https-only public URLs and no local
+/// filesystem reads. The standalone CLI uses [`ImagePolicy::UNRESTRICTED`]
+/// because a local user is already trusted.
+#[derive(Clone, Copy, Debug)]
+pub struct ImagePolicy {
+    /// Permit plain `http://` URLs and private/internal network targets.
+    pub allow_private: bool,
+    /// Permit local filesystem paths.
+    pub allow_local: bool,
 }
 
-fn allow_private_images() -> bool {
-    ALLOW_PRIVATE_IMAGES.load(Ordering::SeqCst)
+impl ImagePolicy {
+    /// Local CLI posture: any URL scheme/host, local paths allowed.
+    pub const UNRESTRICTED: Self = Self {
+        allow_private: true,
+        allow_local: true,
+    };
+
+    /// Server default posture: https-only public URLs, no local paths.
+    pub const SECURE: Self = Self {
+        allow_private: false,
+        allow_local: false,
+    };
+}
+
+impl Default for ImagePolicy {
+    fn default() -> Self {
+        Self::SECURE
+    }
 }
 
 /// Wrap text to fit within a max character width per line.
@@ -48,13 +65,18 @@ pub fn wrap_text(text: &str, max_chars: usize) -> Vec<String> {
 
 /// Convert an image to a base64 data URI for SVG embedding.
 ///
-/// Accepts a local file path or an `http(s)://` URL. Remote images are
-/// fetched synchronously with a 10 s timeout and a 10 MB size cap; the
-/// server render path must call this from a blocking thread
-/// (`tokio::task::spawn_blocking`).
-pub fn image_to_data_uri(path: &str) -> anyhow::Result<String> {
+/// Accepts a local file path or an `http(s)://` URL, gated by [`ImagePolicy`].
+/// Remote images are fetched synchronously with a 10 s timeout, a streamed
+/// 10 MB cap, pinned DNS, and no redirects; the server render path must call
+/// this from a blocking thread (`tokio::task::spawn_blocking`).
+pub fn image_to_data_uri(path: &str, policy: ImagePolicy) -> anyhow::Result<String> {
     if is_remote_url(path) {
-        return fetch_image_data_uri(path, allow_private_images());
+        return fetch_image_data_uri(path, policy.allow_private);
+    }
+
+    if !policy.allow_local {
+        log::warn!("rejected local image path (local images disabled): {path}");
+        anyhow::bail!("local image paths are not allowed");
     }
 
     let mime = mime_for_extension(
@@ -390,6 +412,24 @@ mod tests {
         let url = serve_one(response_with("image/png", b"data"));
         let host_url = url.replace("127.0.0.1", "localhost");
         assert!(fetch_image_data_uri(&host_url, false).is_err());
+    }
+
+    #[test]
+    fn test_local_paths_rejected_by_secure_policy() {
+        let err = image_to_data_uri("/etc/passwd", ImagePolicy::SECURE)
+            .expect_err("local paths must be rejected by the server default");
+        assert!(
+            err.to_string()
+                .contains("local image paths are not allowed"),
+            "got: {err}"
+        );
+        // and allowed under the CLI posture
+        let ok = image_to_data_uri("/etc/hostname", ImagePolicy::UNRESTRICTED);
+        // the file may or may not exist on a given machine, but it must not
+        // fail with the policy rejection
+        if let Err(e) = ok {
+            assert!(!e.to_string().contains("not allowed"), "got: {e}");
+        }
     }
 
     #[test]

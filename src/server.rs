@@ -27,6 +27,7 @@ use tower_http::cors::CorsLayer;
 /// Shared server state — font DB built once at startup.
 struct AppState {
     font_db: usvg::fontdb::Database,
+    image_policy: crate::text::ImagePolicy,
     api_key: Option<String>,
 }
 
@@ -65,7 +66,11 @@ pub struct ErrorResponse {
 ///
 /// If `api_key` is Some, all endpoints except /api/health require
 /// `Authorization: Bearer <api_key>` header.
-pub async fn run(port: u16, api_key: Option<String>) -> anyhow::Result<()> {
+pub async fn run(
+    port: u16,
+    api_key: Option<String>,
+    image_policy: crate::text::ImagePolicy,
+) -> anyhow::Result<()> {
     let font_db = render::build_font_db(None)?;
 
     let template_count = template::list_templates(std::path::Path::new("./templates")).len();
@@ -79,6 +84,7 @@ pub async fn run(port: u16, api_key: Option<String>) -> anyhow::Result<()> {
 
     let state = Arc::new(AppState {
         font_db,
+        image_policy,
         api_key: api_key.clone(),
     });
 
@@ -213,6 +219,7 @@ async fn render_handler(
             0,
             req.scale,
             &state.font_db,
+            state.image_policy,
         )
     })
     .await;

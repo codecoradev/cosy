@@ -25,7 +25,13 @@ fn start_server_with_key(api_key: Option<String>) -> String {
 
     thread::spawn(move || {
         let runtime = tokio::runtime::Runtime::new().unwrap();
-        runtime.block_on(server::run(port, api_key)).unwrap();
+        runtime
+            .block_on(server::run(
+                port,
+                api_key,
+                cosy::text::ImagePolicy::UNRESTRICTED,
+            ))
+            .unwrap();
     });
 
     // Wait for server to be ready (poll health endpoint)

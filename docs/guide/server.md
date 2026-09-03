@@ -24,10 +24,16 @@ Remote image URLs (`bg_image`, `logo`) are fetched with an SSRF guard:
 - blocked fetches log a warning server-side and the render proceeds without
   the image (no error details are returned to the caller)
 
-To allow internal image sources (e.g. an internal MinIO) or plain-http URLs, opt in explicitly:
+Local filesystem paths in `bg_image` / `logo` are **rejected by default**
+too — a render request cannot make the server read its own files. Both
+restrictions have explicit opt-ins:
 
 ```bash
+# allow private/internal network targets (e.g. an internal MinIO)
 cosy serve --port 3000 --allow-private-images
+
+# allow local filesystem paths (the standalone CLI always allows these)
+cosy serve --port 3000 --allow-local-image-paths
 ```
 
 ## Health Check
