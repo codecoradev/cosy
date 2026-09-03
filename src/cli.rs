@@ -216,18 +216,16 @@ impl Cli {
                 if json {
                     let json_out = serde_json::to_string_pretty(&templates)?;
                     println!("{}", json_out);
+                } else if templates.is_empty() {
+                    println!("No templates found in {}", dir.display());
                 } else {
-                    if templates.is_empty() {
-                        println!("No templates found in {}", dir.display());
-                    } else {
-                        println!("Available templates ({}):", templates.len());
-                        println!();
-                        for t in &templates {
-                            println!(
-                                "  {:20} {:40} {}×{}",
-                                t.id, t.name, t.dimensions.width, t.dimensions.height
-                            );
-                        }
+                    println!("Available templates ({}):", templates.len());
+                    println!();
+                    for t in &templates {
+                        println!(
+                            "  {:20} {:40} {}×{}",
+                            t.id, t.name, t.dimensions.width, t.dimensions.height
+                        );
                     }
                 }
                 Ok(ExitCode::SUCCESS)
