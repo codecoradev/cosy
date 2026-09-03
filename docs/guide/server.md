@@ -13,6 +13,20 @@ COSY_API_KEY=your-secret cosy serve --port 3000
 cosy serve --port 3000 --token your-secret
 ```
 
+## Remote Image Security
+
+By default, image URLs (`bg_image`, `logo`) pointing at **private/internal
+addresses** (loopback, RFC1918, link-local — including cloud metadata
+`169.254.169.254`) are blocked, with the same check applied on every redirect
+hop. This prevents SSRF through attacker-controlled render data. Blocked
+fetches log a warning server-side and the render proceeds without the image.
+
+To allow internal image sources (e.g. an internal MinIO), opt in explicitly:
+
+```bash
+cosy serve --port 3000 --allow-private-images
+```
+
 ## Health Check
 
 Always public, no auth required.

@@ -1,7 +1,9 @@
 //! Text processing utilities: wrapping, image encoding.
 
 use base64::Engine;
+use std::net::{IpAddr, SocketAddr, ToSocketAddrs};
 use std::path::Path;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Duration;
 
 /// Refuse to download remote images larger than this (10 MB).
@@ -9,6 +11,23 @@ const MAX_REMOTE_IMAGE_BYTES: u64 = 10 * 1024 * 1024;
 
 /// Timeout for fetching a remote image.
 const FETCH_TIMEOUT: Duration = Duration::from_secs(10);
+
+/// Maximum number of redirects to follow.
+const MAX_REDIRECTS: usize = 5;
+
+/// Whether private/internal addresses may be fetched. Defaults to `false` so
+/// the HTTP server cannot be abused for SSRF against internal services.
+/// The standalone CLI enables it (a local user is already trusted), the
+/// server only via the explicit `--allow-private-images` flag.
+static ALLOW_PRIVATE_IMAGES: AtomicBool = AtomicBool::new(false);
+
+pub fn set_allow_private_images(allow: bool) {
+    ALLOW_PRIVATE_IMAGES.store(allow, Ordering::SeqCst);
+}
+
+fn allow_private_images() -> bool {
+    ALLOW_PRIVATE_IMAGES.load(Ordering::SeqCst)
+}
 
 /// Wrap text to fit within a max character width per line.
 /// Uses textwrap crate for word-boundary-aware wrapping.
@@ -37,7 +56,7 @@ pub fn wrap_text(text: &str, max_chars: usize) -> Vec<String> {
 /// (`tokio::task::spawn_blocking`).
 pub fn image_to_data_uri(path: &str) -> anyhow::Result<String> {
     if is_remote_url(path) {
-        return fetch_image_data_uri(path);
+        return fetch_image_data_uri(path, allow_private_images());
     }
 
     let mime = mime_for_extension(
@@ -72,20 +91,45 @@ fn mime_for_extension(ext: &str) -> &'static str {
 }
 
 /// Download a remote image and encode it as a data URI.
-fn fetch_image_data_uri(url: &str) -> anyhow::Result<String> {
+///
+/// SSRF protection: unless `allow_private`, the resolved host of the URL and
+/// of every redirect hop must be a public address — loopback, private ranges,
+/// link-local (incl. cloud metadata `169.254.169.254`), and other special-use
+/// networks are rejected before a connection is made. Error messages stay
+/// generic; the detailed cause is logged instead of returned to clients.
+fn fetch_image_data_uri(url_str: &str, allow_private: bool) -> anyhow::Result<String> {
+    let url = reqwest::Url::parse(url_str)?;
+    if url.scheme() != "http" && url.scheme() != "https" {
+        anyhow::bail!("only http(s) image URLs are supported");
+    }
+    validate_url_host(&url, allow_private)?;
+
     let client = reqwest::blocking::Client::builder()
         .timeout(FETCH_TIMEOUT)
+        .redirect(redirect_policy(allow_private))
         .build()?;
 
-    let response = client.get(url).send()?.error_for_status()?;
+    let response = match client.get(url.clone()).send() {
+        Ok(r) => r,
+        Err(e) => {
+            log::warn!("remote image fetch failed for {url_str}: {e}");
+            anyhow::bail!("failed to load remote image");
+        }
+    };
+
+    let response = match response.error_for_status() {
+        Ok(r) => r,
+        Err(e) => {
+            log::warn!("remote image fetch returned an error status for {url_str}: {e}");
+            anyhow::bail!("failed to load remote image");
+        }
+    };
 
     if let Some(len) = response.content_length() {
         if len > MAX_REMOTE_IMAGE_BYTES {
             anyhow::bail!(
-                "remote image at {} is {} bytes, limit is {}",
-                url,
-                len,
-                MAX_REMOTE_IMAGE_BYTES
+                "remote image exceeds the {} MB size limit",
+                MAX_REMOTE_IMAGE_BYTES / 1024 / 1024
             );
         }
     }
@@ -96,13 +140,17 @@ fn fetch_image_data_uri(url: &str) -> anyhow::Result<String> {
         .and_then(|v| v.to_str().ok())
         .map(|ct| ct.split(';').next().unwrap_or_default().trim().to_string());
 
-    let bytes = response.bytes()?;
+    let bytes = match response.bytes() {
+        Ok(b) => b,
+        Err(e) => {
+            log::warn!("remote image download interrupted for {url_str}: {e}");
+            anyhow::bail!("failed to load remote image");
+        }
+    };
     if bytes.len() as u64 > MAX_REMOTE_IMAGE_BYTES {
         anyhow::bail!(
-            "remote image at {} is {} bytes, limit is {}",
-            url,
-            bytes.len(),
-            MAX_REMOTE_IMAGE_BYTES
+            "remote image exceeds the {} MB size limit",
+            MAX_REMOTE_IMAGE_BYTES / 1024 / 1024
         );
     }
 
@@ -110,7 +158,7 @@ fn fetch_image_data_uri(url: &str) -> anyhow::Result<String> {
         .filter(|ct| ct.starts_with("image/"))
         .map(|ct| ct.to_string())
         .unwrap_or_else(|| {
-            let ext = Path::new(url.split(['?', '#']).next().unwrap_or(url))
+            let ext = Path::new(url_str.split(['?', '#']).next().unwrap_or(url_str))
                 .extension()
                 .and_then(|e| e.to_str())
                 .unwrap_or("png");
@@ -118,6 +166,74 @@ fn fetch_image_data_uri(url: &str) -> anyhow::Result<String> {
         });
 
     encode_data_uri(&bytes, &mime)
+}
+
+/// Reject URLs whose resolved host is not a public address.
+fn validate_url_host(url: &reqwest::Url, allow_private: bool) -> anyhow::Result<()> {
+    if allow_private {
+        return Ok(());
+    }
+    let host = url
+        .host_str()
+        .ok_or_else(|| anyhow::anyhow!("failed to load remote image"))?;
+
+    let port = url.port_or_known_default();
+    let addrs: Vec<SocketAddr> = (host, port.unwrap_or(80)).to_socket_addrs()?.collect();
+    if addrs.is_empty() || addrs.iter().any(|addr| !is_public_ip(addr.ip())) {
+        log::warn!("blocked image fetch to non-public address (host: {host})");
+        anyhow::bail!("failed to load remote image");
+    }
+    Ok(())
+}
+
+/// A redirect policy that re-validates scheme and host on every hop.
+fn redirect_policy(allow_private: bool) -> reqwest::redirect::Policy {
+    reqwest::redirect::Policy::custom(move |attempt| {
+        if attempt.previous().len() >= MAX_REDIRECTS {
+            return attempt.error("too many redirects");
+        }
+        let url = attempt.url();
+        if url.scheme() != "http" && url.scheme() != "https" {
+            return attempt.error("redirect to a non-http(s) scheme");
+        }
+        if let Err(e) = validate_url_host(url, allow_private) {
+            log::warn!("blocked redirect during image fetch: {e}");
+            return attempt.error("redirect to a non-public address");
+        }
+        attempt.follow()
+    })
+}
+
+/// True only for globally routable addresses. Covers loopback, RFC1918
+/// private ranges, link-local (incl. cloud metadata endpoints), CGNAT,
+/// documentation/benchmark ranges, multicast, and their IPv6 equivalents
+/// (unique-local, link-local, multicast) and IPv4-mapped IPv6 addresses.
+fn is_public_ip(ip: IpAddr) -> bool {
+    match ip {
+        IpAddr::V4(v4) => {
+            let o = v4.octets();
+            !(v4.is_loopback()
+                || v4.is_private()
+                || v4.is_link_local()
+                || v4.is_broadcast()
+                || v4.is_documentation()
+                || v4.is_unspecified()
+                || o[0] == 0
+                || (o[0] == 100 && (64..=127).contains(&o[1]))
+                || (o[0] == 198 && (18..=19).contains(&o[1]))
+                || o[0] >= 224)
+        }
+        IpAddr::V6(v6) => {
+            if let Some(mapped) = v6.to_ipv4_mapped() {
+                return is_public_ip(IpAddr::V4(mapped));
+            }
+            !(v6.is_loopback()
+                || v6.is_unspecified()
+                || (v6.segments()[0] & 0xfe00) == 0xfc00
+                || (v6.segments()[0] & 0xffc0) == 0xfe80
+                || (v6.segments()[0] & 0xff00) == 0xff00)
+        }
+    }
 }
 
 #[cfg(test)]
@@ -193,7 +309,7 @@ mod tests {
     #[test]
     fn test_fetch_url_success_uses_content_type() {
         let url = serve_one(response_with("image/png", b"fakepngbytes"));
-        let uri = image_to_data_uri(&url).expect("fetch must succeed");
+        let uri = fetch_image_data_uri(&url, true).expect("fetch must succeed");
         assert!(uri.starts_with("data:image/png;base64,"), "got: {uri}");
     }
 
@@ -201,7 +317,7 @@ mod tests {
     fn test_fetch_url_falls_back_to_url_extension() {
         // application/octet-stream is not an image/* → mime from .png extension
         let url = serve_one(response_with("application/octet-stream", b"jpegdata"));
-        let uri = image_to_data_uri(&url).unwrap();
+        let uri = fetch_image_data_uri(&url, true).unwrap();
         assert!(uri.starts_with("data:image/png;base64,"), "got: {uri}");
     }
 
@@ -211,7 +327,7 @@ mod tests {
             "HTTP/1.1 200 OK\r\nContent-Type: image/png\r\nContent-Length: 99999999999\r\nConnection: close\r\n\r\n"
                 .to_string(),
         );
-        let err = image_to_data_uri(&url).expect_err("must reject oversized image");
+        let err = fetch_image_data_uri(&url, true).expect_err("must reject oversized image");
         assert!(err.to_string().contains("limit"), "got: {err}");
     }
 
@@ -220,6 +336,67 @@ mod tests {
         let url = serve_one(
             "HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\nConnection: close\r\n\r\n".to_string(),
         );
-        assert!(image_to_data_uri(&url).is_err(), "404 must be an error");
+        assert!(
+            fetch_image_data_uri(&url, true).is_err(),
+            "404 must be an error"
+        );
+    }
+
+    #[test]
+    fn test_fetch_url_blocks_private_targets_by_default() {
+        let url = serve_one(response_with("image/png", b"secret"));
+        let err = fetch_image_data_uri(&url, false)
+            .expect_err("loopback must be blocked without allow_private");
+        assert_eq!(err.to_string(), "failed to load remote image");
+    }
+
+    #[test]
+    fn test_fetch_url_blocks_redirect_to_private_host() {
+        // redirect to the cloud metadata endpoint must be refused before connecting
+        let url = serve_one(
+            "HTTP/1.1 302 Found\r\nLocation: http://169.254.169.254/latest/meta-data/\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+                .to_string(),
+        );
+        let err = fetch_image_data_uri(&url, false)
+            .expect_err("redirect to private host must be blocked");
+        assert_eq!(err.to_string(), "failed to load remote image");
+    }
+
+    #[test]
+    fn test_fetch_url_rejects_non_http_schemes() {
+        assert!(fetch_image_data_uri("file:///etc/passwd", true).is_err());
+        assert!(fetch_image_data_uri("ftp://example.com/a.png", true).is_err());
+    }
+
+    #[test]
+    fn test_is_public_ip_classification() {
+        // private / special-use → not public
+        for ip in [
+            "127.0.0.1",
+            "10.1.2.3",
+            "172.16.0.9",
+            "192.168.1.1",
+            "169.254.169.254",
+            "0.0.0.0",
+            "100.64.0.1",
+            "198.18.0.5",
+            "224.0.0.1",
+            "250.1.2.3",
+            "::1",
+            "::",
+            "fc00::1",
+            "fe80::1",
+            "ff02::1",
+            "::ffff:10.0.0.1",
+            "::ffff:127.0.0.1",
+        ] {
+            let ip: IpAddr = ip.parse().unwrap();
+            assert!(!is_public_ip(ip), "{ip} must not be public");
+        }
+        // globally routable → public
+        for ip in ["8.8.8.8", "1.1.1.1", "172.32.0.1", "2606:4700::1111"] {
+            let ip: IpAddr = ip.parse().unwrap();
+            assert!(is_public_ip(ip), "{ip} must be public");
+        }
     }
 }
