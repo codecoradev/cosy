@@ -483,8 +483,10 @@ mod filter_tests {
         let result = process_template(&template, dir, &brand, &slide);
         match result {
             Ok(svg) => {
-                assert!(svg.contains("AT&amp;T &amp; Sons"),
-                    "bare & escaped but existing entity preserved, got: {svg}");
+                assert!(
+                    svg.contains("AT&amp;T &amp; Sons"),
+                    "bare & escaped but existing entity preserved, got: {svg}"
+                );
             }
             Err(_) => panic!("render with pre-existing entity must not fail"),
         }
