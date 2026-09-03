@@ -91,6 +91,12 @@ pub enum Command {
         /// When neither is set, auth is disabled (dev mode).
         #[arg(short, long)]
         token: Option<String>,
+
+        /// Allow bg_image/logo URLs pointing at private/internal addresses.
+        /// Off by default: the API renders attacker-controlled JSON, so
+        /// image fetches to loopback/RFC1918/link-local targets are blocked.
+        #[arg(long)]
+        allow_private_images: bool,
     },
 }
 
@@ -108,6 +114,8 @@ impl Cli {
                 dump_svg,
                 json_output,
             } => {
+                // Local CLI runs are user-driven; private-address fetches are fine here.
+                crate::text::set_allow_private_images(true);
                 // Resolve input data source
                 let resolved_data = match Self::resolve_input(data, stdin, json)? {
                     Some(d) => d,
@@ -259,9 +267,14 @@ impl Cli {
                 }
             }
 
-            Command::Serve { port, token } => {
+            Command::Serve {
+                port,
+                token,
+                allow_private_images,
+            } => {
                 // Resolve API key: --token flag takes priority, then COSY_API_KEY env
                 let api_key = token.or_else(|| std::env::var("COSY_API_KEY").ok());
+                crate::text::set_allow_private_images(allow_private_images);
 
                 if api_key.is_some() {
                     println!("🔒 Auth enabled — bearer token required");
