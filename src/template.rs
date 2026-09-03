@@ -182,12 +182,7 @@ pub fn process_template(
 fn xml_escape_value(value: &mut serde_json::Value) {
     match value {
         serde_json::Value::String(s) => {
-            *s = s
-                .replace('&', "&amp;")
-                .replace('<', "&lt;")
-                .replace('>', "&gt;")
-                .replace('"', "&quot;")
-                .replace('\'', "&apos;");
+            *s = escape_xml_preserving_entities(s);
         }
         serde_json::Value::Array(items) => {
             for item in items {
@@ -201,6 +196,70 @@ fn xml_escape_value(value: &mut serde_json::Value) {
         }
         _ => {}
     }
+}
+
+/// XML-escape a string while preserving valid entity references.
+///
+/// The five predefined XML entities (`&amp;` `&lt;` `&gt;` `&quot;` `&apos;`)
+/// and numeric references (`&#78;`, `&#x4E;`) pass through untouched, so data
+/// that already contains entities is not double-escaped. A bare `&`, an
+/// HTML-only entity like `&ldquo;`, or a malformed fragment (`&amp` without
+/// the semicolon) is escaped — passing those through would produce malformed
+/// XML and fail the render.
+fn escape_xml_preserving_entities(s: &str) -> String {
+    let mut out = String::with_capacity(s.len());
+    let bytes = s.as_bytes();
+    let mut i = 0;
+    while i < bytes.len() {
+        match bytes[i] {
+            b'&' => {
+                let entity = s[i + 1..]
+                    .find(';')
+                    .map(|end| &s[i..i + end + 2])
+                    .filter(|entity| is_valid_entity(&entity[1..entity.len() - 1]));
+                if let Some(entity) = entity {
+                    out.push_str(entity);
+                    i += entity.len();
+                } else {
+                    out.push_str("&amp;");
+                    i += 1;
+                }
+            }
+            b'<' => {
+                out.push_str("&lt;");
+                i += 1;
+            }
+            b'>' => {
+                out.push_str("&gt;");
+                i += 1;
+            }
+            b'"' => {
+                out.push_str("&quot;");
+                i += 1;
+            }
+            b'\'' => {
+                out.push_str("&apos;");
+                i += 1;
+            }
+            _ => {
+                let ch_len = s[i..].chars().next().map_or(1, char::len_utf8);
+                out.push_str(&s[i..i + ch_len]);
+                i += ch_len;
+            }
+        }
+    }
+    out
+}
+
+fn is_valid_entity(name: &str) -> bool {
+    const PREDEFINED: [&str; 5] = ["amp", "lt", "gt", "quot", "apos"];
+    if let Some(hex) = name.strip_prefix("#x").or_else(|| name.strip_prefix("#X")) {
+        return !hex.is_empty() && hex.bytes().all(|b| b.is_ascii_hexdigit());
+    }
+    if let Some(dec) = name.strip_prefix('#') {
+        return !dec.is_empty() && dec.bytes().all(|b| b.is_ascii_digit());
+    }
+    PREDEFINED.contains(&name)
 }
 
 // ─── Custom minijinja Filters ───────────────────────────────────────
@@ -367,6 +426,67 @@ mod filter_tests {
                 "ampersand must be escaped in SVG"
             ),
             Err(_) => panic!("render with '&' in data must not fail"),
+        }
+    }
+
+    #[test]
+    fn test_escape_xml_preserves_predefined_entities() {
+        assert_eq!(
+            escape_xml_preserving_entities("&amp; &lt; &gt; &quot; &apos;"),
+            "&amp; &lt; &gt; &quot; &apos;"
+        );
+    }
+
+    #[test]
+    fn test_escape_xml_preserves_numeric_references() {
+        assert_eq!(
+            escape_xml_preserving_entities("&#78; &#x4E; &#Xff10;"),
+            "&#78; &#x4E; &#Xff10;"
+        );
+    }
+
+    #[test]
+    fn test_escape_xml_escapes_bare_and_unknown() {
+        // bare ampersand
+        assert_eq!(escape_xml_preserving_entities("R&D"), "R&amp;D");
+        // HTML-only entities are invalid XML → escape the ampersand
+        assert_eq!(
+            escape_xml_preserving_entities("&ldquo;q&rdquo;"),
+            "&amp;ldquo;q&amp;rdquo;"
+        );
+        // malformed: missing semicolon
+        assert_eq!(escape_xml_preserving_entities("&amp x"), "&amp;amp x");
+        // malformed: empty or non-hex numeric reference
+        assert_eq!(escape_xml_preserving_entities("&#;"), "&amp;#;");
+        assert_eq!(escape_xml_preserving_entities("&#xZZ;"), "&amp;#xZZ;");
+        // ampersand with no semicolon anywhere
+        assert_eq!(escape_xml_preserving_entities("a & b"), "a &amp; b");
+    }
+
+    #[test]
+    fn test_escape_xml_mixed_entities_and_specials() {
+        let input = "AT&T &amp; Sons <b> \"q\"";
+        let expected = "AT&amp;T &amp; Sons &lt;b&gt; &quot;q&quot;";
+        assert_eq!(escape_xml_preserving_entities(input), expected);
+    }
+
+    #[test]
+    fn test_process_template_preserves_entities_in_render() {
+        let dir = std::path::Path::new("templates/stat-card");
+        let template = crate::template::load_template("stat-card").expect("template def");
+        let brand = serde_json::json!({});
+        let slide = serde_json::json!({
+            "stat_number": "AT&T &amp; Sons",
+            "stat_label": "x",
+            "source": "y"
+        });
+        let result = process_template(&template, dir, &brand, &slide);
+        match result {
+            Ok(svg) => {
+                assert!(svg.contains("AT&amp;T &amp; Sons"),
+                    "bare & escaped but existing entity preserved, got: {svg}");
+            }
+            Err(_) => panic!("render with pre-existing entity must not fail"),
         }
     }
 
