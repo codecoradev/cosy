@@ -50,13 +50,19 @@
     "bg_image": {
       "type": "image",
       "required": false,
-      "description": "Background image path (PNG/JPG/WebP). Rendered with configurable opacity behind gradient overlay."
+      "description": "Background image — local path or http(s) URL (PNG/JPG/WebP). Rendered with configurable opacity behind gradient overlay."
     },
     "bg_image_opacity": {
       "type": "number",
       "required": false,
       "default": 0.15,
-      "description": "Opacity of background image (0.0-1.0)."
+      "description": "Opacity of background image (0.0-1.0). For dark artwork use ~0.55 so the photo stays visible under the overlay."
+    },
+    "bg_image_overlay": {
+      "type": "number",
+      "required": false,
+      "default": 0.7,
+      "description": "Opacity of the gradient overlay on top of the background image (0.0-1.0). Lower values let more of the photo show through; text contrast depends on it."
     },
     "logo": {
       "type": "image",

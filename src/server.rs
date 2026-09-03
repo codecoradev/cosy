@@ -202,16 +202,16 @@ async fn render_handler(
         }
     };
 
-    // Render first slide (API returns single PNG for simplicity)
-    match render::render_slide_to_png(
-        &tmpl,
-        &template_dir,
-        &req.data,
-        0,
-        req.scale,
-        &state.font_db,
-    ) {
-        Ok(png_bytes) => {
+    // Render first slide (API returns single PNG for simplicity).
+    // Blocking work (template IO, resvg, possibly remote image fetches) runs
+    // on the blocking thread pool so the async runtime is never blocked.
+    let render_result = tokio::task::spawn_blocking(move || {
+        render::render_slide_to_png(&tmpl, &template_dir, &req.data, 0, req.scale, &state.font_db)
+    })
+    .await;
+
+    match render_result {
+        Ok(Ok(png_bytes)) => {
             log::info!("Rendered {} bytes of PNG", png_bytes.len());
             (
                 StatusCode::OK,
@@ -220,9 +220,13 @@ async fn render_handler(
             )
                 .into_response()
         }
-        Err(e) => error_response(
+        Ok(Err(e)) => error_response(
             StatusCode::INTERNAL_SERVER_ERROR,
             format!("Render error: {e:#}"),
+        ),
+        Err(e) => error_response(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            format!("Render worker failed: {e}"),
         ),
     }
 }

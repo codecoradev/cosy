@@ -21,7 +21,7 @@ cosy render --template <TEMPLATE> --data <DATA.json> --output <OUTPUT.png>
 | `-t, --template` | string | Yes | Template name (e.g. `stat-card`) |
 | `-d, --data` | path | Yes | Path to JSON input file |
 | `-o, --output` | path | Yes | Output PNG path |
-| `-s, --scale` | float | No | Scale factor (default: 1.0) |
+| `-s, --scale` | float | No | Scale factor (default: 2.0 — retina/2x output) |
 
 **Example:**
 
