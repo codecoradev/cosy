@@ -110,12 +110,10 @@ fn fetch_image_data_uri(url: &str) -> anyhow::Result<String> {
         .filter(|ct| ct.starts_with("image/"))
         .map(|ct| ct.to_string())
         .unwrap_or_else(|| {
-            let ext = Path::new(
-                url.split(['?', '#']).next().unwrap_or(url),
-            )
-            .extension()
-            .and_then(|e| e.to_str())
-            .unwrap_or("png");
+            let ext = Path::new(url.split(['?', '#']).next().unwrap_or(url))
+                .extension()
+                .and_then(|e| e.to_str())
+                .unwrap_or("png");
             mime_for_extension(ext).to_string()
         });
 

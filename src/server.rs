@@ -206,7 +206,14 @@ async fn render_handler(
     // Blocking work (template IO, resvg, possibly remote image fetches) runs
     // on the blocking thread pool so the async runtime is never blocked.
     let render_result = tokio::task::spawn_blocking(move || {
-        render::render_slide_to_png(&tmpl, &template_dir, &req.data, 0, req.scale, &state.font_db)
+        render::render_slide_to_png(
+            &tmpl,
+            &template_dir,
+            &req.data,
+            0,
+            req.scale,
+            &state.font_db,
+        )
     })
     .await;
 
