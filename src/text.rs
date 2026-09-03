@@ -1,6 +1,7 @@
 //! Text processing utilities: wrapping, image encoding.
 
 use base64::Engine;
+use std::io::Read;
 use std::net::{IpAddr, SocketAddr, ToSocketAddrs};
 use std::path::Path;
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -11,9 +12,6 @@ const MAX_REMOTE_IMAGE_BYTES: u64 = 10 * 1024 * 1024;
 
 /// Timeout for fetching a remote image.
 const FETCH_TIMEOUT: Duration = Duration::from_secs(10);
-
-/// Maximum number of redirects to follow.
-const MAX_REDIRECTS: usize = 5;
 
 /// Whether private/internal addresses may be fetched. Defaults to `false` so
 /// the HTTP server cannot be abused for SSRF against internal services.
@@ -92,22 +90,39 @@ fn mime_for_extension(ext: &str) -> &'static str {
 
 /// Download a remote image and encode it as a data URI.
 ///
-/// SSRF protection: unless `allow_private`, the resolved host of the URL and
-/// of every redirect hop must be a public address — loopback, private ranges,
-/// link-local (incl. cloud metadata `169.254.169.254`), and other special-use
-/// networks are rejected before a connection is made. Error messages stay
-/// generic; the detailed cause is logged instead of returned to clients.
+/// Security posture (the caller decides via `allow_private`; the server
+/// default is `false`):
+/// - only `https://` URLs are accepted by default (`http://` requires
+///   `allow_private`, i.e. the local CLI or the explicit server opt-in flag)
+/// - the host is resolved up front and the connection is **pinned to the
+///   validated address**, so DNS cannot rotate to a private target between
+///   validation and connection (DNS rebinding)
+/// - only globally routable addresses pass: loopback, RFC1918, link-local
+///   (incl. cloud metadata `169.254.169.254`), CGNAT, and other special-use
+///   ranges are rejected
+/// - redirects are not followed; a redirect response is an error
+/// - the body is streamed with a hard `take()` cap — chunked/lying
+///   Content-Length cannot balloon memory
+/// - failures log details server-side and return a generic message
 fn fetch_image_data_uri(url_str: &str, allow_private: bool) -> anyhow::Result<String> {
     let url = reqwest::Url::parse(url_str)?;
-    if url.scheme() != "http" && url.scheme() != "https" {
-        anyhow::bail!("only http(s) image URLs are supported");
+    let scheme_ok = url.scheme() == "https" || (allow_private && url.scheme() == "http");
+    if !scheme_ok {
+        log::warn!("rejected image URL scheme for {url_str}");
+        anyhow::bail!("failed to load remote image");
     }
-    validate_url_host(&url, allow_private)?;
 
-    let client = reqwest::blocking::Client::builder()
+    let mut builder = reqwest::blocking::Client::builder()
         .timeout(FETCH_TIMEOUT)
-        .redirect(redirect_policy(allow_private))
-        .build()?;
+        .redirect(reqwest::redirect::Policy::none());
+    if !allow_private {
+        let host = url
+            .host_str()
+            .ok_or_else(|| anyhow::anyhow!("failed to load remote image"))?;
+        let addr = validated_public_addr(&url)?;
+        builder = builder.resolve(host, addr);
+    }
+    let client = builder.build()?;
 
     let response = match client.get(url.clone()).send() {
         Ok(r) => r,
@@ -124,6 +139,11 @@ fn fetch_image_data_uri(url_str: &str, allow_private: bool) -> anyhow::Result<St
             anyhow::bail!("failed to load remote image");
         }
     };
+    // redirects are disabled; a 3xx that slipped past the policy is an error
+    if response.status().is_redirection() {
+        log::warn!("remote image redirect not followed for {url_str}");
+        anyhow::bail!("failed to load remote image");
+    }
 
     if let Some(len) = response.content_length() {
         if len > MAX_REMOTE_IMAGE_BYTES {
@@ -140,13 +160,15 @@ fn fetch_image_data_uri(url_str: &str, allow_private: bool) -> anyhow::Result<St
         .and_then(|v| v.to_str().ok())
         .map(|ct| ct.split(';').next().unwrap_or_default().trim().to_string());
 
-    let bytes = match response.bytes() {
-        Ok(b) => b,
-        Err(e) => {
-            log::warn!("remote image download interrupted for {url_str}: {e}");
-            anyhow::bail!("failed to load remote image");
-        }
-    };
+    let mut response = response;
+    let mut bytes: Vec<u8> = Vec::new();
+    if let Err(e) = response
+        .take(MAX_REMOTE_IMAGE_BYTES + 1)
+        .read_to_end(&mut bytes)
+    {
+        log::warn!("remote image download interrupted for {url_str}: {e}");
+        anyhow::bail!("failed to load remote image");
+    }
     if bytes.len() as u64 > MAX_REMOTE_IMAGE_BYTES {
         anyhow::bail!(
             "remote image exceeds the {} MB size limit",
@@ -168,40 +190,23 @@ fn fetch_image_data_uri(url_str: &str, allow_private: bool) -> anyhow::Result<St
     encode_data_uri(&bytes, &mime)
 }
 
-/// Reject URLs whose resolved host is not a public address.
-fn validate_url_host(url: &reqwest::Url, allow_private: bool) -> anyhow::Result<()> {
-    if allow_private {
-        return Ok(());
-    }
+/// Resolve the URL host and return its first globally routable address.
+/// Rejects URLs whose hosts resolve only to non-public targets.
+fn validated_public_addr(url: &reqwest::Url) -> anyhow::Result<SocketAddr> {
     let host = url
         .host_str()
         .ok_or_else(|| anyhow::anyhow!("failed to load remote image"))?;
-
-    let port = url.port_or_known_default();
-    let addrs: Vec<SocketAddr> = (host, port.unwrap_or(80)).to_socket_addrs()?.collect();
-    if addrs.is_empty() || addrs.iter().any(|addr| !is_public_ip(addr.ip())) {
-        log::warn!("blocked image fetch to non-public address (host: {host})");
-        anyhow::bail!("failed to load remote image");
+    let port = url.port_or_known_default().unwrap_or(80);
+    let addr = (host, port)
+        .to_socket_addrs()?
+        .find(|addr| is_public_ip(addr.ip()));
+    match addr {
+        Some(addr) => Ok(addr),
+        None => {
+            log::warn!("blocked image fetch to non-public address (host: {host})");
+            anyhow::bail!("failed to load remote image")
+        }
     }
-    Ok(())
-}
-
-/// A redirect policy that re-validates scheme and host on every hop.
-fn redirect_policy(allow_private: bool) -> reqwest::redirect::Policy {
-    reqwest::redirect::Policy::custom(move |attempt| {
-        if attempt.previous().len() >= MAX_REDIRECTS {
-            return attempt.error("too many redirects");
-        }
-        let url = attempt.url();
-        if url.scheme() != "http" && url.scheme() != "https" {
-            return attempt.error("redirect to a non-http(s) scheme");
-        }
-        if let Err(e) = validate_url_host(url, allow_private) {
-            log::warn!("blocked redirect during image fetch: {e}");
-            return attempt.error("redirect to a non-public address");
-        }
-        attempt.follow()
-    })
 }
 
 /// True only for globally routable addresses. Covers loopback, RFC1918
@@ -351,21 +356,36 @@ mod tests {
     }
 
     #[test]
-    fn test_fetch_url_blocks_redirect_to_private_host() {
-        // redirect to the cloud metadata endpoint must be refused before connecting
+    fn test_fetch_url_does_not_follow_redirects() {
+        // redirects are disabled entirely: a 3xx is an error in both modes
         let url = serve_one(
-            "HTTP/1.1 302 Found\r\nLocation: http://169.254.169.254/latest/meta-data/\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
+            "HTTP/1.1 302 Found\r\nLocation: http://127.0.0.1:9/x\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
                 .to_string(),
         );
-        let err = fetch_image_data_uri(&url, false)
-            .expect_err("redirect to private host must be blocked");
-        assert_eq!(err.to_string(), "failed to load remote image");
+        assert!(fetch_image_data_uri(&url, false).is_err());
+        assert!(fetch_image_data_uri(&url, true).is_err());
+    }
+
+    #[test]
+    fn test_fetch_url_https_only_by_default() {
+        // plain http requires allow_private (local CLI / server opt-in flag)
+        let url = serve_one(response_with("image/png", b"data"));
+        assert!(fetch_image_data_uri(&url, false).is_err());
+        assert!(fetch_image_data_uri(&url, true).is_ok());
     }
 
     #[test]
     fn test_fetch_url_rejects_non_http_schemes() {
         assert!(fetch_image_data_uri("file:///etc/passwd", true).is_err());
         assert!(fetch_image_data_uri("ftp://example.com/a.png", true).is_err());
+    }
+
+    #[test]
+    fn test_fetch_url_localhost_hostname_blocked_by_default() {
+        // hostname (not IP literal) resolving to loopback must also be blocked
+        let url = serve_one(response_with("image/png", b"data"));
+        let host_url = url.replace("127.0.0.1", "localhost");
+        assert!(fetch_image_data_uri(&host_url, false).is_err());
     }
 
     #[test]

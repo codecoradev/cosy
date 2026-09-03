@@ -43,7 +43,7 @@ cosy templates
 cosy render --template stat-card --data input.json --output cover.png --scale 2
 
 # Output defaults to 2x (retina) — pass --scale 1 for exact template dimensions.
-# Images (bg_image, logo) accept local paths or http(s) URLs.
+# Images (bg_image, logo) accept local paths or https URLs (SSRF-guarded in cosy serve).
 
 # Render with inline JSON
 cosy render --template stat-card --json '{"brand":{"brand_name":"CodeCora"},"slides":[{"stat_number":"127%","stat_label":"Revenue Growth"}]}' --output cover.png

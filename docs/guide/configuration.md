@@ -59,7 +59,7 @@ All templates expect the same top-level structure:
 | `bg_color_end` | hex | No | Background gradient end |
 | `accent_color` | hex | No | Accent gradient start |
 | `accent_color_end` | hex | No | Accent gradient end |
-| `bg_image` | path / URL | No | Background image (PNG/JPG/WebP), local path or http(s) URL |
+| `bg_image` | path / URL | No | Background image (PNG/JPG/WebP), local path or https URL |
 | `bg_image_opacity` | float | No | Background image opacity (0.0–1.0, default: 0.15; ~0.55 for dark artwork) |
 | `bg_image_overlay` | float | No | Gradient overlay opacity over the image (0.0–1.0, default: 0.7) |
 | `logo` | path | No | Brand logo (PNG/SVG), bottom-right corner |

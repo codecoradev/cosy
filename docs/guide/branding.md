@@ -50,7 +50,7 @@ Add a subtle background image behind the gradient overlay:
 }
 ```
 
-- Supported formats: PNG, JPG, WebP — as a local path **or an `http(s)://` URL** (fetched with a 10 s timeout and 10 MB size cap)
+- Supported formats: PNG, JPG, WebP — as a local path **or an `https://` URL** (fetched with a 10 s timeout, a 10 MB streamed size cap, no redirects, and private-address blocking; plain `http://` URLs work in the local CLI or with `--allow-private-images`)
 - `bg_image_opacity` controls how visible the image is (0.0 = invisible, 1.0 = full opacity)
 - Default: `0.15` (subtle texture). For dark, photo-like artwork use around `0.55` so the art stays visible while text contrast holds
 - `bg_image_overlay` controls the gradient overlay opacity on top of the image (0.0–1.0, default: `0.7`). Lower values let more of the photo show through; keep enough overlay for title contrast

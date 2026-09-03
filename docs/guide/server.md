@@ -15,13 +15,16 @@ cosy serve --port 3000 --token your-secret
 
 ## Remote Image Security
 
-By default, image URLs (`bg_image`, `logo`) pointing at **private/internal
-addresses** (loopback, RFC1918, link-local — including cloud metadata
-`169.254.169.254`) are blocked, with the same check applied on every redirect
-hop. This prevents SSRF through attacker-controlled render data. Blocked
-fetches log a warning server-side and the render proceeds without the image.
+Remote image URLs (`bg_image`, `logo`) are fetched with an SSRF guard:
+- only `https://` URLs (plain `http://` needs the opt-in below)
+- the target must resolve to a globally routable address — loopback, RFC1918,
+  and link-local (incl. cloud metadata `169.254.169.254`) are rejected, and the
+  connection is pinned to the validated IP so DNS rebinding cannot bypass it
+- redirects are not followed; bodies are streamed with a hard 10 MB cap
+- blocked fetches log a warning server-side and the render proceeds without
+  the image (no error details are returned to the caller)
 
-To allow internal image sources (e.g. an internal MinIO), opt in explicitly:
+To allow internal image sources (e.g. an internal MinIO) or plain-http URLs, opt in explicitly:
 
 ```bash
 cosy serve --port 3000 --allow-private-images
