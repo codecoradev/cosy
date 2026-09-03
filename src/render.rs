@@ -31,6 +31,7 @@ pub fn render_template_data(
     output: &Path,
     scale: f32,
     font_dir: Option<&Path>,
+    image_policy: crate::text::ImagePolicy,
 ) -> anyhow::Result<RenderResult> {
     let start = Instant::now();
 
@@ -54,7 +55,15 @@ pub fn render_template_data(
 
     if data.is_single_slide() || output.extension().is_some() {
         // Single PNG output
-        let png = render_slide(&template, &template_dir, data, 0, scale, &font_db)?;
+        let png = render_slide(
+            &template,
+            &template_dir,
+            data,
+            0,
+            scale,
+            &font_db,
+            image_policy,
+        )?;
         ensure_parent_dir(output)?;
         std::fs::write(output, &png)?;
         log::info!("Written: {}", output.display());
@@ -63,7 +72,15 @@ pub fn render_template_data(
         // Multi-slide output to directory
         std::fs::create_dir_all(output)?;
         for i in 0..data.slides.len() {
-            let png = render_slide(&template, &template_dir, data, i, scale, &font_db)?;
+            let png = render_slide(
+                &template,
+                &template_dir,
+                data,
+                i,
+                scale,
+                &font_db,
+                image_policy,
+            )?;
             let filename = format!("{:02}.png", i + 1);
             let path: PathBuf = output.join(&filename);
             std::fs::write(&path, &png)?;
@@ -95,10 +112,11 @@ pub fn render_template(
     output: &Path,
     scale: f32,
     font_dir: Option<&Path>,
+    image_policy: crate::text::ImagePolicy,
 ) -> anyhow::Result<RenderResult> {
     let data = InputData::from_file(data_path)?;
     log::info!("Loaded data: {} slide(s)", data.slides.len());
-    render_template_data(template_name, &data, output, scale, font_dir)
+    render_template_data(template_name, &data, output, scale, font_dir, image_policy)
 }
 
 // ─── Render Single Slide ────────────────────────────────────────────
@@ -111,8 +129,17 @@ fn render_slide(
     slide_index: usize,
     scale: f32,
     font_db: &usvg::fontdb::Database,
+    image_policy: crate::text::ImagePolicy,
 ) -> anyhow::Result<Vec<u8>> {
-    render_slide_to_png(template, template_dir, data, slide_index, scale, font_db)
+    render_slide_to_png(
+        template,
+        template_dir,
+        data,
+        slide_index,
+        scale,
+        font_db,
+        image_policy,
+    )
 }
 
 /// Render a single slide to PNG bytes (public API for server).
@@ -123,12 +150,18 @@ pub fn render_slide_to_png(
     slide_index: usize,
     scale: f32,
     font_db: &usvg::fontdb::Database,
+    image_policy: crate::text::ImagePolicy,
 ) -> anyhow::Result<Vec<u8>> {
     let slide_data = &data.slides[slide_index];
 
     // 1. Process minijinja template → SVG string
-    let svg_string =
-        crate::template::process_template(template, template_dir, &data.brand, slide_data)?;
+    let svg_string = crate::template::process_template(
+        template,
+        template_dir,
+        &data.brand,
+        slide_data,
+        image_policy,
+    )?;
 
     log::debug!("SVG generated: {} bytes", svg_string.len());
 

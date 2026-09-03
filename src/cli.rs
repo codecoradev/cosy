@@ -97,6 +97,12 @@ pub enum Command {
         /// image fetches to loopback/RFC1918/link-local targets are blocked.
         #[arg(long)]
         allow_private_images: bool,
+
+        /// Allow bg_image/logo values referencing local filesystem paths.
+        /// Off by default: the API renders attacker-controlled JSON, so
+        /// local paths would expose server files through the render output.
+        #[arg(long)]
+        allow_local_image_paths: bool,
     },
 }
 
@@ -114,8 +120,8 @@ impl Cli {
                 dump_svg,
                 json_output,
             } => {
-                // Local CLI runs are user-driven; private-address fetches are fine here.
-                crate::text::set_allow_private_images(true);
+                // Local CLI runs are user-driven: no image-source restrictions.
+                let image_policy = crate::text::ImagePolicy::UNRESTRICTED;
                 // Resolve input data source
                 let resolved_data = match Self::resolve_input(data, stdin, json)? {
                     Some(d) => d,
@@ -186,6 +192,7 @@ impl Cli {
                     &output,
                     scale,
                     font_dir.as_deref(),
+                    image_policy,
                 ) {
                     Ok(result) => {
                         if json_output {
@@ -269,10 +276,14 @@ impl Cli {
                 port,
                 token,
                 allow_private_images,
+                allow_local_image_paths,
             } => {
                 // Resolve API key: --token flag takes priority, then COSY_API_KEY env
                 let api_key = token.or_else(|| std::env::var("COSY_API_KEY").ok());
-                crate::text::set_allow_private_images(allow_private_images);
+                let image_policy = crate::text::ImagePolicy {
+                    allow_private: allow_private_images,
+                    allow_local: allow_local_image_paths,
+                };
 
                 if api_key.is_some() {
                     println!("🔒 Auth enabled — bearer token required");
@@ -282,7 +293,7 @@ impl Cli {
                 println!("Starting Cosy API server on port {}...", port);
                 // Tokio runtime for async server
                 let runtime = tokio::runtime::Runtime::new()?;
-                runtime.block_on(crate::server::run(port, api_key))?;
+                runtime.block_on(crate::server::run(port, api_key, image_policy))?;
                 Ok(ExitCode::SUCCESS)
             }
         }
@@ -321,7 +332,13 @@ fn dump_processed_svg(template_name: &str, data_path: &str) -> anyhow::Result<Ex
     let template = crate::template::load_template(template_name)?;
     let dir = crate::template::find_template_dir_for(template_name)?;
     let data = crate::schema::InputData::from_file(data_path)?;
-    let svg = crate::template::process_template(&template, &dir, &data.brand, &data.slides[0])?;
+    let svg = crate::template::process_template(
+        &template,
+        &dir,
+        &data.brand,
+        &data.slides[0],
+        crate::text::ImagePolicy::UNRESTRICTED,
+    )?;
     println!("{}", svg);
     Ok(ExitCode::SUCCESS)
 }
