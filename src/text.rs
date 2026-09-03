@@ -114,7 +114,10 @@ fn fetch_image_data_uri(url_str: &str, allow_private: bool) -> anyhow::Result<St
 
     let mut builder = reqwest::blocking::Client::builder()
         .timeout(FETCH_TIMEOUT)
-        .redirect(reqwest::redirect::Policy::none());
+        .redirect(reqwest::redirect::Policy::none())
+        // proxy env vars would route the request through a proxy that does
+        // its own DNS, defeating the validated-address pin below
+        .no_proxy();
     if !allow_private {
         let host = url
             .host_str()
