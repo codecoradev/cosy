@@ -229,8 +229,10 @@ fn is_public_ip(ip: IpAddr) -> bool {
                 || o[0] >= 224)
         }
         IpAddr::V6(v6) => {
-            if let Some(mapped) = v6.to_ipv4_mapped() {
-                return is_public_ip(IpAddr::V4(mapped));
+            // to_ipv4() unwraps both IPv4-mapped (::ffff:a.b.c.d) and the
+            // deprecated IPv4-compatible (::a.b.c.d) forms, e.g. ::127.0.0.1
+            if let Some(v4) = v6.to_ipv4() {
+                return is_public_ip(IpAddr::V4(v4));
             }
             !(v6.is_loopback()
                 || v6.is_unspecified()
@@ -409,6 +411,9 @@ mod tests {
             "ff02::1",
             "::ffff:10.0.0.1",
             "::ffff:127.0.0.1",
+            "::127.0.0.1",
+            "::169.254.169.254",
+            "::10.0.0.1",
         ] {
             let ip: IpAddr = ip.parse().unwrap();
             assert!(!is_public_ip(ip), "{ip} must not be public");
