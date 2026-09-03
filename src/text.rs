@@ -160,7 +160,6 @@ fn fetch_image_data_uri(url_str: &str, allow_private: bool) -> anyhow::Result<St
         .and_then(|v| v.to_str().ok())
         .map(|ct| ct.split(';').next().unwrap_or_default().trim().to_string());
 
-    let mut response = response;
     let mut bytes: Vec<u8> = Vec::new();
     if let Err(e) = response
         .take(MAX_REMOTE_IMAGE_BYTES + 1)
