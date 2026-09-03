@@ -23,7 +23,7 @@
 {% if bg_image_data_uri %}
   <image href="{{ bg_image_data_uri }}" width="1200" height="675" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
   {% endif %}
-  <rect width="1200" height="675" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
+  <rect width="1200" height="675" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}{{ brand.bg_image_overlay | default(0.7) }}{% else %}1.0{% endif %}"/>
   <rect width="1200" height="675" fill="url(#glow)"/>
   <rect width="1200" height="675" fill="url(#dots)"/>
   <!-- Tag badge -->
