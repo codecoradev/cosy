@@ -50,7 +50,7 @@
     "bg_image": {
       "type": "image",
       "required": false,
-      "description": "Background image path (PNG/JPG/WebP). Rendered with configurable opacity behind gradient overlay."
+      "description": "Background image — local path or http(s) URL (PNG/JPG/WebP). Rendered with configurable opacity behind gradient overlay."
     },
     "bg_image_opacity": {
       "type": "number",

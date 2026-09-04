@@ -13,6 +13,29 @@ COSY_API_KEY=your-secret cosy serve --port 3000
 cosy serve --port 3000 --token your-secret
 ```
 
+## Remote Image Security
+
+Remote image URLs (`bg_image`, `logo`) are fetched with an SSRF guard:
+- only `https://` URLs (plain `http://` needs the opt-in below)
+- the target must resolve to a globally routable address — loopback, RFC1918,
+  and link-local (incl. cloud metadata `169.254.169.254`) are rejected, and the
+  connection is pinned to the validated IP so DNS rebinding cannot bypass it
+- redirects are not followed; bodies are streamed with a hard 10 MB cap
+- blocked fetches log a warning server-side and the render proceeds without
+  the image (no error details are returned to the caller)
+
+Local filesystem paths in `bg_image` / `logo` are **rejected by default**
+too — a render request cannot make the server read its own files. Both
+restrictions have explicit opt-ins:
+
+```bash
+# allow private/internal network targets (e.g. an internal MinIO)
+cosy serve --port 3000 --allow-private-images
+
+# allow local filesystem paths (the standalone CLI always allows these)
+cosy serve --port 3000 --allow-local-image-paths
+```
+
 ## Health Check
 
 Always public, no auth required.

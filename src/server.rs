@@ -27,6 +27,7 @@ use tower_http::cors::CorsLayer;
 /// Shared server state — font DB built once at startup.
 struct AppState {
     font_db: usvg::fontdb::Database,
+    image_policy: crate::text::ImagePolicy,
     api_key: Option<String>,
 }
 
@@ -65,7 +66,11 @@ pub struct ErrorResponse {
 ///
 /// If `api_key` is Some, all endpoints except /api/health require
 /// `Authorization: Bearer <api_key>` header.
-pub async fn run(port: u16, api_key: Option<String>) -> anyhow::Result<()> {
+pub async fn run(
+    port: u16,
+    api_key: Option<String>,
+    image_policy: crate::text::ImagePolicy,
+) -> anyhow::Result<()> {
     let font_db = render::build_font_db(None)?;
 
     let template_count = template::list_templates(std::path::Path::new("./templates")).len();
@@ -79,6 +84,7 @@ pub async fn run(port: u16, api_key: Option<String>) -> anyhow::Result<()> {
 
     let state = Arc::new(AppState {
         font_db,
+        image_policy,
         api_key: api_key.clone(),
     });
 
@@ -202,16 +208,24 @@ async fn render_handler(
         }
     };
 
-    // Render first slide (API returns single PNG for simplicity)
-    match render::render_slide_to_png(
-        &tmpl,
-        &template_dir,
-        &req.data,
-        0,
-        req.scale,
-        &state.font_db,
-    ) {
-        Ok(png_bytes) => {
+    // Render first slide (API returns single PNG for simplicity).
+    // Blocking work (template IO, resvg, possibly remote image fetches) runs
+    // on the blocking thread pool so the async runtime is never blocked.
+    let render_result = tokio::task::spawn_blocking(move || {
+        render::render_slide_to_png(
+            &tmpl,
+            &template_dir,
+            &req.data,
+            0,
+            req.scale,
+            &state.font_db,
+            state.image_policy,
+        )
+    })
+    .await;
+
+    match render_result {
+        Ok(Ok(png_bytes)) => {
             log::info!("Rendered {} bytes of PNG", png_bytes.len());
             (
                 StatusCode::OK,
@@ -220,9 +234,13 @@ async fn render_handler(
             )
                 .into_response()
         }
-        Err(e) => error_response(
+        Ok(Err(e)) => error_response(
             StatusCode::INTERNAL_SERVER_ERROR,
             format!("Render error: {e:#}"),
+        ),
+        Err(e) => error_response(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            format!("Render worker failed: {e}"),
         ),
     }
 }

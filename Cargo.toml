@@ -19,6 +19,7 @@ base64 = "0.22"
 anyhow = "1"
 log = "0.4"
 env_logger = "0.11"
+reqwest = { version = "0.12", default-features = false, features = ["blocking", "json", "rustls-tls"] }
 
 # HTTP server (cosy serve)
 axum = "0.8"
@@ -29,7 +30,6 @@ tower-http = { version = "0.6", features = ["cors", "trace"] }
 assert_cmd = "2"
 predicates = "3"
 tempfile = "3"
-reqwest = { version = "0.12", default-features = false, features = ["blocking", "json", "rustls-tls"] }
 tokio = { version = "1", features = ["full", "test-util"] }
 
 [profile.release]

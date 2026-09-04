@@ -72,6 +72,7 @@ pub fn process_template(
     template_dir: &Path,
     brand: &serde_json::Value,
     slide: &serde_json::Value,
+    image_policy: crate::text::ImagePolicy,
 ) -> anyhow::Result<String> {
     let svg_template = load_svg(template_dir)?;
 
@@ -81,7 +82,7 @@ pub fn process_template(
 
     // Register custom filters
     env.add_filter("wordwrap", filter_wordwrap);
-    env.add_filter("b64", filter_b64);
+    env.add_filter("b64", move |path: String| filter_b64(path, image_policy));
 
     // Build context
     let mut context = serde_json::Map::new();
@@ -129,7 +130,7 @@ pub fn process_template(
     // Convert logo path to data URI if present
     if let Some(logo_path) = brand.get("logo").and_then(|v| v.as_str()) {
         if !logo_path.is_empty() {
-            match crate::text::image_to_data_uri(logo_path) {
+            match crate::text::image_to_data_uri(logo_path, image_policy) {
                 Ok(data_uri) => {
                     context.insert("logo_data_uri".into(), serde_json::Value::String(data_uri));
                 }
@@ -147,7 +148,7 @@ pub fn process_template(
         .and_then(|v| v.as_str());
     if let Some(bg_path) = bg_image {
         if !bg_path.is_empty() {
-            match crate::text::image_to_data_uri(bg_path) {
+            match crate::text::image_to_data_uri(bg_path, image_policy) {
                 Ok(data_uri) => {
                     context.insert(
                         "bg_image_data_uri".into(),
@@ -273,8 +274,8 @@ fn filter_wordwrap(text: String, width: usize) -> String {
 
 /// b64 filter: convert file path to base64 data URI.
 /// Usage: `{{ slide.image|b64 }}`
-fn filter_b64(path: String) -> String {
-    crate::text::image_to_data_uri(&path).unwrap_or_default()
+fn filter_b64(path: String, policy: crate::text::ImagePolicy) -> String {
+    crate::text::image_to_data_uri(&path, policy).unwrap_or_default()
 }
 
 // ─── Template Listing ───────────────────────────────────────────────
@@ -419,7 +420,13 @@ mod filter_tests {
         let brand = serde_json::json!({});
         let slide =
             serde_json::json!({"stat_number": "R&D & Co", "stat_label": "x", "source": "y"});
-        let result = process_template(&template, dir, &brand, &slide);
+        let result = process_template(
+            &template,
+            dir,
+            &brand,
+            &slide,
+            crate::text::ImagePolicy::SECURE,
+        );
         match result {
             Ok(svg) => assert!(
                 svg.contains("R&amp;D &amp; Co"),
@@ -480,7 +487,13 @@ mod filter_tests {
             "stat_label": "x",
             "source": "y"
         });
-        let result = process_template(&template, dir, &brand, &slide);
+        let result = process_template(
+            &template,
+            dir,
+            &brand,
+            &slide,
+            crate::text::ImagePolicy::SECURE,
+        );
         match result {
             Ok(svg) => {
                 assert!(
@@ -522,7 +535,13 @@ mod filter_tests {
         std::fs::write(&filepath, b"fake-image").unwrap();
         let path_str = filepath.to_str().unwrap().to_string();
 
-        let result = filter_b64(path_str);
+        let result = filter_b64(
+            path_str,
+            crate::text::ImagePolicy {
+                allow_private: true,
+                allow_local: true,
+            },
+        );
         assert!(
             result.starts_with("data:image/png;base64,"),
             "b64 filter should return data URI, got: {}",
@@ -535,7 +554,10 @@ mod filter_tests {
 
     #[test]
     fn test_filter_b64_invalid_path_returns_empty() {
-        let result = filter_b64("/nonexistent/path/to/file.png".into());
+        let result = filter_b64(
+            "/nonexistent/path/to/file.png".into(),
+            crate::text::ImagePolicy::UNRESTRICTED,
+        );
         assert_eq!(result, "");
     }
 }
