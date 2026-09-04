@@ -21,7 +21,7 @@
     </pattern>
   </defs>
 {% if bg_image_data_uri %}
-  <image href="{{ bg_image_data_uri }}" width="1200" height="675" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
+  <image href="{{ bg_image_data_uri }}" x="{{ bg_image_geom.x }}" y="{{ bg_image_geom.y }}" width="{{ bg_image_geom.w }}" height="{{ bg_image_geom.h }}" preserveAspectRatio="none" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
   {% endif %}
   <rect width="1200" height="675" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}{{ brand.bg_image_overlay | default(0.7) }}{% else %}1.0{% endif %}"/>
   <rect width="1200" height="675" fill="url(#glow)"/>
