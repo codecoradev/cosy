@@ -148,11 +148,37 @@ pub fn process_template(
         .and_then(|v| v.as_str());
     if let Some(bg_path) = bg_image {
         if !bg_path.is_empty() {
-            match crate::text::image_to_data_uri(bg_path, image_policy) {
-                Ok(data_uri) => {
+            match crate::text::image_to_data_uri_with_size(bg_path, image_policy) {
+                Ok(loaded) => {
                     context.insert(
                         "bg_image_data_uri".into(),
-                        serde_json::Value::String(data_uri),
+                        serde_json::Value::String(loaded.data_uri),
+                    );
+                    // Positioning geometry: cover-fit at user zoom with a
+                    // focal point. Defaults reproduce the old center-crop.
+                    let scale = num_field(brand, slide, "bg_image_scale", 1.0, 0.1, 5.0);
+                    let fx = num_field(brand, slide, "bg_image_x", 0.5, 0.0, 1.0);
+                    let fy = num_field(brand, slide, "bg_image_y", 0.5, 0.0, 1.0);
+                    let iw = loaded.width.unwrap_or(template.dimensions.width) as f64;
+                    let ih = loaded.height.unwrap_or(template.dimensions.height) as f64;
+                    let (gx, gy, gw, gh) = bg_image_geom(
+                        template.dimensions.width as f64,
+                        template.dimensions.height as f64,
+                        iw,
+                        ih,
+                        scale,
+                        fx,
+                        fy,
+                    );
+                    let r2 = |v: f64| (v * 100.0).round() / 100.0;
+                    context.insert(
+                        "bg_image_geom".into(),
+                        serde_json::json!({
+                            "x": r2(gx),
+                            "y": r2(gy),
+                            "w": r2(gw),
+                            "h": r2(gh),
+                        }),
                     );
                 }
                 Err(e) => {
@@ -177,6 +203,50 @@ pub fn process_template(
     let rendered = tmpl.render(serde_json::Value::Object(context))?;
 
     Ok(rendered)
+}
+
+/// Cover-fit geometry for a user-positioned background image.
+///
+/// Returns `(x, y, w, h)` for the `<image>` element: the image is scaled to
+/// cover the canvas (identical to `preserveAspectRatio="slice"`) multiplied
+/// by `scale`, then placed so the focal point `(fx, fy)` — fractions of the
+/// scaled image — sits at the canvas center. Defaults (`scale=1`, `fx=fy=0.5`)
+/// reproduce the old fixed center-crop exactly.
+pub fn bg_image_geom(
+    canvas_w: f64,
+    canvas_h: f64,
+    img_w: f64,
+    img_h: f64,
+    scale: f64,
+    fx: f64,
+    fy: f64,
+) -> (f64, f64, f64, f64) {
+    let img_w = img_w.max(1.0);
+    let img_h = img_h.max(1.0);
+    let cover = (canvas_w / img_w).max(canvas_h / img_h);
+    let s = cover * scale.clamp(0.1, 5.0);
+    let w = img_w * s;
+    let h = img_h * s;
+    let x = canvas_w / 2.0 - fx.clamp(0.0, 1.0) * w;
+    let y = canvas_h / 2.0 - fy.clamp(0.0, 1.0) * h;
+    (x, y, w, h)
+}
+
+/// Read a numeric field with brand-over-slide precedence, clamped.
+fn num_field(
+    brand: &serde_json::Value,
+    slide: &serde_json::Value,
+    name: &str,
+    default: f64,
+    min: f64,
+    max: f64,
+) -> f64 {
+    let value = brand
+        .get(name)
+        .or_else(|| slide.get(name))
+        .and_then(|v| v.as_f64())
+        .unwrap_or(default);
+    value.clamp(min, max)
 }
 
 /// Recursively XML-escape all string values in a JSON value.

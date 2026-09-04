@@ -70,8 +70,27 @@ pub fn wrap_text(text: &str, max_chars: usize) -> Vec<String> {
 /// 10 MB cap, pinned DNS, and no redirects; the server render path must call
 /// this from a blocking thread (`tokio::task::spawn_blocking`).
 pub fn image_to_data_uri(path: &str, policy: ImagePolicy) -> anyhow::Result<String> {
+    Ok(image_to_data_uri_with_size(path, policy)?.data_uri)
+}
+
+/// A loaded image plus its intrinsic pixel dimensions (when decodable).
+pub struct LoadedImage {
+    pub data_uri: String,
+    pub width: Option<u32>,
+    pub height: Option<u32>,
+}
+
+/// Like [`image_to_data_uri`], but also reports the image's intrinsic
+/// dimensions — needed for user-positioned backgrounds (zoom/focal math).
+pub fn image_to_data_uri_with_size(path: &str, policy: ImagePolicy) -> anyhow::Result<LoadedImage> {
     if is_remote_url(path) {
-        return fetch_image_data_uri(path, policy.allow_private);
+        let (bytes, mime) = fetch_image_bytes(path, policy.allow_private)?;
+        let (width, height) = decode_dimensions(&bytes);
+        return Ok(LoadedImage {
+            data_uri: encode_data_uri(&bytes, &mime)?,
+            width,
+            height,
+        });
     }
 
     if !policy.allow_local {
@@ -87,7 +106,24 @@ pub fn image_to_data_uri(path: &str, policy: ImagePolicy) -> anyhow::Result<Stri
     );
 
     let bytes = std::fs::read(path)?;
-    encode_data_uri(&bytes, mime)
+    let (width, height) = decode_dimensions(&bytes);
+    Ok(LoadedImage {
+        data_uri: encode_data_uri(&bytes, mime)?,
+        width,
+        height,
+    })
+}
+
+/// Best-effort intrinsic dimensions; None when the bytes are not an image.
+fn decode_dimensions(bytes: &[u8]) -> (Option<u32>, Option<u32>) {
+    let dims = image::ImageReader::new(std::io::Cursor::new(bytes))
+        .with_guessed_format()
+        .ok()
+        .and_then(|r| r.into_dimensions().ok());
+    match dims {
+        Some((w, h)) if w > 0 && h > 0 => (Some(w), Some(h)),
+        _ => (None, None),
+    }
 }
 
 /// True if the value looks like an http(s) URL rather than a file path.
@@ -126,7 +162,9 @@ fn mime_for_extension(ext: &str) -> &'static str {
 /// - the body is streamed with a hard `take()` cap — chunked/lying
 ///   Content-Length cannot balloon memory
 /// - failures log details server-side and return a generic message
-fn fetch_image_data_uri(url_str: &str, allow_private: bool) -> anyhow::Result<String> {
+///
+/// Download a remote image, returning raw bytes plus its mime type.
+fn fetch_image_bytes(url_str: &str, allow_private: bool) -> anyhow::Result<(Vec<u8>, String)> {
     let url = reqwest::Url::parse(url_str)?;
     let scheme_ok = url.scheme() == "https" || (allow_private && url.scheme() == "http");
     if !scheme_ok {
@@ -211,7 +249,7 @@ fn fetch_image_data_uri(url_str: &str, allow_private: bool) -> anyhow::Result<St
             mime_for_extension(ext).to_string()
         });
 
-    encode_data_uri(&bytes, &mime)
+    Ok((bytes, mime))
 }
 
 /// Resolve the URL host and return its first globally routable address.
@@ -340,16 +378,18 @@ mod tests {
     #[test]
     fn test_fetch_url_success_uses_content_type() {
         let url = serve_one(response_with("image/png", b"fakepngbytes"));
-        let uri = fetch_image_data_uri(&url, true).expect("fetch must succeed");
-        assert!(uri.starts_with("data:image/png;base64,"), "got: {uri}");
+        let (bytes, mime) = fetch_image_bytes(&url, true).expect("fetch must succeed");
+        assert_eq!(mime, "image/png");
+        assert_eq!(bytes, b"fakepngbytes");
     }
 
     #[test]
     fn test_fetch_url_falls_back_to_url_extension() {
         // application/octet-stream is not an image/* → mime from .png extension
         let url = serve_one(response_with("application/octet-stream", b"jpegdata"));
-        let uri = fetch_image_data_uri(&url, true).unwrap();
-        assert!(uri.starts_with("data:image/png;base64,"), "got: {uri}");
+        let (bytes, mime) = fetch_image_bytes(&url, true).unwrap();
+        assert_eq!(mime, "image/png", "extension fallback");
+        assert_eq!(bytes, b"jpegdata");
     }
 
     #[test]
@@ -358,7 +398,7 @@ mod tests {
             "HTTP/1.1 200 OK\r\nContent-Type: image/png\r\nContent-Length: 99999999999\r\nConnection: close\r\n\r\n"
                 .to_string(),
         );
-        let err = fetch_image_data_uri(&url, true).expect_err("must reject oversized image");
+        let err = fetch_image_bytes(&url, true).expect_err("must reject oversized image");
         assert!(err.to_string().contains("limit"), "got: {err}");
     }
 
@@ -368,7 +408,7 @@ mod tests {
             "HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\nConnection: close\r\n\r\n".to_string(),
         );
         assert!(
-            fetch_image_data_uri(&url, true).is_err(),
+            fetch_image_bytes(&url, true).is_err(),
             "404 must be an error"
         );
     }
@@ -376,7 +416,7 @@ mod tests {
     #[test]
     fn test_fetch_url_blocks_private_targets_by_default() {
         let url = serve_one(response_with("image/png", b"secret"));
-        let err = fetch_image_data_uri(&url, false)
+        let err = fetch_image_bytes(&url, false)
             .expect_err("loopback must be blocked without allow_private");
         assert_eq!(err.to_string(), "failed to load remote image");
     }
@@ -388,22 +428,22 @@ mod tests {
             "HTTP/1.1 302 Found\r\nLocation: http://127.0.0.1:9/x\r\nContent-Length: 0\r\nConnection: close\r\n\r\n"
                 .to_string(),
         );
-        assert!(fetch_image_data_uri(&url, false).is_err());
-        assert!(fetch_image_data_uri(&url, true).is_err());
+        assert!(fetch_image_bytes(&url, false).is_err());
+        assert!(fetch_image_bytes(&url, true).is_err());
     }
 
     #[test]
     fn test_fetch_url_https_only_by_default() {
         // plain http requires allow_private (local CLI / server opt-in flag)
         let url = serve_one(response_with("image/png", b"data"));
-        assert!(fetch_image_data_uri(&url, false).is_err());
-        assert!(fetch_image_data_uri(&url, true).is_ok());
+        assert!(fetch_image_bytes(&url, false).is_err());
+        assert!(fetch_image_bytes(&url, true).is_ok());
     }
 
     #[test]
     fn test_fetch_url_rejects_non_http_schemes() {
-        assert!(fetch_image_data_uri("file:///etc/passwd", true).is_err());
-        assert!(fetch_image_data_uri("ftp://example.com/a.png", true).is_err());
+        assert!(fetch_image_bytes("file:///etc/passwd", true).is_err());
+        assert!(fetch_image_bytes("ftp://example.com/a.png", true).is_err());
     }
 
     #[test]
@@ -411,7 +451,7 @@ mod tests {
         // hostname (not IP literal) resolving to loopback must also be blocked
         let url = serve_one(response_with("image/png", b"data"));
         let host_url = url.replace("127.0.0.1", "localhost");
-        assert!(fetch_image_data_uri(&host_url, false).is_err());
+        assert!(fetch_image_bytes(&host_url, false).is_err());
     }
 
     #[test]
