@@ -23,6 +23,8 @@ Clean minimal quote card with large quotation mark
 |-------|------|----------|------------|
 | `quote` | text | ✅ | 300 |
 | `source` | text | — | 80 |
+| `text_color` | color | — | — |
+| `hashtag` | text | — | 40 |
 
 ## Brand Fields
 
@@ -36,6 +38,7 @@ Clean minimal quote card with large quotation mark
 | `accent_color_end` | bg | — | #89b4fa |
 | `bg_image` | image | — | — |
 | `bg_image_opacity` | number | — | 0.15 |
+| `bg_overlay_opacity` | number | — | 0.7 |
 | `logo` | image | — | — |
 
 ## Example JSON
