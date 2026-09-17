@@ -61,6 +61,12 @@
       "type": "image",
       "required": false,
       "description": "Brand logo path."
+    },
+    "bg_overlay_opacity": {
+      "type": "number",
+      "required": false,
+      "default": 0.7,
+      "description": "Opacity of the gradient overlay when bg_image is set. 0.0 = photo fully visible, 1.0 = gradient fully covers. Default: 0.7."
     }
   },
   "slide_fields": {
@@ -102,6 +108,11 @@
       "type": "text",
       "required": true,
       "max": 40
+    },
+    "text_color": {
+      "type": "color",
+      "required": false,
+      "description": "Text color for quote/title text as hex (e.g. \"#1e1e2e\"). Use when the background is light. Default: template dark theme color."
     }
   }
 }

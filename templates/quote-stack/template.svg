@@ -23,11 +23,11 @@
   {% if bg_image_data_uri %}
   <image href="{{ bg_image_data_uri }}" width="1080" height="1350" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
   {% endif %}
-  <rect width="1080" height="1350" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
+  <rect width="1080" height="1350" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}{{ bg_overlay_opacity | default(0.7) }}{% else %}1.0{% endif %}"/>
   <rect width="1080" height="1350" fill="url(#glow)"/>
   <rect width="1080" height="1350" fill="url(#dots)"/>
   {% if slide.title %}
-  <text x="540" y="100" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="36" font-weight="700" fill="#cdd6f4">{{ slide.title }}</text>
+  <text x="540" y="100" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="36" font-weight="700" fill="{{ slide.text_color | default('#cdd6f4') }}">{{ slide.title }}</text>
   {% endif %}
   {% set items = [
     (slide.q1_text, slide.q1_author, q1_text_lines),
@@ -42,7 +42,7 @@
   {% set ql = q[2] %}
   {% if ql %}
     {% for line in ql %}
-  <text x="220" y="{{ cy + 55 + loop.index0 * 38 }}" font-family="Inter,sans-serif" font-size="24" font-weight="500" fill="#cdd6f4">{{ line }}</text>
+  <text x="220" y="{{ cy + 55 + loop.index0 * 38 }}" font-family="Inter,sans-serif" font-size="24" font-weight="500" fill="{{ slide.text_color | default('#cdd6f4') }}">{{ line }}</text>
     {% endfor %}
   {% else %}
   <text x="220" y="{{ cy + 55 }}" font-family="Inter,sans-serif" font-size="24" font-weight="500" fill="#cdd6f4">{{ q[0] }}</text>
