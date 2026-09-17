@@ -43,6 +43,19 @@ pub struct FieldSpec {
     pub options: Vec<String>,
     #[serde(default)]
     pub default: Option<serde_json::Value>,
+    /// Visual slot constraints for autofit (schema option `"autofit"`):
+    /// `slot_width` / `slot_height` in px, `font_size` = base px, `line_height`
+    /// = px per line. When the option is present, the context gets
+    /// `<field>_font_scale` (0.1..1.0) — the factor the template's font-size
+    /// must be multiplied with so max-length content fits the slot.
+    #[serde(default)]
+    pub slot_width: Option<f32>,
+    #[serde(default)]
+    pub slot_height: Option<f32>,
+    #[serde(default)]
+    pub font_size: Option<f32>,
+    #[serde(default)]
+    pub line_height: Option<f32>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
