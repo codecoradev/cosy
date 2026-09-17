@@ -546,3 +546,39 @@ Rules:
 - Typography: Inter 20px, weight 600, fill `#7f849c`
 - Default: `show_brand: false` in `defaults.json`
 - `brand_handle` may be appended as `{{ brand.brand_name }} · {{ brand.brand_handle }}` when present
+
+## Inline Text Markup
+
+Text fields declared with `"options": ["markup"]` in `schema.json` support chat-style
+inline emphasis. When the value contains markers, cosy emits a `<field>_segments`
+context variable (lines × styled segments) and the template renders nested `<tspan>`
+elements:
+
+| Marker | Effect |
+|--------|--------|
+| `*text*` | **bold** (toggles until the next `*`) |
+| `_text_` | *italic* (toggles until the next `_`) |
+| `*color:#rrggbb*` ... `*color*` | color run until reset |
+| `\*`, `\_`, `\_` | literal escape |
+
+Markers toggle only on word boundaries: `snake_case_name` and `5 * 3 = 15` render
+literally. Bundled fonts now include Inter Italic, Inter Bold Italic, and Inter
+Black, so `font-style="italic"` and `font-weight="800"` resolve to real faces.
+
+## Styling Override Fields
+
+- **`text_color`** (slide, `color` type): overrides the template's hardcoded text
+  fill for light backgrounds. Validated as `#rgb`/`#rrggbb` at render time.
+- **`bg_overlay_opacity`** (brand, `number`): gradient overlay opacity when
+  `bg_image` is set (default `0.7`; lower = photo shows through more).
+- **`hashtag`** (slide): renders `#value` near the bottom in the accent color.
+
+## Hashtag Block Pattern
+
+```svg
+{% if slide.hashtag %}
+<text x="{width/2}" y="{height-90}" text-anchor="middle" font-family="Inter,sans-serif"
+      font-size="26" font-weight="700" fill="{{ brand.accent_color | default('#cba6f7') }}"
+      >#{{ slide.hashtag }}</text>
+{% endif %}
+```

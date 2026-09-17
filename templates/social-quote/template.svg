@@ -21,19 +21,24 @@
   {% if bg_image_data_uri %}
   <image href="{{ bg_image_data_uri }}" width="1080" height="1350" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
   {% endif %}
-  <rect width="1080" height="1350" fill="url(#bg-gradient)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
+  <rect width="1080" height="1350" fill="url(#bg-gradient)" opacity="{% if bg_image_data_uri %}{{ bg_overlay_opacity | default(0.7) }}{% else %}1.0{% endif %}"/>
   <rect width="1080" height="1350" fill="url(#glow)"/>
   <rect width="1080" height="1350" fill="url(#dots)"/>
 
   <!-- Accent bar -->
   <rect x="80" y="120" width="8" height="80" rx="8" fill="url(#accent-gradient)"/>
 
-  <!-- Quote text (wrapped) -->
-  <text x="80" y="420" font-family="Inter, sans-serif" font-size="52" font-weight="700" fill="#cdd6f4">
+  <!-- Quote text (wrapped; inline markup via quote_segments when present) -->
+  <text x="80" y="420" font-family="Inter, sans-serif" font-size="52" font-weight="700" fill="{{ slide.text_color | default('#cdd6f4') }}">
+    {% if quote_segments %}
+    {% for line in quote_segments %}
+    <tspan x="80" dy="{% if loop.first %}0{% else %}68{% endif %}">{% for seg in line %}<tspan {% if seg.b %}font-weight="800" {% endif %}{% if seg.i %}font-style="italic" {% endif %}{% if seg.c %}fill="{{ seg.c }}" {% endif %}>{{ seg.t }}</tspan>{% endfor %}</tspan>
+    {% endfor %}
+    {% elif quote_lines %}
     {% for line in quote_lines %}
     <tspan x="80" dy="{% if loop.first %}0{% else %}68{% endif %}">{{ line }}</tspan>
     {% endfor %}
-    {% if not quote_lines %}
+    {% else %}
     <tspan x="80" dy="0">{{ slide.quote }}</tspan>
     {% endif %}
   </text>
@@ -46,7 +51,10 @@
   {% endif %}
 
   <!-- Brand footer -->
-  {% if brand.show_brand %}
+    {% if slide.hashtag %}
+  <text x="80" y="1260" text-anchor="start" font-family="Inter,sans-serif" font-size="26" font-weight="700" fill="{{ brand.accent_color | default('#cba6f7') }}">#{{ slide.hashtag }}</text>
+  {% endif %}
+{% if brand.show_brand %}
   <text x="540" y="1320" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">
     {{ brand.brand_name | default('') }} · {{ brand.brand_handle | default('') }}
   </text>

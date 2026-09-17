@@ -5,6 +5,22 @@ All notable changes to Cosy will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **Inline text markup** — `*bold*`, `_italic_`, and `*color:#hex*...*color*` in
+  markup-enabled text fields (opt-in via schema `options: ["markup"]`), rendered as
+  styled `<tspan>` runs with markup-aware line wrapping. Bundled Inter Italic,
+  Inter Bold Italic, and Inter Black fonts so emphasis resolves to real faces.
+- **`text_color`** slide field on the 9 text-quote templates — per-page text color
+  for light backgrounds, validated as hex at render time (`color` field type is now
+  type-checked).
+- **`hashtag`** slide field on the 9 text-quote templates — accent-colored `#tag`
+  line near the bottom.
+- **`bg_overlay_opacity`** brand field on the 10 quote-family templates — gradient
+  overlay opacity when `bg_image` is set (default `0.7`, backward compatible).
+
 ## [0.2.0] — 2026-08-28
 
 ### Added

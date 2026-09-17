@@ -24,6 +24,8 @@ Developer quote card with large quote text and attribution
 | `quote` | text | ✅ | 200 |
 | `author` | text | ✅ | 50 |
 | `role` | text | — | 50 |
+| `text_color` | color | — | — |
+| `hashtag` | text | — | 40 |
 
 ## Brand Fields
 
@@ -37,6 +39,7 @@ Developer quote card with large quote text and attribution
 | `accent_color_end` | bg | — | #89b4fa |
 | `bg_image` | image | — | — |
 | `bg_image_opacity` | number | — | 0.15 |
+| `bg_overlay_opacity` | number | — | 0.7 |
 | `logo` | image | — | — |
 
 ## Example JSON

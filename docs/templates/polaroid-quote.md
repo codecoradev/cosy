@@ -24,6 +24,8 @@ Quote card styled like a polaroid photo with handwritten feel
 | `quote` | text | ✅ | 250 |
 | `author` | text | — | 50 |
 | `context` | text | — | 60 |
+| `text_color` | color | — | — |
+| `hashtag` | text | — | 40 |
 
 ## Brand Fields
 
@@ -37,6 +39,7 @@ Quote card styled like a polaroid photo with handwritten feel
 | `accent_color_end` | bg | — | #89b4fa |
 | `bg_image` | image | — | — |
 | `bg_image_opacity` | number | — | 0.15 |
+| `bg_overlay_opacity` | number | — | 0.7 |
 | `logo` | image | — | — |
 
 ## Example JSON

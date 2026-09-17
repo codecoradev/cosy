@@ -23,11 +23,11 @@
 {% if bg_image_data_uri %}
   <image href="{{ bg_image_data_uri }}" width="1080" height="1080" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
   {% endif %}
-  <rect width="1080" height="1080" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
+  <rect width="1080" height="1080" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}{{ bg_overlay_opacity | default(0.7) }}{% else %}1.0{% endif %}"/>
   <rect width="1080" height="1080" fill="url(#glow)"/>
   <rect width="1080" height="1080" fill="url(#dots)"/>
   <text x="540" y="360" text-anchor="middle" font-size="120" fill="url(#acc-grad)" opacity="0.12" font-family="Georgia,serif">"</text>
-  <text x="540" y="380" text-anchor="middle" font-family="Inter,sans-serif" font-size="36" font-weight="500" fill="#cdd6f4">
+  <text x="540" y="380" text-anchor="middle" font-family="Inter,sans-serif" font-size="36" font-weight="500" fill="{{ slide.text_color | default('#cdd6f4') }}">
 {% for line in quote_lines %}    <tspan x="540" dy="{% if loop.first %}0{% else %}50{% endif %}">{{ line }}</tspan>{% endfor %}
     {% if not quote_lines %}<tspan x="540">{{ slide.quote }}</tspan>{% endif %}
   </text>
@@ -36,7 +36,10 @@
   {% if slide.role %}
   <text x="540" y="700" text-anchor="middle" font-family="Inter,sans-serif" font-size="22" font-weight="400" fill="#7f849c">{{ slide.role }}</text>
   {% endif %}
-  {% if brand.show_brand %}
+    {% if slide.hashtag %}
+  <text x="540" y="990" text-anchor="middle" font-family="Inter,sans-serif" font-size="26" font-weight="700" fill="{{ brand.accent_color | default('#cba6f7') }}">#{{ slide.hashtag }}</text>
+  {% endif %}
+{% if brand.show_brand %}
   <text x="540" y="1050" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   {% endif %}
 </svg>

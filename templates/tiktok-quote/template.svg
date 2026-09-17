@@ -19,16 +19,19 @@
   {% if bg_image_data_uri %}
   <image href="{{ bg_image_data_uri }}" width="1080" height="1350" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
   {% endif %}
-  <rect width="1080" height="1350" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
+  <rect width="1080" height="1350" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}{{ bg_overlay_opacity | default(0.7) }}{% else %}1.0{% endif %}"/>
   <rect width="1080" height="1350" fill="url(#glow)"/>
   <rect width="1080" height="1350" fill="url(#dots)"/>
-  <text x="540" y="500" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="56" font-weight="800" fill="#cdd6f4">
+  <text x="540" y="500" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="56" font-weight="800" fill="{{ slide.text_color | default('#cdd6f4') }}">
     {% for line in quote_lines %}<tspan x="540" dy="{% if loop.first %}0{% else %}72{% endif %}">{{ line }}</tspan>{% endfor %}
     {% if not quote_lines %}<tspan x="540" dy="0">{{ slide.quote }}</tspan>{% endif %}
   </text>
   <rect x="440" y="1050" width="200" height="6" rx="8" fill="url(#acc-grad)"/>
   <text x="540" y="1120" text-anchor="middle" font-family="Inter,sans-serif" font-size="32" font-weight="600" fill="{{ brand.accent_color | default('#cba6f7') }}">{{ slide.author }}</text>
-  {% if brand.show_brand %}
+    {% if slide.hashtag %}
+  <text x="540" y="1260" text-anchor="middle" font-family="Inter,sans-serif" font-size="26" font-weight="700" fill="{{ brand.accent_color | default('#cba6f7') }}">#{{ slide.hashtag }}</text>
+  {% endif %}
+{% if brand.show_brand %}
   <text x="540" y="1320" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }} · {{ brand.brand_handle | default('') }}</text>
   {% endif %}
   <circle cx="1000" cy="80" r="180" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>

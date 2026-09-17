@@ -23,12 +23,12 @@
 {% if bg_image_data_uri %}
   <image href="{{ bg_image_data_uri }}" width="1080" height="1080" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
   {% endif %}
-  <rect width="1080" height="1080" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}0.7{% else %}1.0{% endif %}"/>
+  <rect width="1080" height="1080" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}{{ bg_overlay_opacity | default(0.7) }}{% else %}1.0{% endif %}"/>
   <rect width="1080" height="1080" fill="url(#glow)"/>
   <rect width="1080" height="1080" fill="url(#dots)"/>
   <rect x="190" y="170" width="700" height="740" rx="12" fill="#cdd6f4" opacity="0.95" transform="rotate(-2 540 540)"/>
   <rect x="190" y="170" width="700" height="560" rx="12" fill="#313244" transform="rotate(-2 540 540)"/>
-  <text x="540" y="440" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="36" font-weight="600" fill="#cdd6f4" transform="rotate(-2 540 540)">
+  <text x="540" y="440" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="36" font-weight="600" fill="{{ slide.text_color | default('#cdd6f4') }}" transform="rotate(-2 540 540)">
 {% for line in quote_lines %}    <tspan x="540" dy="{% if loop.first %}0{% else %}48{% endif %}">{{ line }}</tspan>{% endfor %}
     {% if not quote_lines %}<tspan x="540">{{ slide.quote }}</tspan>{% endif %}
   </text>
@@ -39,7 +39,10 @@
   {% if slide.context %}
   <text x="540" y="780" text-anchor="middle" font-family="Inter,sans-serif" font-size="18" font-weight="400" fill="#6c7086" transform="rotate(-2 540 540)">{{ slide.context }}</text>
   {% endif %}
-  {% if brand.show_brand %}
+    {% if slide.hashtag %}
+  <text x="540" y="990" text-anchor="middle" font-family="Inter,sans-serif" font-size="26" font-weight="700" fill="{{ brand.accent_color | default('#cba6f7') }}">#{{ slide.hashtag }}</text>
+  {% endif %}
+{% if brand.show_brand %}
   <text x="540" y="1050" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   {% endif %}
 </svg>
