@@ -42,7 +42,8 @@
   <text x="195" y="128" font-family="Inter,sans-serif" font-size="28" font-weight="700" fill="{{ slide.text_color | default('#cdd6f4') }}">{{ slide.contact_name | default('Chat') }}</text>
   <text x="195" y="162" font-family="Inter,sans-serif" font-size="19" fill="#7f849c">{{ slide.contact_status | default('online') }}</text>
 
-  <!-- Bubbles: 6 message slots, 170px each; bubble height follows line count -->
+  <!-- Bubbles: 6 message slots, dynamically stacked (no overlap); bubble height by line count -->
+  {% set ns = namespace(y = 245) %}
   {% set items = [
     (slide.m1_text, slide.m1_side | default('left'), m1_text_lines, m1_text_segments),
     (slide.m2_text, slide.m2_side | default('right'), m2_text_lines, m2_text_segments),
@@ -57,7 +58,8 @@
   {% set lines = msg[2] %}
   {% set n_lines = segs | default(lines) | length %}
   {% set bh = 52 + n_lines * 38 %}
-  {% set by = 245 + loop.index0 * 170 %}
+  {% set by = ns.y %}
+  {% set ns.y = by + bh + 24 %}
   {% if msg[1] == 'right' %}
   <rect x="480" y="{{ by }}" width="480" height="{{ bh }}" rx="20" fill="#1d3a52" opacity="0.95"/>
   <text x="510" y="{{ by + 40 }}" font-family="Inter,sans-serif" font-size="26" fill="{{ slide.text_color | default('#cdd6f4') }}">{% if segs %}{% for line in segs %}{{ lineout(line, loop.first, 510) }}{% endfor %}{% else %}{% for line in lines %}{{ plainout(line, loop.first, 510) }}{% endfor %}{% endif %}</text>
