@@ -759,6 +759,20 @@ Cosy ships with **148 templates** out of the box. Browse the gallery below, or u
     <span class="dims">1080×1350</span>
   </div>
 </a>
+<a href="./whatsapp-chat" class="template-card">
+  <img src="https://s3.ajianaz.dev/hermes/codecoradev/cosy/preview/whatsapp-chat.png" alt="WhatsApp Chat" loading="lazy" />
+  <div class="template-info">
+    <h3>WhatsApp Chat</h3>
+    <span class="dims">1080×1350</span>
+  </div>
+</a>
+<a href="./notes-app" class="template-card">
+  <img src="https://s3.ajianaz.dev/hermes/codecoradev/cosy/preview/notes-app.png" alt="Notes App" loading="lazy" />
+  <div class="template-info">
+    <h3>Notes App</h3>
+    <span class="dims">1080×1350</span>
+  </div>
+</a>
 <a href="./rate-limit" class="template-card">
   <img src="https://s3.ajianaz.dev/hermes/codecoradev/cosy/preview/rate-limit.png" alt="Rate Limit" loading="lazy" />
   <div class="template-info">

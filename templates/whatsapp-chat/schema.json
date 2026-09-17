@@ -1,0 +1,180 @@
+{
+  "id": "whatsapp-chat",
+  "name": "WhatsApp Chat",
+  "dimensions": {
+    "width": 1080,
+    "height": 1350
+  },
+  "fonts": [
+    "Inter"
+  ],
+  "brand_fields": {
+    "show_brand": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Show brand name/handle watermark at bottom. Default: false."
+    },
+    "brand_name": {
+      "type": "text",
+      "required": true,
+      "max": 30
+    },
+    "brand_handle": {
+      "type": "text",
+      "required": true,
+      "max": 30
+    },
+    "bg_color": {
+      "type": "bg",
+      "required": false,
+      "default": "#1e1e2e"
+    },
+    "bg_color_end": {
+      "type": "bg",
+      "required": false,
+      "default": "#11111b"
+    },
+    "accent_color": {
+      "type": "text",
+      "required": false,
+      "default": "#cba6f7"
+    },
+    "accent_color_end": {
+      "type": "text",
+      "required": false,
+      "default": "#89b4fa"
+    },
+    "bg_image": {
+      "type": "image",
+      "required": false,
+      "description": "Background image — local path or http(s) URL (PNG/JPG/WebP)."
+    },
+    "bg_image_opacity": {
+      "type": "number",
+      "required": false,
+      "default": 0.15,
+      "description": "Opacity of the background image (0.0-1.0)."
+    },
+    "bg_overlay_opacity": {
+      "type": "number",
+      "required": false,
+      "default": 0.7,
+      "description": "Opacity of the gradient overlay when bg_image is set. Lower = photo shows through more. Default: 0.7."
+    },
+    "logo": {
+      "type": "image",
+      "required": false,
+      "description": "Brand logo path (PNG/SVG). Rendered at bottom-right corner."
+    }
+  },
+  "slide_fields": {
+    "contact_name": {
+      "type": "text",
+      "required": false,
+      "max": 24,
+      "description": "Chat header contact name."
+    },
+    "contact_status": {
+      "type": "text",
+      "required": false,
+      "max": 24,
+      "description": "Chat header status line (e.g. 'online', 'last seen today')."
+    },
+    "text_color": {
+      "type": "color",
+      "required": false,
+      "description": "Message text color. Use a dark hex when the background is light."
+    },
+    "m1_text": {
+      "type": "text",
+      "required": false,
+      "max": 120,
+      "wrap_width": 34,
+      "options": ["markup"],
+      "description": "Message 1 text. Supports *bold*, _italic_, *color:#hex*...*color*."
+    },
+    "m1_side": {
+      "type": "text",
+      "required": false,
+      "max": 5,
+      "options": ["left", "right"],
+      "description": "Message 1 bubble side: left or right (default left)."
+    },
+    "m2_text": {
+      "type": "text",
+      "required": false,
+      "max": 120,
+      "wrap_width": 34,
+      "options": ["markup"],
+      "description": "Message 2 text. Supports inline markup."
+    },
+    "m2_side": {
+      "type": "text",
+      "required": false,
+      "max": 5,
+      "options": ["left", "right"],
+      "description": "Message 2 bubble side (default right)."
+    },
+    "m3_text": {
+      "type": "text",
+      "required": false,
+      "max": 120,
+      "wrap_width": 34,
+      "options": ["markup"],
+      "description": "Message 3 text. Supports inline markup."
+    },
+    "m3_side": {
+      "type": "text",
+      "required": false,
+      "max": 5,
+      "options": ["left", "right"],
+      "description": "Message 3 bubble side (default left)."
+    },
+    "m4_text": {
+      "type": "text",
+      "required": false,
+      "max": 120,
+      "wrap_width": 34,
+      "options": ["markup"],
+      "description": "Message 4 text. Supports inline markup."
+    },
+    "m4_side": {
+      "type": "text",
+      "required": false,
+      "max": 5,
+      "options": ["left", "right"],
+      "description": "Message 4 bubble side (default right)."
+    },
+    "m5_text": {
+      "type": "text",
+      "required": false,
+      "max": 120,
+      "wrap_width": 34,
+      "options": ["markup"],
+      "description": "Message 5 text. Supports inline markup."
+    },
+    "m5_side": {
+      "type": "text",
+      "required": false,
+      "max": 5,
+      "options": ["left", "right"],
+      "description": "Message 5 bubble side (default left)."
+    },
+    "m6_text": {
+      "type": "text",
+      "required": false,
+      "max": 120,
+      "wrap_width": 34,
+      "options": ["markup"],
+      "description": "Message 6 text. Supports inline markup."
+    },
+    "m6_side": {
+      "type": "text",
+      "required": false,
+      "max": 5,
+      "options": ["left", "right"],
+      "description": "Message 6 bubble side (default right)."
+    }
+  }
+}
