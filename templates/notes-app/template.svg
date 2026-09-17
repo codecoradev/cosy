@@ -8,10 +8,6 @@
       <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
       <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
     </linearGradient>
-    <linearGradient id="acc-grad-h" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
-      <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
-    </linearGradient>
     <radialGradient id="glow" cx="75%" cy="25%" r="55%">
       <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0.07"/>
       <stop offset="100%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0"/>
@@ -20,45 +16,35 @@
       <circle cx="20" cy="20" r="1.5" fill="#ffffff" opacity="0.06"/>
     </pattern>
   </defs>
-  {# One styled segment #}
-  {% macro segout(seg) %}{% if seg.b %}<tspan font-weight="800">{% endif %}{% if seg.i %}<tspan font-style="italic">{% endif %}{% if seg.c %}<tspan fill="{{ seg.c }}">{{ seg.t }}</tspan>{% else %}{{ seg.t }}{% endif %}{% if seg.i %}</tspan>{% endif %}{% if seg.b %}</tspan>{% endif %}{% endmacro %}
 
+  {% macro segout(seg) %}{% if seg.b %}<tspan font-weight="800">{% endif %}{% if seg.i %}<tspan font-style="italic">{% endif %}{% if seg.c %}<tspan fill="{{ seg.c }}">{{ seg.t }}</tspan>{% else %}{{ seg.t }}{% endif %}{% if seg.i %}</tspan>{% endif %}{% if seg.b %}</tspan>{% endif %}{% endmacro %}
+  {% macro lineout(line, first, x) %}{% if first %}{% for seg in line %}{{ segout(seg) }}{% endfor %}{% else %}<tspan x="{{ x }}" dy="46">{% for seg in line %}{{ segout(seg) }}{% endfor %}</tspan>{% endif %}{% endmacro %}
+  {% macro plainout(line, first, x) %}{% if first %}{{ line }}{% else %}<tspan x="{{ x }}" dy="46">{{ line }}</tspan>{% endif %}{% endmacro %}
+
+  <!-- Background -->
   {% if bg_image_data_uri %}
   <image href="{{ bg_image_data_uri }}" width="1080" height="1350" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
   {% endif %}
   <rect width="1080" height="1350" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}{{ brand.bg_overlay_opacity | default(0.7) }}{% else %}1.0{% endif %}"/>
   <rect width="1080" height="1350" fill="url(#glow)"/>
   <rect width="1080" height="1350" fill="url(#dots)"/>
-  {% if slide.title %}
-  <text x="540" y="100" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="36" font-weight="700" fill="{{ slide.text_color | default('#cdd6f4') }}">{{ slide.title }}</text>
-  {% endif %}
-  {% set items = [
-    (slide.q1_text, slide.q1_author, q1_text_lines, q1_text_segments),
-    (slide.q2_text, slide.q2_author, q2_text_lines, q2_text_segments),
-    (slide.q3_text, slide.q3_author, q3_text_lines, q3_text_segments)
-  ] %}
-  {% for q in items %}
-  {% if q[0] %}
-  {% set cy = 200 + loop.index0 * 370 %}
-  <rect x="160" y="{{ cy - 80 }}" width="760" height="340" rx="20" fill="#313244" opacity="0.25"/>
-  <text x="220" y="{{ cy - 15 }}" font-size="60" fill="url(#acc-grad)" opacity="0.3">&#x26;</text>
-  {% set ql = q[2] %}
-  {% set qsegs = q[3] %}
-  {% if qsegs %}
-    {% for line in qsegs %}
-  <text x="220" y="{{ cy + 55 + loop.index0 * 38 }}" font-family="Inter,sans-serif" font-size="24" font-weight="500" fill="{{ slide.text_color | default('#cdd6f4') }}">{% for seg in line %}{{ segout(seg) }}{% endfor %}</text>
-    {% endfor %}
-  {% elif ql %}
-    {% for line in ql %}
-  <text x="220" y="{{ cy + 55 + loop.index0 * 38 }}" font-family="Inter,sans-serif" font-size="24" font-weight="500" fill="{{ slide.text_color | default('#cdd6f4') }}">{{ line }}</text>
-    {% endfor %}
-  {% else %}
-  <text x="220" y="{{ cy + 55 }}" font-family="Inter,sans-serif" font-size="24" font-weight="500" fill="#cdd6f4">{{ q[0] }}</text>
-  {% endif %}
-  <rect x="220" y="{{ cy + 180 }}" width="80" height="2" fill="url(#acc-grad-h)"/>
-  <text x="220" y="{{ cy + 210 }}" font-family="Space Grotesk,sans-serif" font-size="22" font-weight="700" fill="url(#acc-grad)">{{ q[1] }}</text>
-  {% endif %}
-  {% endfor %}
+
+  <!-- Notes app window -->
+  <rect x="80" y="90" width="920" height="1170" rx="24" fill="{{ slide.note_bg | default('#fef9c3') }}"/>
+  <!-- Window grip dots -->
+  <circle cx="120" cy="126" r="7" fill="#00000022"/>
+  <circle cx="146" cy="126" r="7" fill="#00000022"/>
+  <circle cx="172" cy="126" r="7" fill="#00000022"/>
+  <text x="540" y="133" text-anchor="middle" font-family="Inter,sans-serif" font-size="19" font-weight="600" fill="#00000055">{{ slide.note_timestamp | default('Today') }}</text>
+
+  <!-- Note title -->
+  <text x="140" y="248" font-family="Inter,sans-serif" font-size="44" font-weight="800" fill="{{ slide.title_color | default('#1e1e2e') }}">{{ slide.title | default('Notes') }}</text>
+  <line x1="140" y1="276" x2="940" y2="276" stroke="#00000018" stroke-width="2"/>
+
+  <!-- Note body -->
+  <text x="140" y="345" font-family="Inter,sans-serif" font-size="32" fill="{{ slide.body_color | default('#3a3a3c') }}">{% if body_segments %}{% for line in body_segments %}{{ lineout(line, loop.first, 140) }}{% endfor %}{% elif body_lines %}{% for line in body_lines %}{{ plainout(line, loop.first, 140) }}{% endfor %}{% else %}{{ slide.body }}{% endif %}</text>
+
+  <!-- Brand footer -->
   {% if brand.show_brand %}
   <text x="540" y="1320" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
   {% endif %}

@@ -80,7 +80,10 @@
       "type": "text",
       "required": true,
       "max": 120,
-      "wrap_width": 35
+      "wrap_width": 35,
+      "options": [
+        "markup"
+      ]
     },
     "q1_author": {
       "type": "text",
@@ -91,7 +94,10 @@
       "type": "text",
       "required": true,
       "max": 120,
-      "wrap_width": 35
+      "wrap_width": 35,
+      "options": [
+        "markup"
+      ]
     },
     "q2_author": {
       "type": "text",
@@ -102,7 +108,10 @@
       "type": "text",
       "required": true,
       "max": 120,
-      "wrap_width": 35
+      "wrap_width": 35,
+      "options": [
+        "markup"
+      ]
     },
     "q3_author": {
       "type": "text",

@@ -75,7 +75,10 @@
       "type": "text",
       "required": true,
       "max": 280,
-      "wrap_width": 35
+      "wrap_width": 35,
+      "options": [
+        "markup"
+      ]
     },
     "author": {
       "type": "text",

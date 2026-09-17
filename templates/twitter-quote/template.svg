@@ -16,6 +16,11 @@
     <circle cx="20" cy="20" r="1.5" fill="#ffffff" opacity="0.06"/>
   </pattern>
   </defs>
+  {# One styled segment #}
+  {% macro segout(seg) %}{% if seg.b %}<tspan font-weight="800">{% endif %}{% if seg.i %}<tspan font-style="italic">{% endif %}{% if seg.c %}<tspan fill="{{ seg.c }}">{{ seg.t }}</tspan>{% else %}{{ seg.t }}{% endif %}{% if seg.i %}</tspan>{% endif %}{% if seg.b %}</tspan>{% endif %}{% endmacro %}
+  {# One quote line: segments variant #}
+  {% macro segline(line, first, x, dy) %}{% if first %}{% for seg in line %}{{ segout(seg) }}{% endfor %}{% else %}<tspan x="{{ x }}" dy="{{ dy }}">{% for seg in line %}{{ segout(seg) }}{% endfor %}</tspan>{% endif %}{% endmacro %}
+
   {% if bg_image_data_uri %}
   <image href="{{ bg_image_data_uri }}" width="1200" height="675" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
   {% endif %}
@@ -30,7 +35,7 @@
   <text x="600" y="645" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}{% if brand.brand_handle %} · {{ brand.brand_handle }}{% endif %}</text>
   {% endif %}
   <text x="80" y="280" font-family="Space Grotesk,sans-serif" font-size="42" font-weight="700" fill="{{ slide.text_color | default('#cdd6f4') }}">
-    {% for line in quote_lines %}<tspan x="80" dy="{% if loop.first %}0{% else %}55{% endif %}">{{ line }}</tspan>{% endfor %}
+    {% if quote_segments %}{% for line in quote_segments %}{{ segline(line, loop.first, "80", "55") }}{% endfor %}{% elif quote_lines %}{% for line in quote_lines %}<tspan x="80" dy="{% if loop.first %}0{% else %}55{% endif %}">{{ line }}</tspan>{% endfor %}{% endif %}
     {% if not quote_lines %}<tspan x="80" dy="0">{{ slide.quote }}</tspan>{% endif %}
   </text>
   <text x="80" y="560" font-family="Inter,sans-serif" font-size="26" font-weight="600" fill="#bac2de">{{ slide.author }}</text>
