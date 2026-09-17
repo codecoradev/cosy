@@ -41,10 +41,50 @@ pub struct RenderRequest {
     /// Scale factor (default 2.0).
     #[serde(default = "default_scale")]
     pub scale: f32,
+    /// Zero-based slide to render when responding with `image/png`.
+    /// Defaults to the first slide. Ignored by the `json` response format,
+    /// which renders every slide.
+    #[serde(default)]
+    pub slide_index: Option<usize>,
+    /// Response format: `png` (default, binary image) or `json` (rendered
+    /// slides as base64 PNG entries with metadata).
+    #[serde(default)]
+    pub response_format: Option<ResponseFormat>,
+}
+
+/// Response format for POST /api/render.
+#[derive(Debug, Clone, Copy, Deserialize, PartialEq)]
+#[serde(rename_all = "lowercase")]
+pub enum ResponseFormat {
+    /// Raw PNG bytes (`image/png`).
+    Png,
+    /// JSON envelope with per-slide base64 PNGs (`application/json`).
+    Json,
 }
 
 fn default_scale() -> f32 {
     2.0
+}
+
+/// One rendered slide in a JSON response.
+#[derive(Debug, Serialize)]
+pub struct RenderedSlide {
+    /// Zero-based slide index.
+    pub index: usize,
+    /// Base64-encoded PNG bytes.
+    pub png_base64: String,
+}
+
+/// JSON response envelope for `response_format: "json"`.
+#[derive(Debug, Serialize)]
+pub struct RenderResponse {
+    pub template: String,
+    /// Rendered slide count.
+    pub slides: usize,
+    /// Dimensions of the template canvas (scale applied).
+    pub width: u32,
+    pub height: u32,
+    pub data: Vec<RenderedSlide>,
 }
 
 /// Response for GET /api/health.
@@ -185,12 +225,21 @@ async fn render_handler(
     State(state): State<Arc<AppState>>,
     Json(req): Json<RenderRequest>,
 ) -> Response {
+    let format = req.response_format.unwrap_or(ResponseFormat::Png);
     log::info!(
-        "Render request: template={}, slides={}, scale={}",
+        "Render request: template={}, slides={}, scale={}, format={:?}",
         req.template,
         req.data.slides.len(),
-        req.scale
+        req.scale,
+        format
     );
+
+    if req.data.slides.is_empty() {
+        return error_response(
+            StatusCode::BAD_REQUEST,
+            "Input data must contain at least one slide".into(),
+        );
+    }
 
     // Load template definition
     let tmpl = match template::load_template(&req.template) {
@@ -208,32 +257,89 @@ async fn render_handler(
         }
     };
 
-    // Render first slide (API returns single PNG for simplicity).
+    // Which slides to render: all for json format, one for png format.
+    let slide_indices: Vec<usize> = match format {
+        ResponseFormat::Json => (0..req.data.slides.len()).collect(),
+        ResponseFormat::Png => {
+            let idx = req.slide_index.unwrap_or(0);
+            if idx >= req.data.slides.len() {
+                return error_response(
+                    StatusCode::BAD_REQUEST,
+                    format!(
+                        "slide_index {} out of range (input has {} slide(s))",
+                        idx,
+                        req.data.slides.len()
+                    ),
+                );
+            }
+            vec![idx]
+        }
+    };
+
     // Blocking work (template IO, resvg, possibly remote image fetches) runs
     // on the blocking thread pool so the async runtime is never blocked.
+    let font_db = state.font_db.clone();
+    let image_policy = state.image_policy;
+    let scale = req.scale;
+    let data = req.data;
+    let template_id = tmpl.id.clone();
+    let dims = tmpl.dimensions.clone();
     let render_result = tokio::task::spawn_blocking(move || {
-        render::render_slide_to_png(
-            &tmpl,
-            &template_dir,
-            &req.data,
-            0,
-            req.scale,
-            &state.font_db,
-            state.image_policy,
-        )
+        slide_indices
+            .into_iter()
+            .map(|i| {
+                let png = render::render_slide_to_png(
+                    &tmpl,
+                    &template_dir,
+                    &data,
+                    i,
+                    scale,
+                    &font_db,
+                    image_policy,
+                )?;
+                Ok((i, png))
+            })
+            .collect::<anyhow::Result<Vec<(usize, Vec<u8>)>>>()
     })
     .await;
 
     match render_result {
-        Ok(Ok(png_bytes)) => {
-            log::info!("Rendered {} bytes of PNG", png_bytes.len());
-            (
-                StatusCode::OK,
-                [(header::CONTENT_TYPE, "image/png")],
-                png_bytes,
-            )
-                .into_response()
-        }
+        Ok(Ok(rendered)) => match format {
+            ResponseFormat::Png => {
+                let (_, png_bytes) = rendered.into_iter().next().expect("one slide rendered");
+                log::info!("Rendered {} bytes of PNG", png_bytes.len());
+                (
+                    StatusCode::OK,
+                    [(header::CONTENT_TYPE, "image/png")],
+                    png_bytes,
+                )
+                    .into_response()
+            }
+            ResponseFormat::Json => {
+                let slides_json: Vec<RenderedSlide> = rendered
+                    .into_iter()
+                    .map(|(i, png)| RenderedSlide {
+                        index: i,
+                        png_base64: base64::Engine::encode(
+                            &base64::engine::general_purpose::STANDARD,
+                            &png,
+                        ),
+                    })
+                    .collect();
+                log::info!("Rendered {} slide(s) as JSON", slides_json.len());
+                (
+                    StatusCode::OK,
+                    Json(RenderResponse {
+                        template: template_id,
+                        slides: slides_json.len(),
+                        width: (dims.width as f32 * scale) as u32,
+                        height: (dims.height as f32 * scale) as u32,
+                        data: slides_json,
+                    }),
+                )
+                    .into_response()
+            }
+        },
         Ok(Err(e)) => error_response(
             StatusCode::INTERNAL_SERVER_ERROR,
             format!("Render error: {e:#}"),
