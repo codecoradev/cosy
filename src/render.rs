@@ -223,6 +223,24 @@ pub fn build_font_db(custom_dir: Option<&Path>) -> anyhow::Result<usvg::fontdb::
     );
     load_bundled_font(
         &mut db,
+        "Inter",
+        "Italic",
+        include_bytes!("assets/fonts/Inter-Italic.ttf"),
+    );
+    load_bundled_font(
+        &mut db,
+        "Inter",
+        "Bold Italic",
+        include_bytes!("assets/fonts/Inter-BoldItalic.ttf"),
+    );
+    load_bundled_font(
+        &mut db,
+        "Inter",
+        "Black",
+        include_bytes!("assets/fonts/Inter-Black.ttf"),
+    );
+    load_bundled_font(
+        &mut db,
         "JetBrains Mono",
         "Regular",
         include_bytes!("assets/fonts/JetBrainsMono-Regular.ttf"),
@@ -246,7 +264,9 @@ pub fn build_font_db(custom_dir: Option<&Path>) -> anyhow::Result<usvg::fontdb::
         "Bold",
         include_bytes!("assets/fonts/SpaceGrotesk-Bold.ttf"),
     );
-    log::debug!("Loaded 7 bundled fonts (Inter R/B/SB, JetBrains Mono R, SpaceGrotesk M/SB/B)");
+    log::debug!(
+        "Loaded 10 bundled fonts (Inter R/B/SB/Black/I/BI, JetBrains Mono R, SpaceGrotesk M/SB/B)"
+    );
 
     // 2. Load system fonts (may fail in containers — that's OK)
     db.load_system_fonts();

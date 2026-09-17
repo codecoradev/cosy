@@ -105,6 +105,43 @@ pub fn process_template(
         }
     }
 
+    // Inline markup fields (schema options: ["markup"]): emit <field>_segments
+    // (lines × styled segments) when the value contains marker characters. Plain
+    // values keep the legacy wrap path below, byte-for-byte.
+    for (field_name, field_spec) in &template.slide_fields {
+        if !field_spec.options.contains(&"markup".to_string()) {
+            continue;
+        }
+        if let Some(text) = slide.get(field_name).and_then(|v| v.as_str()) {
+            if !crate::markup::has_markup(text) {
+                continue;
+            }
+            let wrap = field_spec.wrap_width.or(field_spec.max).unwrap_or(60);
+            let lines = crate::markup::wrap_segments(text, wrap);
+            let lines_json: Vec<serde_json::Value> = lines
+                .iter()
+                .map(|line| {
+                    serde_json::Value::Array(
+                        line.iter()
+                            .map(|seg| {
+                                serde_json::json!({
+                                    "t": seg.text,
+                                    "b": seg.bold,
+                                    "i": seg.italic,
+                                    "c": seg.color,
+                                })
+                            })
+                            .collect(),
+                    )
+                })
+                .collect();
+            context.insert(
+                format!("{}_segments", field_name),
+                serde_json::Value::Array(lines_json),
+            );
+        }
+    }
+
     // Pre-wrap text fields that have a max chars limit
     for (field_name, field_spec) in &template.slide_fields {
         if field_spec.field_type == FieldType::Text {
@@ -446,6 +483,26 @@ pub fn validate_input(template: &TemplateDef, data: &InputData) -> Vec<String> {
                             name,
                             type_name(value)
                         ));
+                    }
+                    FieldType::Color => {
+                        // Hex color string: #rgb or #rrggbb. Brand-level colors
+                        // are Bg-typed and intentionally unchecked (legacy).
+                        let ok = value
+                            .as_str()
+                            .map(|s| {
+                                let body = s.strip_prefix('#').unwrap_or(s);
+                                (body.len() == 3 || body.len() == 6)
+                                    && body.chars().all(|c| c.is_ascii_hexdigit())
+                            })
+                            .unwrap_or(false);
+                        if !ok {
+                            errors.push(format!(
+                                "Slide {}: field '{}' must be a hex color (#rgb or #rrggbb), got {}",
+                                i + 1,
+                                name,
+                                type_name(value)
+                            ));
+                        }
                     }
                     _ => {}
                 }
