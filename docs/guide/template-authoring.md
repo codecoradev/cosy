@@ -559,7 +559,7 @@ elements:
 | `*text*` | **bold** (toggles until the next `*`) |
 | `_text_` | *italic* (toggles until the next `_`) |
 | `*color:#rrggbb*` ... `*color*` | color run until reset |
-| `\*`, `\_`, `\_` | literal escape |
+| `\*`, `\_`, `\\` | literal escape |
 
 Markers toggle only on word boundaries: `snake_case_name` and `5 * 3 = 15` render
 literally. Bundled fonts now include Inter Italic, Inter Bold Italic, and Inter
