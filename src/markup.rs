@@ -49,6 +49,11 @@ fn valid_color(s: &str) -> bool {
     (body.len() == 3 || body.len() == 6) && body.chars().all(|c| c.is_ascii_hexdigit())
 }
 
+/// `*color:` — start of a color-set token (the leading `*` is at the scan index).
+const COLOR_SET_PREFIX: [char; 6] = ['c', 'o', 'l', 'o', 'r', ':'];
+/// `color*` — a color-reset token (the leading `*` is at the scan index).
+const COLOR_RESET_PREFIX: [char; 5] = ['c', 'o', 'l', 'o', 'r'];
+
 /// A marker toggles only on a word boundary: not sandwiched between two
 /// alphanumerics (start/end of string count as boundaries).
 fn on_word_boundary(chars: &[char], i: usize) -> bool {
@@ -82,30 +87,27 @@ pub fn parse(text: &str) -> Vec<Segment> {
                 i += 2;
             }
             '*' => {
-                // color token: *color:#hex* (set) or *color* (reset)
-                let tail: String = chars[i + 1..].iter().collect();
-                if let Some(rest) = tail.strip_prefix("color:") {
-                    if let Some(end) = rest.find('*') {
-                        let val: String = rest[..end].chars().collect();
+                // color token: *color:#hex* (set) or *color* (reset).
+                // Scanned in char space — byte offsets would break on multibyte input.
+                if chars[i + 1..].starts_with(&COLOR_SET_PREFIX) {
+                    if let Some(rel) = chars[i + 7..].iter().position(|&c| c == '*') {
+                        let val: String = chars[i + 7..i + 7 + rel].iter().collect();
                         if valid_color(&val) {
                             flush(&mut segs, &mut cur, bold, italic, &color);
                             color = Some(val);
-                            i += "color:".len() + end + 2; // consume "*color:#hex*"
+                            i += 8 + rel; // consume the whole token incl. closing '*'
                             continue;
                         }
                         // Invalid color value: render the whole token literally.
-                        cur.push_str(&chars[i..=i + end + 1].iter().collect::<String>());
-                        i += end + 2;
+                        cur.extend(chars[i..i + 8 + rel].iter());
+                        i += 8 + rel;
                         continue;
                     }
                     // No closing '*': fall through, the '*' renders literally.
-                } else if tail
-                    .strip_prefix("color")
-                    .is_some_and(|r| r.starts_with('*'))
-                {
+                } else if color.is_some() && chars[i + 1..].starts_with(&COLOR_RESET_PREFIX) {
                     flush(&mut segs, &mut cur, bold, italic, &color);
                     color = None;
-                    i += "color*".len() + 1; // consume "*color*"
+                    i += 7; // consume "*color*"
                     continue;
                 }
                 if bold || (closes_later(i + 1, '*') && on_word_boundary(&chars, i)) {
@@ -173,6 +175,8 @@ struct Chunk {
 /// words are emitted as unstyled segments when lines are assembled, so they never
 /// land at a line start or end.
 pub fn wrap_segments(text: &str, max_chars: usize) -> Vec<Vec<Segment>> {
+    // A zero/negative width would never advance the scan (empty lines forever).
+    let max_chars = max_chars.max(1);
     let segments = parse(text);
 
     // 1. Tokenize into words (Vec of styled chunks, no spaces inside).
@@ -407,6 +411,40 @@ mod tests {
         assert!(lines
             .iter()
             .any(|l| l.iter().any(|s| s.color.as_deref() == Some("#123456"))));
+    }
+
+    #[test]
+    fn invalid_color_with_multibyte_is_safe_and_literal() {
+        // Regression: byte-offset vs char-offset mismatch used to panic here.
+        // The literal token carries no style, so the following plain text
+        // merges into the same segment.
+        let s = parse("*color:éééééééé* x");
+        assert_eq!(texts(&s), vec!["*color:éééééééé* x"]);
+        assert!(!s[0].bold && !s[0].italic && s[0].color.is_none());
+    }
+
+    #[test]
+    fn wrap_zero_width_does_not_hang() {
+        // Regression: max_chars == 0 used to push empty lines forever.
+        let lines = wrap_segments("a b c", 0);
+        assert!(!lines.is_empty());
+        let joined: String = lines
+            .iter()
+            .flat_map(|l| l.iter().map(|s| s.text.as_str()))
+            .collect::<Vec<_>>()
+            .join("");
+        assert_eq!(joined.replace(' ', ""), "abc");
+    }
+
+    #[test]
+    fn color_reset_without_tint_is_bold_toggle() {
+        // `*color*` with no active tint is not a reset — it degrades to the
+        // regular bold-toggle rule. With no closing marker on a boundary
+        // later... there IS one ('*color*' itself), so: '*' toggles bold,
+        // 'color' is content, final '*' closes. Chat-app semantics.
+        let s = parse("*color* x");
+        assert_eq!(texts(&s), vec!["color", " x"]);
+        assert!(s[0].color.is_none() && s[0].bold);
     }
 
     #[test]
