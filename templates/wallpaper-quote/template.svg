@@ -23,7 +23,7 @@
 {% if bg_image_data_uri %}
   <image href="{{ bg_image_data_uri }}" width="1080" height="1920" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
   {% endif %}
-  <rect width="1080" height="1920" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}{{ bg_overlay_opacity | default(0.7) }}{% else %}1.0{% endif %}"/>
+  <rect width="1080" height="1920" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}{{ brand.bg_overlay_opacity | default(0.7) }}{% else %}1.0{% endif %}"/>
   <rect width="1080" height="1920" fill="url(#glow)"/>
   <rect width="1080" height="1920" fill="url(#dots)"/>
   <text x="540" y="700" text-anchor="middle" font-size="140" fill="url(#acc-grad)" opacity="0.06">&#x201C;</text>
