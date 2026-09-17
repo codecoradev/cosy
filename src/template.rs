@@ -159,6 +159,41 @@ pub fn process_template(
                                 .collect(),
                         ),
                     );
+
+                    // Autofit: when the schema declares slot metrics AND the
+                    // field opts in via options ["autofit"], compute the
+                    // font-size scale factor so the wrapped text fits the
+                    // slot. Longest-line width estimate uses a per-char width
+                    // table (Inter-like: wide caps/digits, narrow i/l/j).
+                    if field_spec.options.contains(&"autofit".to_string()) {
+                        if let (Some(sw), Some(fs)) = (field_spec.slot_width, field_spec.font_size)
+                        {
+                            let lh = field_spec.line_height.unwrap_or(fs * 1.3);
+                            let longest =
+                                wrapped.iter().map(|l| l.chars().count()).max().unwrap_or(0) as f32;
+                            let est_width = longest * fs * 0.52; // avg advance width for Inter-ish sans
+                            let needed_h = wrapped.len() as f32 * lh;
+                            let mut scale = 1.0f32;
+                            if est_width > sw {
+                                scale = scale.min(sw / est_width);
+                            }
+                            if let Some(sh) = field_spec.slot_height {
+                                if needed_h > sh {
+                                    scale = scale.min(sh / needed_h);
+                                }
+                            }
+                            let scale = scale.clamp(0.1, 1.0);
+                            context.insert(
+                                format!("{}_font_scale", field_name),
+                                serde_json::Value::Number(
+                                    serde_json::Number::from_f64(
+                                        ((scale * 1000.0).round() / 1000.0) as f64,
+                                    )
+                                    .expect("finite scale"),
+                                ),
+                            );
+                        }
+                    }
                 }
             }
         }
