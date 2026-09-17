@@ -49,10 +49,16 @@ fn valid_color(s: &str) -> bool {
     (body.len() == 3 || body.len() == 6) && body.chars().all(|c| c.is_ascii_hexdigit())
 }
 
-/// `*color:` — start of a color-set token (the leading `*` is at the scan index).
-const COLOR_SET_PREFIX: [char; 6] = ['c', 'o', 'l', 'o', 'r', ':'];
-/// `color*` — a color-reset token (the leading `*` is at the scan index).
-const COLOR_RESET_PREFIX: [char; 5] = ['c', 'o', 'l', 'o', 'r'];
+/// Set-token prefix: `*color:` (the leading `*` is at the scan index).
+const COLOR_SET: &str = "color:";
+/// Reset-token body: `color` — valid only when followed by the closing `*`.
+const COLOR_RESET: &str = "color";
+
+/// Does `chars[pos..]` start with the characters of `prefix`?
+fn matches_at(chars: &[char], pos: usize, prefix: &str) -> bool {
+    let n = prefix.chars().count();
+    pos + n <= chars.len() && chars[pos..pos + n].iter().copied().eq(prefix.chars())
+}
 
 /// A marker toggles only on a word boundary: not sandwiched between two
 /// alphanumerics (start/end of string count as boundaries).
@@ -89,22 +95,26 @@ pub fn parse(text: &str) -> Vec<Segment> {
             '*' => {
                 // color token: *color:#hex* (set) or *color* (reset).
                 // Scanned in char space — byte offsets would break on multibyte input.
-                if chars[i + 1..].starts_with(&COLOR_SET_PREFIX) {
-                    if let Some(rel) = chars[i + 7..].iter().position(|&c| c == '*') {
-                        let val: String = chars[i + 7..i + 7 + rel].iter().collect();
+                if matches_at(&chars, i + 1, COLOR_SET) {
+                    let value_start = i + 1 + COLOR_SET.chars().count();
+                    if let Some(rel) = chars[value_start..].iter().position(|&c| c == '*') {
+                        let val: String = chars[value_start..value_start + rel].iter().collect();
                         if valid_color(&val) {
                             flush(&mut segs, &mut cur, bold, italic, &color);
                             color = Some(val);
-                            i += 8 + rel; // consume the whole token incl. closing '*'
+                            i = value_start + rel + 1; // consume the whole token incl. closing '*'
                             continue;
                         }
                         // Invalid color value: render the whole token literally.
-                        cur.extend(chars[i..i + 8 + rel].iter());
-                        i += 8 + rel;
+                        cur.extend(chars[i..value_start + rel + 1].iter());
+                        i = value_start + rel + 1;
                         continue;
                     }
                     // No closing '*': fall through, the '*' renders literally.
-                } else if color.is_some() && chars[i + 1..].starts_with(&COLOR_RESET_PREFIX) {
+                } else if color.is_some()
+                    && matches_at(&chars, i + 1, COLOR_RESET)
+                    && chars.get(i + 6) == Some(&'*')
+                {
                     flush(&mut segs, &mut cur, bold, italic, &color);
                     color = None;
                     i += 7; // consume "*color*"
@@ -445,6 +455,22 @@ mod tests {
         let s = parse("*color* x");
         assert_eq!(texts(&s), vec!["color", " x"]);
         assert!(s[0].color.is_none() && s[0].bold);
+    }
+
+    #[test]
+    fn reset_requires_closing_star() {
+        // Regression: `*colorful` with an active tint used to be consumed as
+        // a reset token, swallowing the 'f' and losing user content. Now the
+        // reset only fires on a real closing '*' and the stray '*' renders
+        // literally — no character loss.
+        let s = parse("*color:#f00*hi *colorful world");
+        let joined: String = s.iter().map(|x| x.text.as_str()).collect();
+        assert_eq!(joined, "hi *colorful world");
+        // The tint set at the start stays active through the literal '*'.
+        assert!(s.iter().take(2).any(|x| x.color.as_deref() == Some("#f00")));
+        let after = s.last().unwrap();
+        assert_eq!(after.color.as_deref(), Some("#f00"));
+        assert!(after.text.ends_with("world"));
     }
 
     #[test]
