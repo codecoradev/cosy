@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Multi-slide HTTP API** — `POST /api/render` now accepts
+  `response_format: "json"` to render every slide of a carousel and return them
+  as base64 PNG entries with template dimensions, and `slide_index` to pick a
+  specific slide with the default binary PNG response. Empty slide arrays and
+  out-of-range indices are rejected with a 400.
 - **Inline text markup** — `*bold*`, `_italic_`, and `*color:#hex*...*color*` in
   markup-enabled text fields (opt-in via schema `options: ["markup"]`), rendered as
   styled `<tspan>` runs with markup-aware line wrapping. Bundled Inter Italic,

@@ -222,6 +222,114 @@ fn test_render_default_scale() {
 }
 
 #[test]
+fn test_render_json_multi_slide() {
+    let url = start_server();
+    // response_format=json renders ALL slides and returns a JSON envelope
+    let body = serde_json::json!({
+        "template": "carousel-default",
+        "response_format": "json",
+        "scale": 0.5,
+        "data": {
+            "brand": {"brand_name": "Multi Test"},
+            "slides": [
+                {"eyebrow": "s1", "headline": "Slide One", "body": "first"},
+                {"eyebrow": "s2", "headline": "Slide Two", "body": "second"},
+                {"eyebrow": "s3", "headline": "Slide Three", "body": "third"}
+            ]
+        }
+    });
+    let resp = http_client()
+        .post(format!("{}/api/render", url))
+        .json(&body)
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 200);
+    let json: serde_json::Value = resp.json().unwrap();
+    assert_eq!(json["template"], "carousel-default");
+    assert_eq!(json["slides"], 3);
+    assert_eq!(json["data"].as_array().unwrap().len(), 3);
+    for (i, slide) in json["data"].as_array().unwrap().iter().enumerate() {
+        assert_eq!(slide["index"], i);
+        let b64 = slide["png_base64"].as_str().unwrap();
+        assert!(b64.len() > 1000, "slide {} png should be substantial", i);
+    }
+    // Slide dimensions: 1080x1350 at 0.5 scale = 540x675
+    assert_eq!(json["width"], 540);
+    assert_eq!(json["height"], 675);
+}
+
+#[test]
+fn test_render_slide_index_png() {
+    let url = start_server();
+    // slide_index picks a specific slide with png format (default)
+    let body = serde_json::json!({
+        "template": "carousel-default",
+        "slide_index": 1,
+        "scale": 0.5,
+        "data": {
+            "brand": {"brand_name": "Index Test"},
+            "slides": [
+                {"eyebrow": "s1", "headline": "Slide One", "body": "first"},
+                {"eyebrow": "s2", "headline": "Slide Two", "body": "second"}
+            ]
+        }
+    });
+    let resp = http_client()
+        .post(format!("{}/api/render", url))
+        .json(&body)
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 200);
+    assert_eq!(resp.headers()["content-type"], "image/png");
+    let bytes = resp.bytes().unwrap();
+    assert_eq!(&bytes[..8], b"\x89PNG\r\n\x1a\n");
+}
+
+#[test]
+fn test_render_slide_index_out_of_range() {
+    let url = start_server();
+    let body = serde_json::json!({
+        "template": "carousel-default",
+        "slide_index": 5,
+        "scale": 0.5,
+        "data": {
+            "brand": {"brand_name": "Range Test"},
+            "slides": [
+                {"eyebrow": "s1", "headline": "Only", "body": "one"}
+            ]
+        }
+    });
+    let resp = http_client()
+        .post(format!("{}/api/render", url))
+        .json(&body)
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 400);
+    let json: serde_json::Value = resp.json().unwrap();
+    assert!(json["error"].as_str().unwrap().contains("out of range"));
+}
+
+#[test]
+fn test_render_empty_slides_rejected() {
+    let url = start_server();
+    let body = serde_json::json!({
+        "template": "carousel-default",
+        "data": {"brand": {"brand_name": "Empty"}, "slides": []}
+    });
+    let resp = http_client()
+        .post(format!("{}/api/render", url))
+        .json(&body)
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 400);
+    let json: serde_json::Value = resp.json().unwrap();
+    assert!(json["error"]
+        .as_str()
+        .unwrap()
+        .contains("at least one slide"));
+}
+
+#[test]
 fn test_render_nonexistent_template() {
     let url = start_server();
     let body = serde_json::json!({

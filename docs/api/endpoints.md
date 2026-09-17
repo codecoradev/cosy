@@ -44,6 +44,8 @@ Renders an image from a template.
 | `template` | string | Yes | Template name (e.g. `"stat-card"`) |
 | `data` | object | Yes | Template input data (brand + slides) |
 | `scale` | float | No | Scale factor (default: `1.0`) |
+| `slide_index` | int | No | Zero-based slide to render with the default `png` format (default: `0`) |
+| `response_format` | string | No | `"png"` (default, binary image) or `"json"` (all slides as base64 entries) |
 
 **Example:**
 
@@ -71,11 +73,44 @@ Renders an image from a template.
 }
 ```
 
+**Multi-slide example** — render every slide of a carousel as base64 PNGs:
+
+```json
+{
+  "template": "carousel-default",
+  "response_format": "json",
+  "scale": 0.5,
+  "data": {
+    "brand": {"brand_name": "CodeCora"},
+    "slides": [
+      {"eyebrow": "s1", "headline": "Slide One", "body": "first"},
+      {"eyebrow": "s2", "headline": "Slide Two", "body": "second"}
+    ]
+  }
+}
+```
+
+The JSON response contains per-slide base64 PNGs:
+
+```json
+{
+  "template": "carousel-default",
+  "slides": 2,
+  "width": 540,
+  "height": 675,
+  "data": [
+    {"index": 0, "png_base64": "iVBORw0KGgo..."},
+    {"index": 1, "png_base64": "iVBORw0KGgo..."}
+  ]
+}
+```
+
 ### Responses
 
 #### 200 OK
 
-Returns the rendered PNG image.
+`response_format: "png"` (default) returns the rendered PNG image. With a
+`slide_index`, that specific slide is rendered; without one, the first slide.
 
 | Header | Value |
 |--------|-------|
