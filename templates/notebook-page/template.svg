@@ -70,5 +70,5 @@
   <text x="160" y="1062" font-family="Kalam,cursive" font-size="22" fill="{{ brand.accent_color | default('#1e3a8a') }}">{% for ln in slide.extra_text|default('')|wordwrap(60)|split('\n') %}<tspan x="160" dy="{{ 0 if loop.first else 32 }}">{{ ln }}</tspan>{% endfor %}</text>
   {% endif %}
   <!-- bottom brandline -->
-  <text x="540" y="1256" text-anchor="middle" font-family="Patrick Hand,cursive" font-size="26" fill="{{ brand.accent_color_end | default('#6d28d9') }}">{% for ln in slide.footer_line|wordwrap(60)|split('\n') %}<tspan x="540" dy="{{ 0 if loop.first else 34 }}">{{ ln }}</tspan>{% endfor %}</text>
+  <text x="540" y="1256" text-anchor="middle" font-family="Kalam,cursive" font-size="26" fill="{{ brand.accent_color_end | default('#6d28d9') }}">{% for ln in slide.footer_line|wordwrap(60)|split('\n') %}<tspan x="540" dy="{{ 0 if loop.first else 34 }}">{{ ln }}</tspan>{% endfor %}</text>
 </svg>
