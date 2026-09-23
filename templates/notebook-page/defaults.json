@@ -1,0 +1,29 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#fdfcf5",
+    "bg_color_end": "#fdfcf5",
+    "accent_color": "#1e3a8a",
+    "accent_color_end": "#6d28d9",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "header_handle": "IG: ajianaz",
+      "page_label": "Hal. 1",
+      "chapter_title": "1. MASALAH: IDE HILANG",
+      "lead_text": "Kita menulis ratusan catatan setiap bulan. Lalu kenapa tetap kehilangan ide?",
+      "bullet1": "Ide terbaik datang di luar meja kerja: di lift, jalan, antrean.",
+      "bullet2": "Kita buru-buru mengetik tanpa mikir kata kunci besok.",
+      "bullet3": "Tiga minggu kemudian: catatannya tidak ketemu.",
+      "box_title": "Contoh nyata",
+      "box_color": "#c2387d",
+      "box_text": "Kamu menulis 'ide paket harga klien kecil'. Tiga minggu kemudian mencari 'strategi pricing UMKM'. Beda kata, satu makna.",
+      "punchline": "Masalahnya bukan kamu pelupa. Masalahnya cara aplikasi mencari.",
+      "extra_title": "Cara mengujinya",
+      "extra_text": "Matikan internet, lalu cari catatanmu berdasarkan makna. Kalau tetap ketemu, berarti semua prosesnya benar-benar di perangkatmu.",
+      "footer_line": "uteke mobile - uteke.app"
+    }
+  ]
+}

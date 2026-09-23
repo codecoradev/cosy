@@ -264,8 +264,39 @@ pub fn build_font_db(custom_dir: Option<&Path>) -> anyhow::Result<usvg::fontdb::
         "Bold",
         include_bytes!("assets/fonts/SpaceGrotesk-Bold.ttf"),
     );
+    // Handwritten fonts: Kalam (body) + Caveat (display) for notebook-style templates
+    load_bundled_font(
+        &mut db,
+        "Kalam",
+        "Light",
+        include_bytes!("assets/fonts/Kalam-Light.ttf"),
+    );
+    load_bundled_font(
+        &mut db,
+        "Kalam",
+        "Regular",
+        include_bytes!("assets/fonts/Kalam-Regular.ttf"),
+    );
+    load_bundled_font(
+        &mut db,
+        "Kalam",
+        "Bold",
+        include_bytes!("assets/fonts/Kalam-Bold.ttf"),
+    );
+    load_bundled_font(
+        &mut db,
+        "Caveat",
+        "Medium",
+        include_bytes!("assets/fonts/Caveat-Medium.ttf"),
+    );
+    load_bundled_font(
+        &mut db,
+        "Caveat",
+        "Bold",
+        include_bytes!("assets/fonts/Caveat-Bold.ttf"),
+    );
     log::debug!(
-        "Loaded 10 bundled fonts (Inter R/B/SB/Black/I/BI, JetBrains Mono R, SpaceGrotesk M/SB/B)"
+        "Loaded 15 bundled fonts (Inter R/B/SB/Black/I/BI, JetBrains Mono R, SpaceGrotesk M/SB/B, Kalam L/R/B, Caveat M/B)"
     );
 
     // 2. Load system fonts (may fail in containers — that's OK)
