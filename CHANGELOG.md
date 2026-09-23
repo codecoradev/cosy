@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Notebook-style templates** - `notebook-cover` and `notebook-page`
+  (1080x1350) replicate the viral handwritten study-notes carousel format:
+  ruled paper, spiral binding, dashed callout boxes, and a cloud punchline.
+  Includes bundled handwritten fonts Kalam (Light/Regular/Bold) and Caveat
+  (Medium/Bold), drawn inline SVG pipeline icons (no emoji), shrink-to-fit
+  hero/chapter titles, and dynamic-height dashed boxes and punchline bubble.
 
 - **Multi-slide HTTP API** — `POST /api/render` now accepts
   `response_format: "json"` to render every slide of a carousel and return them

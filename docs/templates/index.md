@@ -773,6 +773,22 @@ Cosy ships with **148 templates** out of the box. Browse the gallery below, or u
     <span class="dims">1080×1350</span>
   </div>
 </a>
+
+<a href="./notebook-cover" class="template-card">
+  <img src="https://s3.ajianaz.dev/hermes/codecoradev/cosy/preview/notebook-cover.png" alt="Notebook Cover" loading="lazy" />
+  <div class="template-info">
+    <h3>Notebook Cover</h3>
+    <span class="dims">1080&times;1350</span>
+  </div>
+</a>
+
+<a href="./notebook-page" class="template-card">
+  <img src="https://s3.ajianaz.dev/hermes/codecoradev/cosy/preview/notebook-page.png" alt="Notebook Page" loading="lazy" />
+  <div class="template-info">
+    <h3>Notebook Page</h3>
+    <span class="dims">1080&times;1350</span>
+  </div>
+</a>
 <a href="./rate-limit" class="template-card">
   <img src="https://s3.ajianaz.dev/hermes/codecoradev/cosy/preview/rate-limit.png" alt="Rate Limit" loading="lazy" />
   <div class="template-info">

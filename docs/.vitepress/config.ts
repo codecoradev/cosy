@@ -170,3 +170,5 @@ export default defineConfig({
     },
   },
 })
+        'notebook-cover',
+        'notebook-page',
