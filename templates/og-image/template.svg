@@ -17,6 +17,7 @@
   </pattern>
   </defs>
 
+  <g id="bg">
   <!-- Gradient background + glow -->
   {% if bg_image_data_uri %}
   <image href="{{ bg_image_data_uri }}" width="1200" height="630" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
@@ -27,16 +28,20 @@
 
   <!-- Left accent bar (gradient) -->
   <rect x="0" y="0" width="8" height="630" fill="url(#accent-gradient)"/>
+  </g>
 
   <!-- Brand name top-left -->
+  <g id="brand">
   <rect x="80" y="50" width="5" height="28" rx="2.5" fill="url(#accent-gradient)"/>
   {% if brand.show_brand %}
   <text x="600" y="600" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">
     {{ brand.brand_name | default('') }}
   </text>
   {% endif %}
+  </g>
 
   <!-- Title (wrapped, large) -->
+  <g id="f-title">
   <text x="80" y="240" font-family="Inter, sans-serif" font-size="52" font-weight="800" fill="#cdd6f4">
     {% for line in title_lines %}
     <tspan x="80" dy="{% if loop.first %}0{% else %}62{% endif %}">{{ line }}</tspan>
@@ -45,9 +50,11 @@
     <tspan x="80" dy="0">{{ slide.title }}</tspan>
     {% endif %}
   </text>
+  </g>
 
   <!-- Subtitle (wrapped) -->
   {% if slide.subtitle %}
+  <g id="f-subtitle">
   <text x="80" y="450" font-family="Inter, sans-serif" font-size="28" font-weight="400" fill="#a6adc8">
     {% for line in subtitle_lines %}
     <tspan x="80" dy="{% if loop.first %}0{% else %}38{% endif %}">{{ line }}</tspan>
@@ -56,20 +63,25 @@
     <tspan x="80" dy="0">{{ slide.subtitle }}</tspan>
     {% endif %}
   </text>
+  </g>
   {% endif %}
 
   <!-- Author -->
   {% if slide.author %}
+  <g id="f-author">
   <text x="80" y="580" font-family="Inter, sans-serif" font-size="22" font-weight="500" fill="{{ brand.accent_color | default('#cba6f7') }}">
     {{ slide.author }}
   </text>
+  </g>
   {% endif %}
 
   <!-- URL right-aligned -->
   {% if slide.url %}
+  <g id="f-url">
   <text x="1120" y="580" font-family="JetBrains Mono, monospace" font-size="20" font-weight="400" fill="#7f849c" text-anchor="end">
     {{ slide.url }}
   </text>
+  </g>
   {% endif %}
   <circle cx="1120" cy="80" r="105" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
   {% if logo_data_uri %}
