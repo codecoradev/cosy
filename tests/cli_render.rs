@@ -452,6 +452,104 @@ fn test_render_webp_multi_slide_directory() {
     }
 }
 
+// ─── Output format: SVG (vector path) ───────────────────────────────
+
+/// Verify a file is a valid, self-contained cosy SVG render.
+fn assert_valid_svg(path: &Path) {
+    let content =
+        fs::read_to_string(path).unwrap_or_else(|_| panic!("Failed to read SVG: {:?}", path));
+    assert!(
+        content.starts_with("<?xml") || content.starts_with("<svg"),
+        "not an SVG: {:?}",
+        path
+    );
+    // Text must be converted to paths (self-contained, zero font deps).
+    assert!(
+        !content.contains("<text"),
+        "raw <text> found — text-to-path failed: {:?}",
+        path
+    );
+    assert!(
+        !content.contains("font-family"),
+        "font-family attribute leaked: {:?}",
+        path
+    );
+}
+
+#[test]
+fn test_render_svg_single_file() {
+    let output = tempfile::NamedTempFile::with_suffix(".svg").unwrap();
+
+    Command::cargo_bin("cosy")
+        .unwrap()
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .args([
+            "render",
+            "-t",
+            "social-quote",
+            "-d",
+            "templates/social-quote/defaults.json",
+            "-o",
+            output.path().to_str().unwrap(),
+            "--scale",
+            "2",
+            "--format",
+            "svg",
+        ])
+        .assert()
+        .success();
+
+    assert_valid_svg(output.path());
+    let content = fs::read_to_string(output.path()).unwrap();
+    // Scale is a raster concept: viewBox/canvas stays at 1x even at --scale 2.
+    assert!(
+        content.contains("width=\"1080\""),
+        "expected 1x canvas width"
+    );
+    assert!(
+        content.contains("height=\"1350\""),
+        "expected 1x canvas height"
+    );
+}
+
+#[test]
+fn test_render_svg_multi_slide_directory() {
+    let dir = tempfile::tempdir().unwrap();
+    let out_dir = dir.path().join("svg-out");
+
+    Command::cargo_bin("cosy")
+        .unwrap()
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .args([
+            "render",
+            "-t",
+            "carousel-default",
+            "-d",
+            "templates/carousel-default/defaults.json",
+            "-o",
+            out_dir.to_str().unwrap(),
+            "--format",
+            "svg",
+        ])
+        .assert()
+        .success();
+
+    let entries: Vec<_> = fs::read_dir(&out_dir)
+        .unwrap()
+        .flatten()
+        .map(|e| e.file_name().to_string_lossy().to_string())
+        .collect();
+    assert!(!entries.is_empty(), "no slides rendered");
+    assert!(
+        entries.iter().all(|f| f.ends_with(".svg")),
+        "expected .svg slide files, got: {:?}",
+        entries
+    );
+    for name in &entries {
+        assert_valid_svg(&out_dir.join(name));
+    }
+}
+
 #[test]
 fn test_render_format_png_default_unchanged() {
     // Explicit --format png must behave exactly like the default.
