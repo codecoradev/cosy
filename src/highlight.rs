@@ -13,6 +13,34 @@
 
 use crate::markup::Segment;
 
+/// Token colors per editor theme. Dark = Catppuccin Mocha accents (on
+/// `#0c0c14`), Light = Catppuccin Latte-style accents (on `#fafafa`) —
+/// both chosen for ≥3:1 contrast against their editor background.
+struct Palette {
+    keyword: &'static str,
+    string: &'static str,
+    number: &'static str,
+    comment: &'static str,
+}
+
+fn palette(theme: &str) -> Palette {
+    if theme == "light" {
+        Palette {
+            keyword: "#8839ef",
+            string: "#40a02b",
+            number: "#fe640b",
+            comment: "#838ba7",
+        }
+    } else {
+        Palette {
+            keyword: "#cba6f7",
+            string: "#a6e3a1",
+            number: "#fab387",
+            comment: "#6c7086",
+        }
+    }
+}
+
 /// Keyword sets per language id (schema `code_lang` values).
 fn keywords(lang: &str) -> &'static [&'static str] {
     match lang {
@@ -172,24 +200,10 @@ fn is_word_bounded(chars: &[char], start: usize, len: usize) -> bool {
     before_ok && after_ok
 }
 
-fn keyword_color() -> Option<String> {
-    Some("#cba6f7".into()) // mauve
-}
-fn string_color() -> Option<String> {
-    Some("#a6e3a1".into()) // green
-}
-
-fn number_color() -> Option<String> {
-    Some("#fab387".into()) // peach
-}
-
-fn comment_color() -> Option<String> {
-    Some("#6c7086".into()) // overlay0
-}
-
 /// Highlight one line of code into styled segments.
-pub fn highlight_line(line: &str, lang: &str) -> Vec<Segment> {
+pub fn highlight_line(line: &str, lang: &str, theme: &str) -> Vec<Segment> {
     let kws = keywords(lang);
+    let pal = palette(theme);
     let comment = line_comment(lang);
     let chars: Vec<char> = line.chars().collect();
     let mut segments: Vec<Segment> = Vec::new();
@@ -211,7 +225,7 @@ pub fn highlight_line(line: &str, lang: &str) -> Vec<Segment> {
             if i + n <= chars.len() && chars[i..i + n].iter().copied().eq(starter.chars()) {
                 push_plain!();
                 let rest: String = chars[i..].iter().collect();
-                segments.push(Segment::new_plain_color(rest, comment_color()));
+                segments.push(Segment::new_plain_color(rest, Some(pal.comment.into())));
                 return segments;
             }
         }
@@ -223,7 +237,7 @@ pub fn highlight_line(line: &str, lang: &str) -> Vec<Segment> {
                 let end = i + 1 + close; // inclusive of closing quote index
                 push_plain!();
                 let text: String = chars[i..=end].iter().collect();
-                segments.push(Segment::new_plain_color(text, string_color()));
+                segments.push(Segment::new_plain_color(text, Some(pal.string.into())));
                 i = end + 1;
                 continue;
             }
@@ -239,7 +253,7 @@ pub fn highlight_line(line: &str, lang: &str) -> Vec<Segment> {
             if is_word_bounded(&chars, i, len) {
                 push_plain!();
                 let text: String = chars[i..i + len].iter().collect();
-                segments.push(Segment::new_plain_color(text, number_color()));
+                segments.push(Segment::new_plain_color(text, Some(pal.number.into())));
                 i += len;
                 continue;
             }
@@ -254,7 +268,7 @@ pub fn highlight_line(line: &str, lang: &str) -> Vec<Segment> {
             let word: String = chars[i..i + len].iter().collect();
             if kws.contains(&word.as_str()) && is_word_bounded(&chars, i, len) {
                 push_plain!();
-                segments.push(Segment::new_plain_color(word, keyword_color()));
+                segments.push(Segment::new_plain_color(word, Some(pal.keyword.into())));
                 i += len;
                 continue;
             }
@@ -272,9 +286,9 @@ pub fn highlight_line(line: &str, lang: &str) -> Vec<Segment> {
 }
 
 /// Highlight a multi-line code block (one Segment vec per line).
-pub fn highlight(code: &str, lang: &str) -> Vec<Vec<Segment>> {
+pub fn highlight(code: &str, lang: &str, theme: &str) -> Vec<Vec<Segment>> {
     code.lines()
-        .map(|line| highlight_line(line, lang))
+        .map(|line| highlight_line(line, lang, theme))
         .collect()
 }
 
@@ -284,7 +298,7 @@ mod highlight_tests {
 
     #[test]
     fn rust_keywords_and_strings() {
-        let segs = highlight_line(r#"let name = "cosy";"#, "rust");
+        let segs = highlight_line(r#"let name = "cosy";"#, "rust", "dark");
         assert_eq!(segs[0].text, "let");
         assert_eq!(segs[0].color.as_deref(), Some("#cba6f7"));
         assert!(segs
@@ -294,7 +308,7 @@ mod highlight_tests {
 
     #[test]
     fn comment_takes_rest_of_line() {
-        let segs = highlight_line("x = 1 // trailing note", "go");
+        let segs = highlight_line("x = 1 // trailing note", "go", "dark");
         let last = segs.last().unwrap();
         assert_eq!(last.text, "// trailing note");
         assert_eq!(last.color.as_deref(), Some("#6c7086"));
@@ -302,14 +316,14 @@ mod highlight_tests {
 
     #[test]
     fn python_hash_comment() {
-        let segs = highlight_line("# full comment", "python");
+        let segs = highlight_line("# full comment", "python", "dark");
         assert_eq!(segs.len(), 1);
         assert_eq!(segs[0].color.as_deref(), Some("#6c7086"));
     }
 
     #[test]
     fn numbers_colored_but_not_identifier_tails() {
-        let segs = highlight_line("x2 = 42", "rust");
+        let segs = highlight_line("x2 = 42", "rust", "dark");
         // "x2" stays plain (digit inside identifier) — it may be merged into
         // the surrounding plain run, so check the prefix, not exact equality.
         let plain_prefix = segs
@@ -325,7 +339,7 @@ mod highlight_tests {
 
     #[test]
     fn sql_case_insensitive_keywords() {
-        let segs = highlight_line("SELECT id FROM users", "sql");
+        let segs = highlight_line("SELECT id FROM users", "sql", "dark");
         assert_eq!(segs[0].text, "SELECT");
         assert_eq!(segs[0].color.as_deref(), Some("#cba6f7"));
         assert!(segs.iter().any(|s| s.text == "FROM" && s.color.is_some()));
@@ -334,14 +348,14 @@ mod highlight_tests {
     #[test]
     fn multiline_preserves_line_count() {
         let code = "fn a() {\n    return 1;\n}";
-        let lines = highlight(code, "rust");
+        let lines = highlight(code, "rust", "dark");
         assert_eq!(lines.len(), 3);
         assert!(lines[0].iter().any(|s| s.text == "fn"));
     }
 
     #[test]
     fn unknown_lang_keywords_off_numbers_still_colored() {
-        let segs = highlight_line("let x = 1", "cobol");
+        let segs = highlight_line("let x = 1", "cobol", "dark");
         // Unknown language: no keyword class, but numbers are universal.
         assert!(
             segs.iter().all(|s| s.text != "let" || s.color.is_none()),
@@ -355,8 +369,16 @@ mod highlight_tests {
     }
 
     #[test]
+    fn light_theme_uses_light_palette() {
+        let dark = highlight_line("let x", "rust", "dark");
+        let light = highlight_line("let x", "rust", "light");
+        assert_eq!(dark[0].color.as_deref(), Some("#cba6f7"));
+        assert_eq!(light[0].color.as_deref(), Some("#8839ef"));
+    }
+
+    #[test]
     fn unclosed_string_stays_plain() {
-        let segs = highlight_line("x = \"oops", "rust");
+        let segs = highlight_line("x = \"oops", "rust", "dark");
         assert!(segs.iter().all(|s| s.color.is_none() || s.text == "x"));
         assert!(!segs
             .iter()

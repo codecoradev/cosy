@@ -117,7 +117,8 @@ pub fn process_template(
                 .get("code_lang")
                 .and_then(|v| v.as_str())
                 .unwrap_or("");
-            let lines = crate::highlight::highlight(text, lang);
+            let theme = slide.get("theme").and_then(|v| v.as_str()).unwrap_or("");
+            let lines = crate::highlight::highlight(text, lang, theme);
             let plain_lines: Vec<serde_json::Value> = lines
                 .iter()
                 .map(|line| {
