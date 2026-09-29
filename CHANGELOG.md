@@ -5,6 +5,39 @@ All notable changes to Cosy will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] — 2026-09-30
+
+### Added
+- **6 sosmed templates** — `tweet-screenshot`, `linkedin-text-post`,
+  `testimonial-card` (SVG star rating 0–5), `audiogram-card` (episode
+  hero + static waveform), `meme-text-card` (top/bottom captions +
+  accent frame), `sparkline-card` (polyline + gradient area fill +
+  end-dot marker). All follow the semantic-id convention. Template
+  count 158.
+
+### Fixed
+- Markup fields: the generic pre-wrap loop no longer overwrites `_lines`
+  with raw-marker wrapping (which dropped bold/italic emphasis and
+  desynced from `_segments`).
+
+### Added
+- **Semantic element ids in SVG output** — templates wrap field content
+  in `<g id="f-<field>">` (+ `bg` / `brand` / `chrome`); usvg preserves
+  the ids through the SVG write path so downstream consumers can target
+  individual elements. First batch: `og-image`, `code-screenshot`.
+  Convention now required for new templates (documented in the
+  authoring guide). Raster output unchanged (md5-identical on defaults).
+  Closes #117.
+- **`code-screenshot` template** — macOS editor window (traffic lights,
+  title, filename + language badge) with **real syntax highlighting**:
+  keywords (language-aware: Rust/Go/Python/TS/JS/Bash/SQL), strings,
+  numbers, and comments tokenized per line via the new `highlight`
+  module; colors on both dark (default) and light themes. 1200×675,
+  lines beyond 13 clip inside the code window. Closes #93.
+- **`code` schema option** — `options: ["code"]` on a text field emits
+  `<field>_lines` (plain) + `<field>_segments` (colored) using the
+  sibling `code_lang` field; reusable by other templates.
+
 ## [0.4.0] — 2026-09-29
 
 ### Added

@@ -29,12 +29,27 @@ pub struct Segment {
 }
 
 impl Segment {
-    fn plain(text: impl Into<String>) -> Self {
+    pub(crate) fn plain(text: impl Into<String>) -> Self {
         Self {
             text: text.into(),
             bold: false,
             italic: false,
             color: None,
+        }
+    }
+
+    /// Public constructor for sibling modules (syntax highlighting).
+    pub fn new_plain(text: impl Into<String>) -> Self {
+        Self::plain(text)
+    }
+
+    /// Public constructor with a color (syntax highlighting token classes).
+    pub fn new_plain_color(text: impl Into<String>, color: Option<String>) -> Self {
+        Self {
+            text: text.into(),
+            bold: false,
+            italic: false,
+            color,
         }
     }
 }
