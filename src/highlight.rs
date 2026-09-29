@@ -266,7 +266,13 @@ pub fn highlight_line(line: &str, lang: &str, theme: &str) -> Vec<Segment> {
                 .take_while(|c| c.is_alphanumeric() || **c == '_')
                 .count();
             let word: String = chars[i..i + len].iter().collect();
-            if kws.contains(&word.as_str()) && is_word_bounded(&chars, i, len) {
+            // SQL is conventionally case-insensitive: match keywords in any case.
+            let is_kw = if lang == "sql" {
+                kws.iter().any(|k| k.eq_ignore_ascii_case(&word))
+            } else {
+                kws.contains(&word.as_str())
+            };
+            if is_kw && is_word_bounded(&chars, i, len) {
                 push_plain!();
                 segments.push(Segment::new_plain_color(word, Some(pal.keyword.into())));
                 i += len;
@@ -339,10 +345,20 @@ mod highlight_tests {
 
     #[test]
     fn sql_case_insensitive_keywords() {
-        let segs = highlight_line("SELECT id FROM users", "sql", "dark");
-        assert_eq!(segs[0].text, "SELECT");
-        assert_eq!(segs[0].color.as_deref(), Some("#cba6f7"));
-        assert!(segs.iter().any(|s| s.text == "FROM" && s.color.is_some()));
+        // Both cases must color: SQL is conventionally case-insensitive.
+        for q in ["SELECT id FROM users", "select id from users"] {
+            let segs = highlight_line(q, "sql", "dark");
+            let first = segs[0].text.as_str();
+            assert!(
+                first.eq_ignore_ascii_case("SELECT"),
+                "first token should be the keyword, got {first:?}"
+            );
+            assert_eq!(segs[0].color.as_deref(), Some("#cba6f7"));
+            assert!(segs
+                .iter()
+                .any(|s| s.text.eq_ignore_ascii_case("FROM")
+                    && s.color.as_deref() == Some("#cba6f7")));
+        }
     }
 
     #[test]
