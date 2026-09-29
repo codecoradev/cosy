@@ -23,6 +23,7 @@ cosy render --template <TEMPLATE> --data <DATA.json> --output <OUTPUT.png>
 | `-o, --output` | path | Yes | Output image path (used verbatim — match the extension to `--format`) |
 | `-s, --scale` | float | No | Scale factor (default: 2.0 — retina/2x output) |
 | `--format` | enum | No | Output container: `png` (default) or `webp` |
+| `--metadata` | string | No | JSON string echoed in the `--json-output` result (pipeline tracing) |
 
 **Example:**
 
