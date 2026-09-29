@@ -12,7 +12,7 @@ use crate::render;
 use crate::schema::InputData;
 use crate::template;
 use axum::{
-    extract::{Request, State},
+    extract::{Path, Query, Request, State},
     http::{header, StatusCode},
     middleware::Next,
     response::{IntoResponse, Json, Response},
@@ -29,6 +29,9 @@ struct AppState {
     font_db: usvg::fontdb::Database,
     image_policy: crate::text::ImagePolicy,
     api_key: Option<String>,
+    /// Signing key for GET /r/:template signed render URLs. Falls back to
+    /// the API key when set; route stays disabled when neither exists.
+    signing_key: Option<String>,
 }
 
 /// Request body for POST /api/render.
@@ -139,6 +142,106 @@ pub struct ErrorResponse {
     pub error: String,
 }
 
+// ─── GET signed render URLs (#95) ────────────────────────────────────
+
+/// Maximum serialized size of the `d` query payload.
+pub const MAX_SIGNED_PAYLOAD_BYTES: usize = 8 * 1024;
+
+/// HMAC-SHA256 hex signature over a payload using the signing key.
+fn sign_payload(key: &str, payload: &[u8]) -> String {
+    use hmac::{Hmac, Mac};
+    use sha2::Sha256;
+    let mut mac =
+        Hmac::<Sha256>::new_from_slice(key.as_bytes()).expect("HMAC accepts any key length");
+    mac.update(payload);
+    let bytes = mac.finalize().into_bytes();
+    bytes.iter().map(|b| format!("{b:02x}")).collect()
+}
+
+/// Constant-time string comparison for signature checks.
+fn constant_time_str_eq(a: &str, b: &str) -> bool {
+    constant_time_eq(a.as_bytes(), b.as_bytes())
+}
+
+/// Parse and verify a signed GET render request.
+/// Returns the decoded input data, or an HTTP status + message.
+fn verify_signed_request(
+    signing_key: &str,
+    template_id: &str,
+    query_d: &str,
+    query_sig: &str,
+) -> Result<InputData, (StatusCode, String)> {
+    // Payload = template + data so URLs can't be transplanted across
+    // templates (a signature for template A must not render template B).
+    let payload = format!("{template_id}:{query_d}");
+
+    if !constant_time_str_eq(&sign_payload(signing_key, payload.as_bytes()), query_sig) {
+        return Err((StatusCode::FORBIDDEN, "invalid signature".into()));
+    }
+
+    // d = base64url(JSON) — decode leniently (padded or not).
+    use base64::Engine;
+    let json_bytes = base64::engine::general_purpose::URL_SAFE_NO_PAD
+        .decode(query_d)
+        .or_else(|_| base64::engine::general_purpose::URL_SAFE.decode(query_d))
+        .map_err(|_| {
+            (
+                StatusCode::BAD_REQUEST,
+                "d is not valid base64url-encoded JSON".into(),
+            )
+        })?;
+
+    if json_bytes.len() > MAX_SIGNED_PAYLOAD_BYTES {
+        return Err((
+            StatusCode::PAYLOAD_TOO_LARGE,
+            format!(
+                "payload too large: {} bytes (max {})",
+                json_bytes.len(),
+                MAX_SIGNED_PAYLOAD_BYTES
+            ),
+        ));
+    }
+
+    let value: serde_json::Value = serde_json::from_slice(&json_bytes).map_err(|e| {
+        (
+            StatusCode::BAD_REQUEST,
+            format!("d does not contain valid JSON: {e}"),
+        )
+    })?;
+
+    // Accept {"data": {...}} or a bare data object (brand+slides).
+    match value.get("data") {
+        Some(d) => serde_json::from_value(d.clone()).map_err(|e| {
+            (
+                StatusCode::BAD_REQUEST,
+                format!("data does not match input schema: {e}"),
+            )
+        }),
+        None => serde_json::from_value(value).map_err(|e| {
+            (
+                StatusCode::BAD_REQUEST,
+                format!("d does not match input schema: {e}"),
+            )
+        }),
+    }
+}
+
+/// Build a signed GET render URL (used by tests; documented for callers
+/// generating `<meta property="og:image">` tags).
+pub fn signed_get_url(
+    base: &str,
+    signing_key: &str,
+    template: &str,
+    data_json: &str,
+    ext: &str,
+) -> String {
+    use base64::Engine;
+    let d = base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(data_json.as_bytes());
+    let payload = format!("{template}:{d}");
+    let sig = sign_payload(signing_key, payload.as_bytes());
+    format!("{base}/r/{template}.{ext}?d={d}&sig={sig}")
+}
+
 /// Start the HTTP server.
 ///
 /// If `api_key` is Some, all endpoints except /api/health require
@@ -163,6 +266,7 @@ pub async fn run(
         font_db,
         image_policy,
         api_key: api_key.clone(),
+        signing_key: api_key.clone(),
     });
 
     // Protected routes require auth
@@ -178,6 +282,8 @@ pub async fn run(
         // Health is always public (for Docker healthcheck)
         .route("/api/health", get(health))
         .merge(protected)
+        // Signed GET render URLs (disabled without a signing key)
+        .route("/r/{template}", get(signed_render_handler))
         .layer(CorsLayer::permissive())
         .with_state(state);
 
@@ -429,4 +535,141 @@ async fn render_handler(
 /// Build a JSON error response.
 fn error_response(status: StatusCode, message: String) -> Response {
     (status, Json(ErrorResponse { error: message })).into_response()
+}
+
+// ─── GET /r/:template — signed render URLs (#95) ─────────────────────
+
+/// Render via a signed GET URL, for `<meta property="og:image">` style use:
+/// blog engines embed a plain URL with no client library and no POST.
+///
+/// Path: `/r/{template}.{ext}` — ext selects the container (`png`|`webp`).
+/// Query: `d` = base64url(JSON data), `sig` = HMAC-SHA256 hex of
+/// `{template}:{d}` under the signing key (= API key). Responses carry
+/// `Cache-Control: public, max-age=3600` for OG re-crawls.
+async fn signed_render_handler(
+    State(state): State<Arc<AppState>>,
+    Path(template_with_ext): Path<String>,
+    Query(params): Query<std::collections::HashMap<String, String>>,
+) -> Response {
+    // 1. Feature gate: no signing key configured → route disabled (dev mode
+    //    keeps unsigned POST only, per the issue's security note).
+    let Some(signing_key) = state.signing_key.clone() else {
+        return error_response(
+            StatusCode::NOT_FOUND,
+            "signed GET rendering is disabled (no API key / signing key configured)".into(),
+        );
+    };
+
+    // 2. Split template.ext
+    let (template_id, image_format) = match template_with_ext.rsplit_once('.') {
+        Some((t, "png")) => (t.to_string(), crate::format::OutputFormat::Png),
+        Some((t, "webp")) => (t.to_string(), crate::format::OutputFormat::WebP),
+        Some((t, _)) => {
+            return error_response(
+                StatusCode::BAD_REQUEST,
+                format!("unsupported extension in '{t}.': use .png or .webp"),
+            );
+        }
+        None => {
+            return error_response(
+                StatusCode::BAD_REQUEST,
+                "path must be /r/{template}.{png|webp}".into(),
+            );
+        }
+    };
+
+    // 3. Required query params
+    let Some(d) = params.get("d") else {
+        return error_response(StatusCode::BAD_REQUEST, "missing d query parameter".into());
+    };
+    let Some(sig) = params.get("sig") else {
+        return error_response(
+            StatusCode::BAD_REQUEST,
+            "missing sig query parameter".into(),
+        );
+    };
+
+    // 4. Verify signature + decode payload (also rejects >8 KB payloads)
+    let data = match verify_signed_request(&signing_key, &template_id, d, sig) {
+        Ok(data) => data,
+        Err((status, msg)) => return error_response(status, msg),
+    };
+
+    if data.slides.is_empty() {
+        return error_response(
+            StatusCode::BAD_REQUEST,
+            "Input data must contain at least one slide".into(),
+        );
+    }
+
+    // 5. Load template + dir (error mapping mirrors render_handler)
+    let Ok(tmpl) = template::load_template(&template_id) else {
+        return error_response(
+            StatusCode::BAD_REQUEST,
+            format!("Template error: template '{template_id}' not found"),
+        );
+    };
+    let Ok(template_dir) = template::find_template_dir_for(&template_id) else {
+        return error_response(
+            StatusCode::NOT_FOUND,
+            format!("Template not found: '{template_id}'"),
+        );
+    };
+
+    let errors = crate::template::validate_input(&tmpl, &data);
+    if !errors.is_empty() {
+        return error_response(
+            StatusCode::BAD_REQUEST,
+            format!("validation failed: {}", errors.join("; ")),
+        );
+    }
+
+    // 6. Render first slide on the blocking pool
+    let font_db = state.font_db.clone();
+    let image_policy = state.image_policy;
+    let scale = 1.0_f32;
+    let dims = tmpl.dimensions.clone();
+    let render_result = tokio::task::spawn_blocking(move || {
+        let pixels = render::render_slide_to_pixels(
+            &tmpl,
+            &template_dir,
+            &data,
+            0,
+            scale,
+            &font_db,
+            image_policy,
+        )?;
+        let w = (dims.width as f32 * scale).round() as u32;
+        let h = (dims.height as f32 * scale).round() as u32;
+        image_format.encode(&pixels, w, h)
+    })
+    .await;
+
+    match render_result {
+        Ok(Ok(bytes)) => {
+            log::info!(
+                "Signed GET render: template={} format={} bytes={}",
+                template_id,
+                image_format.extension(),
+                bytes.len()
+            );
+            (
+                StatusCode::OK,
+                [
+                    (header::CONTENT_TYPE, image_format.mime_type()),
+                    (header::CACHE_CONTROL, "public, max-age=3600"),
+                ],
+                bytes,
+            )
+                .into_response()
+        }
+        Ok(Err(e)) => error_response(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            format!("Render error: {e:#}"),
+        ),
+        Err(e) => error_response(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            format!("Render worker failed: {e}"),
+        ),
+    }
 }
