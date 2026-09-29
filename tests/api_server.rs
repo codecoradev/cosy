@@ -703,3 +703,108 @@ fn test_metadata_binary_response_still_ok() {
     assert_eq!(resp.status(), 200);
     assert_eq!(resp.headers()["content-type"], "image/png");
 }
+
+// ─── GET /r/:template — signed render URLs ───────────────────────────
+
+fn make_signed_url(base: &str, key: &str, template: &str, data_json: &str, ext: &str) -> String {
+    server::signed_get_url(base, key, template, data_json, ext)
+}
+
+#[test]
+fn test_signed_get_renders_png() {
+    let key = "signkey-1".to_string();
+    let url = start_server_with_key(Some(key.clone()));
+    let data = r#"{"brand":{"brand_name":"OG Test"},"slides":[{"stat_number":"88%","stat_label":"og image","source":"blog"}]}"#;
+    let signed = make_signed_url(&url, &key, "stat-card", data, "png");
+
+    let resp = http_client().get(&signed).send().unwrap();
+    assert_eq!(resp.status(), 200);
+    assert_eq!(resp.headers()["content-type"], "image/png");
+    assert_eq!(resp.headers()["cache-control"], "public, max-age=3600");
+    let bytes = resp.bytes().unwrap();
+    assert_eq!(&bytes[..8], b"\x89PNG\r\n\x1a\n");
+}
+
+#[test]
+fn test_signed_get_webp_extension() {
+    let key = "signkey-2".to_string();
+    let url = start_server_with_key(Some(key.clone()));
+    let data = r#"{"brand":{"brand_name":"OG Test"},"slides":[{"stat_number":"7%","stat_label":"webp og","source":"blog"}]}"#;
+    let signed = make_signed_url(&url, &key, "stat-card", data, "webp");
+
+    let resp = http_client().get(&signed).send().unwrap();
+    assert_eq!(resp.status(), 200);
+    assert_eq!(resp.headers()["content-type"], "image/webp");
+    assert_webp_bytes(&resp.bytes().unwrap(), "signed GET webp");
+}
+
+#[test]
+fn test_signed_get_invalid_signature_403() {
+    let key = "signkey-3".to_string();
+    let url = start_server_with_key(Some(key.clone()));
+    let signed = make_signed_url(
+        &url,
+        &key,
+        "stat-card",
+        r#"{"brand":{},"slides":[]}"#,
+        "png",
+    );
+    let tampered = signed.replace(&signed[signed.find("sig=").unwrap() + 4..], &"0".repeat(64));
+
+    let resp = http_client().get(&tampered).send().unwrap();
+    assert_eq!(resp.status(), 403);
+}
+
+#[test]
+fn test_signed_get_signature_bound_to_template() {
+    // A valid signature for template A must not authorize template B.
+    let key = "signkey-4".to_string();
+    let url = start_server_with_key(Some(key.clone()));
+    let data = r#"{"brand":{"brand_name":"X"},"slides":[{"stat_number":"1%","stat_label":"x","source":"x"}]}"#;
+    let signed_for_stat = make_signed_url(&url, &key, "stat-card", data, "png");
+    // Transplant d+sig onto a different template path.
+    let transplanted = signed_for_stat.replacen("stat-card", "og-image", 1);
+
+    let resp = http_client().get(&transplanted).send().unwrap();
+    assert_eq!(resp.status(), 403);
+}
+
+#[test]
+fn test_signed_get_disabled_without_key() {
+    // No API key → dev mode → signed route must be disabled (404).
+    let url = start_server();
+    let signed = make_signed_url(
+        &url,
+        "anykey",
+        "stat-card",
+        r#"{"brand":{},"slides":[]}"#,
+        "png",
+    );
+    let resp = http_client().get(&signed).send().unwrap();
+    assert_eq!(resp.status(), 404);
+}
+
+#[test]
+fn test_signed_get_unknown_template_400() {
+    let key = "signkey-5".to_string();
+    let url = start_server_with_key(Some(key.clone()));
+    let data = r#"{"brand":{},"slides":[]}"#;
+    let signed = make_signed_url(&url, &key, "no-such-template", data, "png");
+    let resp = http_client().get(&signed).send().unwrap();
+    assert_eq!(resp.status(), 400);
+}
+
+#[test]
+fn test_signed_get_bad_extension_400() {
+    let key = "signkey-6".to_string();
+    let url = start_server_with_key(Some(key.clone()));
+    let signed = make_signed_url(
+        &url,
+        &key,
+        "stat-card",
+        r#"{"brand":{},"slides":[]}"#,
+        "jpg",
+    );
+    let resp = http_client().get(&signed).send().unwrap();
+    assert_eq!(resp.status(), 400);
+}

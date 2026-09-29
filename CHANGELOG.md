@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **GET signed-URL rendering** — `GET /r/{template}.{png|webp}?d=<base64url
+  JSON>&sig=<hmac-sha256>` for `<meta property="og:image">`-style dynamic
+  images: blog engines embed a plain URL, no client library, no POST. The
+  signature covers `{template}:{d}` (URLs can't be transplanted across
+  templates), is compared in constant time, and uses the API key as the
+  signing key; the route is disabled (404) when no key is configured.
+  Payload cap 8 KB → 413, bad signature → 403, cacheable response
+  (`Cache-Control: public, max-age=3600`). New deps: `hmac` + `sha2`
+  (pure Rust). Closes #95.
 - **CSV batch rendering** — `cosy render --dataset rows.csv --out-dir out/`
   renders one image per row in parallel (rayon). Header = field names;
   number/boolean columns are type-coerced per the template schema; brand
