@@ -452,6 +452,96 @@ fn test_render_webp_multi_slide_directory() {
     }
 }
 
+// ─── Code screenshot template (syntax highlighting) ──────────────────
+
+#[test]
+fn test_render_code_screenshot_default() {
+    let output = tempfile::NamedTempFile::with_suffix(".png").unwrap();
+
+    Command::cargo_bin("cosy")
+        .unwrap()
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .args([
+            "render",
+            "-t",
+            "code-screenshot",
+            "-d",
+            "templates/code-screenshot/defaults.json",
+            "-o",
+            output.path().to_str().unwrap(),
+            "--scale",
+            "1",
+        ])
+        .assert()
+        .success();
+
+    assert_valid_png(output.path());
+}
+
+#[test]
+fn test_render_code_screenshot_svg_output() {
+    // SVG output works for the new template too (vector path from v0.4.0).
+    let output = tempfile::NamedTempFile::with_suffix(".svg").unwrap();
+
+    Command::cargo_bin("cosy")
+        .unwrap()
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .args([
+            "render",
+            "-t",
+            "code-screenshot",
+            "-d",
+            "templates/code-screenshot/defaults.json",
+            "-o",
+            output.path().to_str().unwrap(),
+            "--format",
+            "svg",
+        ])
+        .assert()
+        .success();
+
+    assert_valid_svg(output.path());
+}
+
+#[test]
+fn test_render_code_screenshot_light_theme() {
+    let dir = tempfile::tempdir().unwrap();
+    let data = dir.path().join("light.json");
+    fs::write(
+        &data,
+        r#"{
+        "brand": {"brand_name": "ajianaz"},
+        "slides": [{
+            "title": "light theme test",
+            "filename": "main.go",
+            "code_lang": "go",
+            "theme": "light",
+            "code": "package main\n\nfunc main() {\n    println(\"hello\")\n}"
+        }]}"#,
+    )
+    .unwrap();
+
+    let output = tempfile::NamedTempFile::with_suffix(".png").unwrap();
+    Command::cargo_bin("cosy")
+        .unwrap()
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .args([
+            "render",
+            "-t",
+            "code-screenshot",
+            "-d",
+            data.to_str().unwrap(),
+            "-o",
+            output.path().to_str().unwrap(),
+            "--scale",
+            "1",
+        ])
+        .assert()
+        .success();
+
+    assert_valid_png(output.path());
+}
+
 // ─── Output format: SVG (vector path) ───────────────────────────────
 
 /// Verify a file is a valid, self-contained cosy SVG render.

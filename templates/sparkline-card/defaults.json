@@ -1,0 +1,20 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "label": "Weekly downloads",
+      "value": "12.4K",
+      "delta": "+18%",
+      "points": "4.1,4.8,4.4,5.6,5.1,6.3,6.0,6.8,7.4,7.1,8.2,8.9,8.5,9.6,10.2,9.9,10.8,12.4",
+      "period": "last 18 weeks"
+    }
+  ]
+}

@@ -582,3 +582,36 @@ Black, so `font-style="italic"` and `font-weight="800"` resolve to real faces.
       >#{{ slide.hashtag }}</text>
 {% endif %}
 ```
+
+## Semantic Element IDs (required)
+
+Wrap each schema slide field's rendered content in a group with
+`id="f-<field_name>"`, chrome in `id="bg"` / `id="brand"` (and template
+specific ids like `chrome` where it helps). usvg preserves these ids
+through the SVG output write path, letting consumers target individual
+elements (`#f-title path`, `#f-stat_number`, …) — e.g. per-element
+animation in downstream pipelines. Grouping does not change painting,
+so PNG/WebP output is unaffected.
+
+```svg
+<g id="bg">
+  <rect width="{width}" height="{height}" fill="url(#bg-grad)"/>
+</g>
+<g id="f-title">
+  <text x="80" y="240" font-family="Inter,sans-serif" font-size="52">{{ slide.title }}</text>
+</g>
+<g id="brand">
+  {% if brand.show_brand %}
+  <text x="{width/2}" y="{height-30}" text-anchor="middle">{{ brand.brand_name }}</text>
+  {% endif %}
+</g>
+```
+
+Rules:
+- One `f-<field>` group per schema slide field; an optional field that
+  is absent keeps its group out of the output (wrap it in the same
+  `{% if %}` as the content).
+- `bg`, `brand`, `chrome` are reserved ids — do not use them for field
+  groups.
+- Verify with `--format svg`: `grep -o 'id="[^"]*"' out.svg` must list
+  every field group.
