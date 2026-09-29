@@ -5,6 +5,16 @@ All notable changes to Cosy will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **SVG output format** — `cosy render --format svg` (CLI) and
+  `image_format: "svg"` (API; also in the JSON envelope and via `.svg`
+  extensions). Vector-native: emits the usvg-resolved tree with **text
+  converted to paths** — fully self-contained, zero font dependencies.
+  `scale` is a raster concept and is ignored (canvas stays at 1x).
+  Content-Type `image/svg+xml`. Closes #111.
+
 ## [0.3.0] — 2026-09-29
 
 ### Added

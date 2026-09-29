@@ -75,6 +75,7 @@ pub const MAX_METADATA_BYTES: usize = 4096;
 pub enum ImageFormatArg {
     Png,
     Webp,
+    Svg,
 }
 
 impl From<ImageFormatArg> for crate::format::OutputFormat {
@@ -82,6 +83,7 @@ impl From<ImageFormatArg> for crate::format::OutputFormat {
         match arg {
             ImageFormatArg::Png => Self::Png,
             ImageFormatArg::Webp => Self::WebP,
+            ImageFormatArg::Svg => Self::Svg,
         }
     }
 }
@@ -459,17 +461,30 @@ async fn render_handler(
         slide_indices
             .into_iter()
             .map(|i| {
-                let png = render::render_slide_to_pixels(
-                    &tmpl,
-                    &template_dir,
-                    &data,
-                    i,
-                    scale,
-                    &font_db,
-                    image_policy,
-                )?;
-                let bytes = image_format.encode(&png, out_w, out_h)?;
-                Ok((i, bytes))
+                if image_format.is_pixel_based() {
+                    let png = render::render_slide_to_pixels(
+                        &tmpl,
+                        &template_dir,
+                        &data,
+                        i,
+                        scale,
+                        &font_db,
+                        image_policy,
+                    )?;
+                    let bytes = image_format.encode(&png, out_w, out_h)?;
+                    Ok((i, bytes))
+                } else {
+                    // SVG: vector path — scale does not apply.
+                    let svg = render::render_slide_to_svg(
+                        &tmpl,
+                        &template_dir,
+                        &data,
+                        i,
+                        &font_db,
+                        image_policy,
+                    )?;
+                    Ok((i, svg.into_bytes()))
+                }
             })
             .collect::<anyhow::Result<Vec<(usize, Vec<u8>)>>>()
     })

@@ -59,48 +59,64 @@ pub fn render_template_data(
 
     if data.is_single_slide() || output.extension().is_some() {
         // Single image output
-        let png = render_slide(
-            &template,
-            &template_dir,
-            data,
-            0,
-            scale,
-            &font_db,
-            image_policy,
-        )?;
-        let bytes = format.encode(
-            &png,
-            output_width(&template.dimensions, scale),
-            output_height(&template.dimensions, scale),
-        )?;
-        // The -o path is used verbatim (no extension rewriting) — existing
-        // scripts that render to exact paths stay byte-path compatible.
-        // Recommend matching the extension to --format for clarity.
-        ensure_parent_dir(output)?;
-        std::fs::write(output, &bytes)?;
-        log::info!("Written: {}", output.display());
-        output_files.push(output.to_string_lossy().to_string());
-    } else {
-        // Multi-slide output to directory
-        std::fs::create_dir_all(output)?;
-        for i in 0..data.slides.len() {
+        if format.is_pixel_based() {
             let png = render_slide(
                 &template,
                 &template_dir,
                 data,
-                i,
+                0,
                 scale,
                 &font_db,
                 image_policy,
             )?;
-            let filename = format!("{:02}.{}", i + 1, format.extension());
-            let path: PathBuf = output.join(&filename);
             let bytes = format.encode(
                 &png,
                 output_width(&template.dimensions, scale),
                 output_height(&template.dimensions, scale),
             )?;
-            std::fs::write(&path, &bytes)?;
+            // The -o path is used verbatim (no extension rewriting) — existing
+            // scripts that render to exact paths stay byte-path compatible.
+            // Recommend matching the extension to --format for clarity.
+            ensure_parent_dir(output)?;
+            std::fs::write(output, &bytes)?;
+            log::info!("Written: {}", output.display());
+            output_files.push(output.to_string_lossy().to_string());
+        } else {
+            // SVG: vector path — scale does not apply, write the resolved tree.
+            let svg =
+                render_slide_to_svg(&template, &template_dir, data, 0, &font_db, image_policy)?;
+            ensure_parent_dir(output)?;
+            std::fs::write(output, &svg)?;
+            log::info!("Written: {}", output.display());
+            output_files.push(output.to_string_lossy().to_string());
+        }
+    } else {
+        // Multi-slide output to directory
+        std::fs::create_dir_all(output)?;
+        for i in 0..data.slides.len() {
+            let filename = format!("{:02}.{}", i + 1, format.extension());
+            let path: PathBuf = output.join(&filename);
+            if format.is_pixel_based() {
+                let png = render_slide(
+                    &template,
+                    &template_dir,
+                    data,
+                    i,
+                    scale,
+                    &font_db,
+                    image_policy,
+                )?;
+                let bytes = format.encode(
+                    &png,
+                    output_width(&template.dimensions, scale),
+                    output_height(&template.dimensions, scale),
+                )?;
+                std::fs::write(&path, &bytes)?;
+            } else {
+                let svg =
+                    render_slide_to_svg(&template, &template_dir, data, i, &font_db, image_policy)?;
+                std::fs::write(&path, &svg)?;
+            }
             log::info!("Written: {}", path.display());
             output_files.push(path.to_string_lossy().to_string());
         }
@@ -226,6 +242,51 @@ pub fn render_slide_to_pixels(
 
     // 5. Return raw RGBA pixels for container-format encoding
     Ok(pixmap.data().to_vec())
+}
+
+/// Render a single slide to a self-contained SVG string (public API for
+/// the SVG output format).
+///
+/// Returns the usvg-resolved tree serialized with text converted to paths
+/// (default `preserve_text: false`), so the output has zero font
+/// dependencies and renders identically anywhere. `scale` is a raster
+/// concept and does not apply — the `viewBox` equals the template canvas.
+/// Background images/logo are already inlined as data URIs by the template
+/// processor, so no external references remain.
+pub fn render_slide_to_svg(
+    template: &TemplateDef,
+    template_dir: &Path,
+    data: &InputData,
+    slide_index: usize,
+    font_db: &usvg::fontdb::Database,
+    image_policy: crate::text::ImagePolicy,
+) -> anyhow::Result<String> {
+    let slide_data = &data.slides[slide_index];
+
+    // 1. Process minijinja template → SVG string
+    let svg_string = crate::template::process_template(
+        template,
+        template_dir,
+        &data.brand,
+        slide_data,
+        image_policy,
+    )?;
+
+    // 2. Resolve the SVG through usvg (same as the raster path: applies
+    //    the font DB, resolves hrefs, normalizes the tree)…
+    let opts = usvg::Options {
+        font_family: "Inter".to_string(),
+        fontdb: std::sync::Arc::new(font_db.clone()),
+        ..Default::default()
+    };
+    let tree = usvg::Tree::from_str(&svg_string, &opts)?;
+
+    // 3. …then serialize with text converted to outlines.
+    let write_opts = usvg::WriteOptions {
+        preserve_text: false,
+        ..Default::default()
+    };
+    Ok(tree.to_string(&write_opts))
 }
 
 /// Render a single slide to PNG bytes (legacy convenience wrapper).
