@@ -57,7 +57,7 @@
   {% set lines = code_lines %}
   {% set max_lines = lines | length %}
   <g clip-path="url(#code-clip)" font-family="JetBrains Mono,monospace" font-size="17">
-    {% set ns = namespace(y = 195) %}
+    {% set ns = namespace(y = 192) %}
     {% for i in range(13) %}
       {% if i < max_lines %}
         {% set plain_line = lines[i] %}
@@ -67,7 +67,7 @@
         {% else %}
           <text x="90" y="{{ ns.y }}">{{ plain_line }}</text>
         {% endif %}
-        {% set ns.y = ns.y + 34 %}
+        {% set ns.y = ns.y + 33 %}
       {% endif %}
     {% endfor %}
   </g>
