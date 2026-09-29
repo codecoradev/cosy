@@ -1,6 +1,6 @@
 [package]
 name = "cosy"
-version = "0.3.0"
+version = "0.4.0"
 edition = "2021"
 description = "Content Easy — Lightning-fast template-based image generation in Rust"
 license = "BSL-1.1"
