@@ -3,6 +3,7 @@
 //!
 //! Pipeline: JSON input → minijinja token replacement → SVG → resvg render → PNG
 
+pub mod batch;
 pub mod cli;
 pub mod format;
 pub mod markup;

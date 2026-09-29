@@ -84,6 +84,15 @@ pub enum Command {
         /// (pipeline tracing / correlation IDs).
         #[arg(long)]
         metadata: Option<String>,
+
+        /// CSV dataset file: one render per row (header = field names).
+        /// Requires --output to be a directory.
+        #[arg(long, conflicts_with_all = ["data", "stdin", "json"])]
+        dataset: Option<PathBuf>,
+
+        /// With --dataset: stop scheduling new rows after the first failure.
+        #[arg(long, requires = "dataset")]
+        fail_fast: bool,
     },
 
     /// List available templates.
@@ -148,9 +157,49 @@ impl Cli {
                 json_output,
                 format,
                 metadata,
+                dataset,
+                fail_fast,
             } => {
                 // Local CLI runs are user-driven: no image-source restrictions.
                 let image_policy = crate::text::ImagePolicy::UNRESTRICTED;
+
+                // CSV batch mode: one render per row, results summarized.
+                // Independent of --data/--stdin/--json (each row carries its
+                // own data); template + output are validated here.
+                if let Some(csv_path) = dataset {
+                    // Load template up front for a clear error message.
+                    if let Err(e) = crate::template::load_template(&template) {
+                        eprintln!("✗ Failed to load template: {:#}", e);
+                        return Ok(ExitCode::from(2));
+                    }
+                    let batch = crate::batch::render_csv(
+                        &template,
+                        &csv_path,
+                        &output,
+                        scale,
+                        font_dir.as_deref(),
+                        image_policy,
+                        format.into(),
+                        fail_fast,
+                    )?;
+                    if json_output {
+                        println!("{}", serde_json::to_string_pretty(&batch)?);
+                    } else {
+                        println!(
+                            "Batch complete: {}/{} rows OK ({} failed)",
+                            batch.succeeded, batch.total_rows, batch.failed
+                        );
+                        for e in &batch.errors {
+                            eprintln!("  - {}", e);
+                        }
+                    }
+                    return Ok(if batch.failed > 0 {
+                        ExitCode::from(1)
+                    } else {
+                        ExitCode::SUCCESS
+                    });
+                }
+
                 // Resolve input data source
                 let resolved_data = match Self::resolve_input(data, stdin, json)? {
                     Some(d) => d,

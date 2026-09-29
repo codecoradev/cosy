@@ -24,6 +24,26 @@ cosy render --template <TEMPLATE> --data <DATA.json> --output <OUTPUT.png>
 | `-s, --scale` | float | No | Scale factor (default: 2.0 — retina/2x output) |
 | `--format` | enum | No | Output container: `png` (default) or `webp` |
 | `--metadata` | string | No | JSON string echoed in the `--json-output` result (pipeline tracing) |
+| `--dataset` | path | No | CSV file: one render per row (see below) |
+| `--fail-fast` | flag | No | With `--dataset`: stop unscheduled rows after the first failure |
+
+**CSV batch rendering:**
+
+```bash
+cosy render --template certificate --dataset attendees.csv --out-dir certs/
+```
+
+- CSV header row = field names; each data row renders one image.
+- `number`/`boolean` schema fields are parsed from their string values
+  automatically; brand fields default to the template's `defaults.json`.
+- Optional `_filename` column overrides the output name (sanitized);
+  otherwise files are `NNNN_<slug>.<ext>`.
+- Optional `_data` column carries a full JSON slide object or array
+  (multi-slide rows render to `{stem}_slides/NN.<ext>`). Quote cells
+  containing commas.
+- Exit code is 1 when any row fails; per-row errors are reported at the
+  end. `--json-output` emits `{template, total_rows, succeeded, failed,
+  files, errors, render_time_ms}`.
 
 **Example:**
 
