@@ -50,6 +50,28 @@ pub struct RenderRequest {
     /// slides as base64 PNG entries with metadata).
     #[serde(default)]
     pub response_format: Option<ResponseFormat>,
+    /// Image container format for the rendered bytes: `png` (default) or
+    /// `webp` (lossless). Orthogonal to `response_format`: a JSON
+    /// envelope can carry PNG or WebP entries.
+    #[serde(default)]
+    pub image_format: Option<ImageFormatArg>,
+}
+
+/// Image container format for POST /api/render (`image_format` field).
+#[derive(Debug, Clone, Copy, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum ImageFormatArg {
+    Png,
+    Webp,
+}
+
+impl From<ImageFormatArg> for crate::format::OutputFormat {
+    fn from(arg: ImageFormatArg) -> Self {
+        match arg {
+            ImageFormatArg::Png => Self::Png,
+            ImageFormatArg::Webp => Self::WebP,
+        }
+    }
 }
 
 /// Response format for POST /api/render.
@@ -71,8 +93,11 @@ fn default_scale() -> f32 {
 pub struct RenderedSlide {
     /// Zero-based slide index.
     pub index: usize,
-    /// Base64-encoded PNG bytes.
+    /// Base64-encoded image bytes. Field name kept as `png_base64` for
+    /// backward compatibility — the actual container is `image_format`.
     pub png_base64: String,
+    /// Container format of the encoded bytes ("png" or "webp").
+    pub image_format: &'static str,
 }
 
 /// JSON response envelope for `response_format: "json"`.
@@ -257,7 +282,7 @@ async fn render_handler(
         }
     };
 
-    // Which slides to render: all for json format, one for png format.
+    // Which slides to render: all for json format, one for image format.
     let slide_indices: Vec<usize> = match format {
         ResponseFormat::Json => (0..req.data.slides.len()).collect(),
         ResponseFormat::Png => {
@@ -284,11 +309,15 @@ async fn render_handler(
     let data = req.data;
     let template_id = tmpl.id.clone();
     let dims = tmpl.dimensions.clone();
+    let image_format: crate::format::OutputFormat =
+        req.image_format.map(Into::into).unwrap_or_default();
+    let out_w = (dims.width as f32 * scale).round() as u32;
+    let out_h = (dims.height as f32 * scale).round() as u32;
     let render_result = tokio::task::spawn_blocking(move || {
         slide_indices
             .into_iter()
             .map(|i| {
-                let png = render::render_slide_to_png(
+                let png = render::render_slide_to_pixels(
                     &tmpl,
                     &template_dir,
                     &data,
@@ -297,7 +326,8 @@ async fn render_handler(
                     &font_db,
                     image_policy,
                 )?;
-                Ok((i, png))
+                let bytes = image_format.encode(&png, out_w, out_h)?;
+                Ok((i, bytes))
             })
             .collect::<anyhow::Result<Vec<(usize, Vec<u8>)>>>()
     })
@@ -306,24 +336,29 @@ async fn render_handler(
     match render_result {
         Ok(Ok(rendered)) => match format {
             ResponseFormat::Png => {
-                let (_, png_bytes) = rendered.into_iter().next().expect("one slide rendered");
-                log::info!("Rendered {} bytes of PNG", png_bytes.len());
+                let (_, image_bytes) = rendered.into_iter().next().expect("one slide rendered");
+                log::info!(
+                    "Rendered {} bytes of {}",
+                    image_bytes.len(),
+                    image_format.mime_type()
+                );
                 (
                     StatusCode::OK,
-                    [(header::CONTENT_TYPE, "image/png")],
-                    png_bytes,
+                    [(header::CONTENT_TYPE, image_format.mime_type())],
+                    image_bytes,
                 )
                     .into_response()
             }
             ResponseFormat::Json => {
                 let slides_json: Vec<RenderedSlide> = rendered
                     .into_iter()
-                    .map(|(i, png)| RenderedSlide {
+                    .map(|(i, bytes)| RenderedSlide {
                         index: i,
                         png_base64: base64::Engine::encode(
                             &base64::engine::general_purpose::STANDARD,
-                            &png,
+                            &bytes,
                         ),
+                        image_format: image_format.extension(),
                     })
                     .collect();
                 log::info!("Rendered {} slide(s) as JSON", slides_json.len());

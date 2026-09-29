@@ -46,6 +46,7 @@ Renders an image from a template.
 | `scale` | float | No | Scale factor (default: `1.0`) |
 | `slide_index` | int | No | Zero-based slide to render with the default `png` format (default: `0`) |
 | `response_format` | string | No | `"png"` (default, binary image) or `"json"` (all slides as base64 entries) |
+| `image_format` | string | No | `"png"` (default) or `"webp"` — container for the rendered bytes, independent of `response_format` |
 
 **Example:**
 
@@ -90,7 +91,9 @@ Renders an image from a template.
 }
 ```
 
-The JSON response contains per-slide base64 PNGs:
+The JSON response contains per-slide base64 images. The field name stays
+`png_base64` for backward compatibility; the actual container is reported in
+`image_format` (defaults to `"png"` when `image_format` is not requested):
 
 ```json
 {
@@ -99,24 +102,43 @@ The JSON response contains per-slide base64 PNGs:
   "width": 540,
   "height": 675,
   "data": [
-    {"index": 0, "png_base64": "iVBORw0KGgo..."},
-    {"index": 1, "png_base64": "iVBORw0KGgo..."}
+    {"index": 0, "png_base64": "iVBORw0KGgo...", "image_format": "png"},
+    {"index": 1, "png_base64": "iVBORw0KGgo...", "image_format": "png"}
   ]
 }
 ```
+
+**WebP example** — request `image_format: "webp"` to receive lossless WebP
+bytes instead of PNG. Works with both response formats:
+
+```json
+{
+  "template": "stat-card",
+  "image_format": "webp",
+  "data": {
+    "brand": {"brand_name": "CodeCora"},
+    "slides": [{"stat_number": "123", "stat_label": "Tests Passing", "source": "CI"}]
+  }
+}
+```
+
+The binary response then has `Content-Type: image/webp`; a JSON envelope's
+per-slide `image_format` becomes `"webp"`.
 
 ### Responses
 
 #### 200 OK
 
-`response_format: "png"` (default) returns the rendered PNG image. With a
+`response_format: "png"` (default) returns the rendered image. With a
 `slide_index`, that specific slide is rendered; without one, the first slide.
+The `Content-Type` follows `image_format`: `image/png` (default) or
+`image/webp`.
 
 | Header | Value |
 |--------|-------|
-| `Content-Type` | `image/png` |
+| `Content-Type` | `image/png` or `image/webp` |
 
-Body: PNG binary data.
+Body: image binary data.
 
 #### 400 Bad Request
 

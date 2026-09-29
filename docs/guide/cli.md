@@ -20,14 +20,27 @@ cosy render --template <TEMPLATE> --data <DATA.json> --output <OUTPUT.png>
 |------|------|----------|-------------|
 | `-t, --template` | string | Yes | Template name (e.g. `stat-card`) |
 | `-d, --data` | path | Yes | Path to JSON input file |
-| `-o, --output` | path | Yes | Output PNG path |
+| `-o, --output` | path | Yes | Output image path (used verbatim — match the extension to `--format`) |
 | `-s, --scale` | float | No | Scale factor (default: 2.0 — retina/2x output) |
+| `--format` | enum | No | Output container: `png` (default) or `webp` |
 
 **Example:**
 
 ```bash
 cosy render --template og-image --data post.json --output cover.png --scale 2.0
 ```
+
+**WebP output:**
+
+```bash
+cosy render --template social-quote --data quote.json --output quote.webp --format webp
+```
+
+::: tip
+WebP encoding is lossless (via the `image` crate — no extra dependencies).
+Multi-slide renders into a directory write `NN.webp` files when
+`--format webp` is set. Single-file `-o` paths are used exactly as given.
+:::
 
 ::: tip
 `render` validates input against the template schema **before** rendering. Invalid input

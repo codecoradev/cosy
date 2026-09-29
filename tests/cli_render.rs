@@ -375,3 +375,106 @@ fn test_render_multi_slide_carousel() {
         assert_valid_png(&png_path);
     }
 }
+
+// ─── Output format: WebP ────────────────────────────────────────────
+
+/// Verify a file is a valid WebP (RIFF container + WEBP fourcc).
+fn assert_valid_webp(path: &Path) {
+    let bytes = fs::read(path).unwrap_or_else(|_| panic!("Failed to read WebP: {:?}", path));
+    assert!(bytes.len() > 32, "WebP too small ({} bytes)", bytes.len());
+    assert_eq!(&bytes[..4], b"RIFF", "Not a RIFF container: {:?}", path);
+    assert_eq!(&bytes[8..12], b"WEBP", "Not a WebP payload: {:?}", path);
+}
+
+#[test]
+fn test_render_webp_single_file() {
+    let output = tempfile::NamedTempFile::with_suffix(".webp").unwrap();
+
+    Command::cargo_bin("cosy")
+        .unwrap()
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .args([
+            "render",
+            "-t",
+            "stat-card",
+            "-d",
+            "templates/stat-card/defaults.json",
+            "-o",
+            output.path().to_str().unwrap(),
+            "--scale",
+            "1",
+            "--format",
+            "webp",
+        ])
+        .assert()
+        .success();
+
+    assert_valid_webp(output.path());
+}
+
+#[test]
+fn test_render_webp_multi_slide_directory() {
+    let dir = tempfile::tempdir().unwrap();
+    let out_dir = dir.path().join("webp-out");
+
+    Command::cargo_bin("cosy")
+        .unwrap()
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .args([
+            "render",
+            "-t",
+            "carousel-default",
+            "-d",
+            "templates/carousel-default/defaults.json",
+            "-o",
+            out_dir.to_str().unwrap(),
+            "--scale",
+            "0.5",
+            "--format",
+            "webp",
+        ])
+        .assert()
+        .success();
+
+    let entries: Vec<_> = fs::read_dir(&out_dir)
+        .unwrap()
+        .flatten()
+        .map(|e| e.file_name().to_string_lossy().to_string())
+        .collect();
+    assert!(!entries.is_empty(), "no slides rendered");
+    assert!(
+        entries.iter().all(|f| f.ends_with(".webp")),
+        "expected .webp slide files, got: {:?}",
+        entries
+    );
+    for name in &entries {
+        assert_valid_webp(&out_dir.join(name));
+    }
+}
+
+#[test]
+fn test_render_format_png_default_unchanged() {
+    // Explicit --format png must behave exactly like the default.
+    let output = tempfile::NamedTempFile::with_suffix(".png").unwrap();
+
+    Command::cargo_bin("cosy")
+        .unwrap()
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .args([
+            "render",
+            "-t",
+            "stat-card",
+            "-d",
+            "templates/stat-card/defaults.json",
+            "-o",
+            output.path().to_str().unwrap(),
+            "--scale",
+            "1",
+            "--format",
+            "png",
+        ])
+        .assert()
+        .success();
+
+    assert_valid_png(output.path());
+}

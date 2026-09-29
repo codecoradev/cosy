@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **WebP output format** — `cosy render --format webp` (CLI) and
+  `image_format: "webp"` on `POST /api/render`. Container choice is
+  independent of `response_format`: a JSON envelope can carry PNG or WebP
+  entries (`image_format` field added per slide in the envelope). Binary
+  responses get the correct `Content-Type` (`image/png` / `image/webp`).
+  WebP encoding is lossless via the `image` crate (no new dependencies);
+  the `-o` path is used verbatim, multi-slide directory mode names files
+  `NN.webp`. Closes #94.
 - **Notebook-style templates** - `notebook-cover` and `notebook-page`
   (1080x1350) replicate the viral handwritten study-notes carousel format:
   ruled paper, spiral binding, dashed callout boxes, and a cloud punchline.
