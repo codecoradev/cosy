@@ -1,0 +1,23 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "display_name": "ajianaz",
+      "handle": "@ajianaz",
+      "verified": true,
+      "body": "Shipping beats debating. Put the thing in front of users this week, _not_ next quarter.\n\nThe feedback loop is the product strategy.",
+      "timestamp": "2:14 PM · Sep 29, 2026",
+      "replies": "12",
+      "reposts": "148",
+      "likes": "1.2K"
+    }
+  ]
+}
