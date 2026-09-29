@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **CSV batch rendering** — `cosy render --dataset rows.csv --out-dir out/`
+  renders one image per row in parallel (rayon). Header = field names;
+  number/boolean columns are type-coerced per the template schema; brand
+  defaults come from the template's `defaults.json`. Optional `_filename`
+  column names the output (sanitized), optional `_data` column carries a
+  full JSON slide/array (multi-slide rows write a `{stem}_slides/`
+  subdirectory). `--fail-fast` stops unscheduled rows after the first
+  failure; exit code 1 if any row failed; `--json-output` emits a
+  structured summary. Works with `--format webp`. Closes #96.
 - **Metadata passthrough** — optional `metadata` (any JSON value, 4 KB cap)
   on `POST /api/render`, echoed verbatim in the JSON envelope (binary
   responses log it instead — raw image bytes can't carry it). CLI:

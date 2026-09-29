@@ -446,6 +446,7 @@ dependencies = [
  "log",
  "minijinja",
  "predicates",
+ "rayon",
  "reqwest",
  "resvg",
  "serde",
