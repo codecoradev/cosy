@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350" viewBox="0 0 1080 1350">
+  <defs>
+    <pattern id="nb-rules" x="0" y="0" width="1080" height="44" patternUnits="userSpaceOnUse">
+      <rect x="0" y="42" width="1080" height="2" fill="#cfe0f2"/>
+    </pattern>
+    <pattern id="nb-spiral" x="0" y="0" width="120" height="156" patternUnits="userSpaceOnUse">
+      <path d="M 30 44 A 32 15 -14 1 1 92 36" fill="none" stroke="#3a3a3a" stroke-width="6"/>
+    </pattern>
+  </defs>
+  <!-- paper background layers -->
+  <rect width="1080" height="1350" fill="{{ brand.bg_color | default('#fdfcf5') }}"/>
+  {% if bg_image_data_uri %}
+  <image href="{{ bg_image_data_uri }}" width="1080" height="1350" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
+  <rect width="1080" height="1350" fill="{{ brand.bg_color | default('#fdfcf5') }}" opacity="0.7"/>
+  {% endif %}
+  <rect width="1080" height="1350" fill="url(#nb-rules)"/>
+  <rect x="88" y="0" width="2" height="1350" fill="#e8a0a8"/>
+  <rect x="0" y="26" width="120" height="1298" fill="url(#nb-spiral)"/>
+  <!-- double frame -->
+  <rect x="96" y="26" width="952" height="1298" fill="none" stroke="{{ brand.accent_color | default('#1e3a8a') }}" stroke-width="3"/>
+  <rect x="104" y="34" width="936" height="1282" fill="none" stroke="{{ brand.accent_color | default('#1e3a8a') }}" stroke-width="2"/>
+
+  <text x="136" y="86" font-family="Kalam,cursive" font-size="30" fill="{{ brand.accent_color | default('#1e3a8a') }}" text-decoration="underline">{{ slide.header_handle }}</text>
+  <text x="{{ (1080-56)|int }}" y="86" text-anchor="end" font-family="Kalam,cursive" font-size="30" font-weight="700" fill="{{ brand.accent_color | default('#1e3a8a') }}" text-decoration="underline">{{ slide.page_label }}</text>
+
+  <!-- hero -->
+  {% set hero_len = slide.hero_title | length %}
+  {% if hero_len > 10 %}{% set hfs = (1000 / hero_len) | round | int %}{% else %}{% set hfs = slide.hero_font_size | default(150) %}{% endif %}
+  <text x="540" y="300" text-anchor="middle" font-family="Caveat,cursive" font-size="{{ hfs }}" font-weight="700" fill="{{ brand.accent_color | default('#1e3a8a') }}">{{ slide.hero_title }}</text>
+  {% set slen = slide.hero_subtitle | length %}
+  {% if slen > 26 %}{% set sfs = (900 / slen) | round | int %}{% else %}{% set sfs = 34 %}{% endif %}
+  <text x="540" y="372" text-anchor="middle" font-family="Kalam,cursive" font-size="{{ sfs }}" font-weight="700" letter-spacing="2" fill="{{ brand.accent_color | default('#1e3a8a') }}" text-decoration="underline">{{ slide.hero_subtitle }}</text>
+  <!-- tagline banner (rotated) -->
+  <g transform="rotate(-1 540 448)">
+    <rect x="160" y="414" width="760" height="68" rx="24" fill="#ffffff" stroke="{{ brand.accent_color | default('#1e3a8a') }}" stroke-width="3"/>
+    {% set tlen = slide.tagline | length %}
+    {% if tlen > 46 %}{% set tfs = (1309 / tlen) | round | int %}{% else %}{% set tfs = 26 %}{% endif %}
+    <text x="540" y="458" text-anchor="middle" font-family="Kalam,cursive" font-size="{{ tfs }}" font-weight="700" fill="{{ brand.accent_color | default('#1e3a8a') }}" font-style="italic">{{ slide.tagline }}</text>
+  </g>
+  <!-- pipeline: 6 steps with inline SVG icons -->
+  {% macro pipe_icon(kind, cx, cy) %}{% if not kind %}{% set kind = 'note' %}{% endif %}
+  {% if kind == 'note' %}<g transform="translate({{ cx - 15 }}, {{ cy - 16 }})"><rect x="0" y="0" width="30" height="32" rx="4" fill="none" stroke="{{ brand.accent_color_end | default('#6d28d9') }}" stroke-width="3"/><line x1="6" y1="9" x2="24" y2="9" stroke="{{ brand.accent_color_end | default('#6d28d9') }}" stroke-width="2.5"/><line x1="6" y1="16" x2="24" y2="16" stroke="{{ brand.accent_color_end | default('#6d28d9') }}" stroke-width="2.5"/><line x1="6" y1="23" x2="18" y2="23" stroke="{{ brand.accent_color_end | default('#6d28d9') }}" stroke-width="2.5"/></g>
+  {% elif kind == 'phone' %}<g transform="translate({{ cx - 11 }}, {{ cy - 16 }})"><rect x="0" y="0" width="22" height="32" rx="5" fill="none" stroke="{{ brand.accent_color_end | default('#6d28d9') }}" stroke-width="3"/><line x1="8" y1="26" x2="14" y2="26" stroke="{{ brand.accent_color_end | default('#6d28d9') }}" stroke-width="2.5"/></g>
+  {% elif kind == 'brain' %}<g transform="translate({{ cx - 15 }}, {{ cy - 14 }})"><path d="M 4 22 Q 0 14 6 9 Q 7 2 15 3 Q 24 1 26 9 Q 31 14 27 21 Q 26 27 19 27 L 11 27 Q 6 27 4 22 Z" fill="none" stroke="{{ brand.accent_color_end | default('#6d28d9') }}" stroke-width="2.5"/><path d="M 15 4 L 15 27" stroke="{{ brand.accent_color_end | default('#6d28d9') }}" stroke-width="2"/></g>
+  {% elif kind == 'search' %}<g transform="translate({{ cx - 14 }}, {{ cy - 14 }})"><circle cx="12" cy="12" r="9" fill="none" stroke="{{ brand.accent_color_end | default('#6d28d9') }}" stroke-width="3"/><line x1="19" y1="19" x2="28" y2="28" stroke="{{ brand.accent_color_end | default('#6d28d9') }}" stroke-width="4" stroke-linecap="round"/></g>
+  {% elif kind == 'spark' %}<g transform="translate({{ cx - 13 }}, {{ cy - 15 }})"><path d="M 13 0 L 16 10 L 26 13 L 16 16 L 13 26 L 10 16 L 0 13 L 10 10 Z" fill="{{ brand.accent_color_end | default('#6d28d9') }}" fill-opacity="0.9"/></g>
+  {% elif kind == 'rocket' %}<g transform="translate({{ cx - 12 }}, {{ cy - 16 }})"><path d="M 12 0 Q 22 8 20 22 L 4 22 Q 2 8 12 0 Z" fill="none" stroke="{{ brand.accent_color_end | default('#6d28d9') }}" stroke-width="2.5"/><circle cx="12" cy="12" r="4" fill="none" stroke="{{ brand.accent_color_end | default('#6d28d9') }}" stroke-width="2"/><path d="M 6 22 L 3 30 L 9 26 M 18 22 L 21 30 L 15 26" fill="none" stroke="{{ brand.accent_color_end | default('#6d28d9') }}" stroke-width="2.5"/></g>
+  {% endif %}
+  {% endmacro %}
+  {% for i in range(6) %}
+  <g>
+    {% set bx = 116 + i * 145 %}
+    <rect x="{{ bx }}" y="530" width="128" height="92" rx="8" fill="#ffffff" stroke="{{ brand.accent_color | default('#1e3a8a') }}" stroke-width="2.5"/>
+    {{ pipe_icon(slide.icon1 if i == 0 else slide.icon2 if i == 1 else slide.icon3 if i == 2 else slide.icon4 if i == 3 else slide.icon5 if i == 4 else slide.icon6, bx + 64, 556) }}
+    <text x="{{ bx + 64 }}" y="590" text-anchor="middle" font-family="Kalam,cursive" font-size="19" font-weight="700" fill="{{ brand.accent_color | default('#1e3a8a') }}">{{ slide.label1 if i == 0 else slide.label2 if i == 1 else slide.label3 if i == 2 else slide.label4 if i == 3 else slide.label5 if i == 4 else slide.label6 }}</text>
+    {% if i < 5 %}<g><line x1="{{ bx + 126 }}" y1="576" x2="{{ bx + 137 }}" y2="576" stroke="{{ brand.accent_color | default('#1e3a8a') }}" stroke-width="3"/><polygon points="{{ bx + 137 }},570 {{ bx + 147 }},576 {{ bx + 137 }},582" fill="{{ brand.accent_color | default('#1e3a8a') }}" stroke="none"/></g>{% endif %}
+  </g>
+  {% endfor %}
+  <!-- intro dashed box -->
+  <rect x="116" y="650" width="848" height="130" rx="10" fill="#ffffff" fill-opacity="0.8" stroke="{{ brand.accent_color | default('#1e3a8a') }}" stroke-width="3" stroke-dasharray="10 7"/>
+  <text x="140" y="700" font-family="Kalam,cursive" font-size="24" font-weight="700" fill="{{ brand.accent_color_end | default('#6d28d9') }}">{{ slide.intro_lead }}</text>
+  <text x="140" y="722" font-family="Kalam,cursive" font-size="23" fill="{{ brand.accent_color | default('#1e3a8a') }}">{% for ln in slide.intro_text|wordwrap(74)|split('
+') %}<tspan x="140" dy="{{ 0 if loop.first else 34 }}">{{ ln }}</tspan>{% endfor %}</text>
+  <!-- TOC column -->
+  <text x="116" y="812" font-family="Kalam,cursive" font-size="27" font-weight="700" fill="{{ brand.accent_color_end | default('#6d28d9') }}">{{ slide.toc_title }}</text>
+  {% for n in range(9) %}
+  {% set ly = 848 + n * 40 %}
+  {% if n == 0 %}{% set entry = slide.toc1 %}{% set pg = slide.pg1 %}
+  {% elif n == 1 %}{% set entry = slide.toc2 %}{% set pg = slide.pg2 %}
+  {% elif n == 2 %}{% set entry = slide.toc3 %}{% set pg = slide.pg3 %}
+  {% elif n == 3 %}{% set entry = slide.toc4 %}{% set pg = slide.pg4 %}
+  {% elif n == 4 %}{% set entry = slide.toc5 %}{% set pg = slide.pg5 %}
+  {% elif n == 5 %}{% set entry = slide.toc6 %}{% set pg = slide.pg6 %}
+  {% elif n == 6 %}{% set entry = slide.toc7 %}{% set pg = slide.pg7 %}
+  {% elif n == 7 %}{% set entry = slide.toc8 %}{% set pg = slide.pg8 %}
+  {% else %}{% set entry = slide.toc9 %}{% set pg = slide.pg9 %}
+  {% endif %}
+  <text x="116" y="{{ ly }}" font-family="Kalam,cursive" font-size="22" fill="{{ brand.accent_color | default('#1e3a8a') }}">{{ n + 1 }}. {{ entry }}</text>
+  <text x="{{ (1080-132)|int }}" y="{{ ly }}" text-anchor="end" font-family="Kalam,cursive" font-size="21" fill="{{ brand.accent_color | default('#1e3a8a') }}">{{ pg }}</text>
+  <line x1="380" y1="{{ ly - 6 }}" x2="830" y2="{{ ly - 6 }}" stroke="{{ brand.accent_color | default('#1e3a8a') }}" stroke-opacity="0.35" stroke-width="2.5" stroke-dasharray="2 7"/>
+  {% endfor %}
+</svg>

@@ -12,7 +12,7 @@ use crate::render;
 use crate::schema::InputData;
 use crate::template;
 use axum::{
-    extract::{Request, State},
+    extract::{Path, Query, Request, State},
     http::{header, StatusCode},
     middleware::Next,
     response::{IntoResponse, Json, Response},
@@ -27,7 +27,11 @@ use tower_http::cors::CorsLayer;
 /// Shared server state — font DB built once at startup.
 struct AppState {
     font_db: usvg::fontdb::Database,
+    image_policy: crate::text::ImagePolicy,
     api_key: Option<String>,
+    /// Signing key for GET /r/:template signed render URLs. Falls back to
+    /// the API key when set; route stays disabled when neither exists.
+    signing_key: Option<String>,
 }
 
 /// Request body for POST /api/render.
@@ -40,10 +44,87 @@ pub struct RenderRequest {
     /// Scale factor (default 2.0).
     #[serde(default = "default_scale")]
     pub scale: f32,
+    /// Zero-based slide to render when responding with `image/png`.
+    /// Defaults to the first slide. Ignored by the `json` response format,
+    /// which renders every slide.
+    #[serde(default)]
+    pub slide_index: Option<usize>,
+    /// Response format: `png` (default, binary image) or `json` (rendered
+    /// slides as base64 PNG entries with metadata).
+    #[serde(default)]
+    pub response_format: Option<ResponseFormat>,
+    /// Image container format for the rendered bytes: `png` (default) or
+    /// `webp` (lossless). Orthogonal to `response_format`: a JSON
+    /// envelope can carry PNG or WebP entries.
+    #[serde(default)]
+    pub image_format: Option<ImageFormatArg>,
+    /// Arbitrary caller metadata echoed back in the JSON envelope
+    /// (pipeline tracing / correlation IDs). Any JSON value, capped at
+    /// [`MAX_METADATA_BYTES`] when serialized. Binary responses cannot
+    /// carry it (the body is raw image bytes) — it is logged instead.
+    #[serde(default)]
+    pub metadata: Option<serde_json::Value>,
+}
+
+/// Maximum serialized size of the optional `metadata` field.
+pub const MAX_METADATA_BYTES: usize = 4096;
+
+/// Image container format for POST /api/render (`image_format` field).
+#[derive(Debug, Clone, Copy, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum ImageFormatArg {
+    Png,
+    Webp,
+}
+
+impl From<ImageFormatArg> for crate::format::OutputFormat {
+    fn from(arg: ImageFormatArg) -> Self {
+        match arg {
+            ImageFormatArg::Png => Self::Png,
+            ImageFormatArg::Webp => Self::WebP,
+        }
+    }
+}
+
+/// Response format for POST /api/render.
+#[derive(Debug, Clone, Copy, Deserialize, PartialEq)]
+#[serde(rename_all = "lowercase")]
+pub enum ResponseFormat {
+    /// Raw PNG bytes (`image/png`).
+    Png,
+    /// JSON envelope with per-slide base64 PNGs (`application/json`).
+    Json,
 }
 
 fn default_scale() -> f32 {
     2.0
+}
+
+/// One rendered slide in a JSON response.
+#[derive(Debug, Serialize)]
+pub struct RenderedSlide {
+    /// Zero-based slide index.
+    pub index: usize,
+    /// Base64-encoded image bytes. Field name kept as `png_base64` for
+    /// backward compatibility — the actual container is `image_format`.
+    pub png_base64: String,
+    /// Container format of the encoded bytes ("png" or "webp").
+    pub image_format: &'static str,
+}
+
+/// JSON response envelope for `response_format: "json"`.
+#[derive(Debug, Serialize)]
+pub struct RenderResponse {
+    pub template: String,
+    /// Rendered slide count.
+    pub slides: usize,
+    /// Dimensions of the template canvas (scale applied).
+    pub width: u32,
+    pub height: u32,
+    pub data: Vec<RenderedSlide>,
+    /// Caller metadata echoed verbatim (absent when not provided).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub metadata: Option<serde_json::Value>,
 }
 
 /// Response for GET /api/health.
@@ -61,11 +142,115 @@ pub struct ErrorResponse {
     pub error: String,
 }
 
+// ─── GET signed render URLs (#95) ────────────────────────────────────
+
+/// Maximum serialized size of the `d` query payload.
+pub const MAX_SIGNED_PAYLOAD_BYTES: usize = 8 * 1024;
+
+/// HMAC-SHA256 hex signature over a payload using the signing key.
+fn sign_payload(key: &str, payload: &[u8]) -> String {
+    use hmac::{Hmac, Mac};
+    use sha2::Sha256;
+    let mut mac =
+        Hmac::<Sha256>::new_from_slice(key.as_bytes()).expect("HMAC accepts any key length");
+    mac.update(payload);
+    let bytes = mac.finalize().into_bytes();
+    bytes.iter().map(|b| format!("{b:02x}")).collect()
+}
+
+/// Constant-time string comparison for signature checks.
+fn constant_time_str_eq(a: &str, b: &str) -> bool {
+    constant_time_eq(a.as_bytes(), b.as_bytes())
+}
+
+/// Parse and verify a signed GET render request.
+/// Returns the decoded input data, or an HTTP status + message.
+fn verify_signed_request(
+    signing_key: &str,
+    template_id: &str,
+    query_d: &str,
+    query_sig: &str,
+) -> Result<InputData, (StatusCode, String)> {
+    // Payload = template + data so URLs can't be transplanted across
+    // templates (a signature for template A must not render template B).
+    let payload = format!("{template_id}:{query_d}");
+
+    if !constant_time_str_eq(&sign_payload(signing_key, payload.as_bytes()), query_sig) {
+        return Err((StatusCode::FORBIDDEN, "invalid signature".into()));
+    }
+
+    // d = base64url(JSON) — decode leniently (padded or not).
+    use base64::Engine;
+    let json_bytes = base64::engine::general_purpose::URL_SAFE_NO_PAD
+        .decode(query_d)
+        .or_else(|_| base64::engine::general_purpose::URL_SAFE.decode(query_d))
+        .map_err(|_| {
+            (
+                StatusCode::BAD_REQUEST,
+                "d is not valid base64url-encoded JSON".into(),
+            )
+        })?;
+
+    if json_bytes.len() > MAX_SIGNED_PAYLOAD_BYTES {
+        return Err((
+            StatusCode::PAYLOAD_TOO_LARGE,
+            format!(
+                "payload too large: {} bytes (max {})",
+                json_bytes.len(),
+                MAX_SIGNED_PAYLOAD_BYTES
+            ),
+        ));
+    }
+
+    let value: serde_json::Value = serde_json::from_slice(&json_bytes).map_err(|e| {
+        (
+            StatusCode::BAD_REQUEST,
+            format!("d does not contain valid JSON: {e}"),
+        )
+    })?;
+
+    // Accept {"data": {...}} or a bare data object (brand+slides).
+    match value.get("data") {
+        Some(d) => serde_json::from_value(d.clone()).map_err(|e| {
+            (
+                StatusCode::BAD_REQUEST,
+                format!("data does not match input schema: {e}"),
+            )
+        }),
+        None => serde_json::from_value(value).map_err(|e| {
+            (
+                StatusCode::BAD_REQUEST,
+                format!("d does not match input schema: {e}"),
+            )
+        }),
+    }
+}
+
+/// Build a signed GET render URL (used by tests; documented for callers
+/// generating `<meta property="og:image">` tags).
+pub fn signed_get_url(
+    base: &str,
+    signing_key: &str,
+    template: &str,
+    data_json: &str,
+    ext: &str,
+) -> String {
+    use base64::Engine;
+    let d = base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(data_json.as_bytes());
+    let payload = format!("{template}:{d}");
+    let sig = sign_payload(signing_key, payload.as_bytes());
+    format!("{base}/r/{template}.{ext}?d={d}&sig={sig}")
+}
+
 /// Start the HTTP server.
 ///
 /// If `api_key` is Some, all endpoints except /api/health require
 /// `Authorization: Bearer <api_key>` header.
-pub async fn run(port: u16, api_key: Option<String>) -> anyhow::Result<()> {
+pub async fn run(
+    port: u16,
+    api_key: Option<String>,
+    image_policy: crate::text::ImagePolicy,
+) -> anyhow::Result<()> {
     let font_db = render::build_font_db(None)?;
 
     let template_count = template::list_templates(std::path::Path::new("./templates")).len();
@@ -79,7 +264,9 @@ pub async fn run(port: u16, api_key: Option<String>) -> anyhow::Result<()> {
 
     let state = Arc::new(AppState {
         font_db,
+        image_policy,
         api_key: api_key.clone(),
+        signing_key: api_key.clone(),
     });
 
     // Protected routes require auth
@@ -95,6 +282,8 @@ pub async fn run(port: u16, api_key: Option<String>) -> anyhow::Result<()> {
         // Health is always public (for Docker healthcheck)
         .route("/api/health", get(health))
         .merge(protected)
+        // Signed GET render URLs (disabled without a signing key)
+        .route("/r/{template}", get(signed_render_handler))
         .layer(CorsLayer::permissive())
         .with_state(state);
 
@@ -179,12 +368,45 @@ async fn render_handler(
     State(state): State<Arc<AppState>>,
     Json(req): Json<RenderRequest>,
 ) -> Response {
+    let format = req.response_format.unwrap_or(ResponseFormat::Png);
     log::info!(
-        "Render request: template={}, slides={}, scale={}",
+        "Render request: template={}, slides={}, scale={}, format={:?}",
         req.template,
         req.data.slides.len(),
-        req.scale
+        req.scale,
+        format
     );
+
+    // Metadata passthrough: size-cap so callers can't smuggle unbounded
+    // payloads through the echo field.
+    if let Some(meta) = &req.metadata {
+        let serialized = match serde_json::to_string(meta) {
+            Ok(s) => s,
+            Err(e) => {
+                return error_response(
+                    StatusCode::BAD_REQUEST,
+                    format!("metadata is not valid JSON: {e}"),
+                );
+            }
+        };
+        if serialized.len() > MAX_METADATA_BYTES {
+            return error_response(
+                StatusCode::PAYLOAD_TOO_LARGE,
+                format!(
+                    "metadata too large: {} bytes (max {})",
+                    serialized.len(),
+                    MAX_METADATA_BYTES
+                ),
+            );
+        }
+    }
+
+    if req.data.slides.is_empty() {
+        return error_response(
+            StatusCode::BAD_REQUEST,
+            "Input data must contain at least one slide".into(),
+        );
+    }
 
     // Load template definition
     let tmpl = match template::load_template(&req.template) {
@@ -202,27 +424,110 @@ async fn render_handler(
         }
     };
 
-    // Render first slide (API returns single PNG for simplicity)
-    match render::render_slide_to_png(
-        &tmpl,
-        &template_dir,
-        &req.data,
-        0,
-        req.scale,
-        &state.font_db,
-    ) {
-        Ok(png_bytes) => {
-            log::info!("Rendered {} bytes of PNG", png_bytes.len());
-            (
-                StatusCode::OK,
-                [(header::CONTENT_TYPE, "image/png")],
-                png_bytes,
-            )
-                .into_response()
+    // Which slides to render: all for json format, one for image format.
+    let slide_indices: Vec<usize> = match format {
+        ResponseFormat::Json => (0..req.data.slides.len()).collect(),
+        ResponseFormat::Png => {
+            let idx = req.slide_index.unwrap_or(0);
+            if idx >= req.data.slides.len() {
+                return error_response(
+                    StatusCode::BAD_REQUEST,
+                    format!(
+                        "slide_index {} out of range (input has {} slide(s))",
+                        idx,
+                        req.data.slides.len()
+                    ),
+                );
+            }
+            vec![idx]
         }
-        Err(e) => error_response(
+    };
+
+    // Blocking work (template IO, resvg, possibly remote image fetches) runs
+    // on the blocking thread pool so the async runtime is never blocked.
+    let font_db = state.font_db.clone();
+    let image_policy = state.image_policy;
+    let scale = req.scale;
+    let data = req.data;
+    let template_id = tmpl.id.clone();
+    let dims = tmpl.dimensions.clone();
+    let image_format: crate::format::OutputFormat =
+        req.image_format.map(Into::into).unwrap_or_default();
+    let out_w = (dims.width as f32 * scale).round() as u32;
+    let out_h = (dims.height as f32 * scale).round() as u32;
+    let render_result = tokio::task::spawn_blocking(move || {
+        slide_indices
+            .into_iter()
+            .map(|i| {
+                let png = render::render_slide_to_pixels(
+                    &tmpl,
+                    &template_dir,
+                    &data,
+                    i,
+                    scale,
+                    &font_db,
+                    image_policy,
+                )?;
+                let bytes = image_format.encode(&png, out_w, out_h)?;
+                Ok((i, bytes))
+            })
+            .collect::<anyhow::Result<Vec<(usize, Vec<u8>)>>>()
+    })
+    .await;
+
+    match render_result {
+        Ok(Ok(rendered)) => match format {
+            ResponseFormat::Png => {
+                let (_, image_bytes) = rendered.into_iter().next().expect("one slide rendered");
+                if let Some(meta) = &req.metadata {
+                    log::info!("Render metadata: {meta}");
+                }
+                log::info!(
+                    "Rendered {} bytes of {}",
+                    image_bytes.len(),
+                    image_format.mime_type()
+                );
+                (
+                    StatusCode::OK,
+                    [(header::CONTENT_TYPE, image_format.mime_type())],
+                    image_bytes,
+                )
+                    .into_response()
+            }
+            ResponseFormat::Json => {
+                let slides_json: Vec<RenderedSlide> = rendered
+                    .into_iter()
+                    .map(|(i, bytes)| RenderedSlide {
+                        index: i,
+                        png_base64: base64::Engine::encode(
+                            &base64::engine::general_purpose::STANDARD,
+                            &bytes,
+                        ),
+                        image_format: image_format.extension(),
+                    })
+                    .collect();
+                log::info!("Rendered {} slide(s) as JSON", slides_json.len());
+                (
+                    StatusCode::OK,
+                    Json(RenderResponse {
+                        template: template_id,
+                        slides: slides_json.len(),
+                        width: (dims.width as f32 * scale) as u32,
+                        height: (dims.height as f32 * scale) as u32,
+                        data: slides_json,
+                        metadata: req.metadata,
+                    }),
+                )
+                    .into_response()
+            }
+        },
+        Ok(Err(e)) => error_response(
             StatusCode::INTERNAL_SERVER_ERROR,
             format!("Render error: {e:#}"),
+        ),
+        Err(e) => error_response(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            format!("Render worker failed: {e}"),
         ),
     }
 }
@@ -230,4 +535,141 @@ async fn render_handler(
 /// Build a JSON error response.
 fn error_response(status: StatusCode, message: String) -> Response {
     (status, Json(ErrorResponse { error: message })).into_response()
+}
+
+// ─── GET /r/:template — signed render URLs (#95) ─────────────────────
+
+/// Render via a signed GET URL, for `<meta property="og:image">` style use:
+/// blog engines embed a plain URL with no client library and no POST.
+///
+/// Path: `/r/{template}.{ext}` — ext selects the container (`png`|`webp`).
+/// Query: `d` = base64url(JSON data), `sig` = HMAC-SHA256 hex of
+/// `{template}:{d}` under the signing key (= API key). Responses carry
+/// `Cache-Control: public, max-age=3600` for OG re-crawls.
+async fn signed_render_handler(
+    State(state): State<Arc<AppState>>,
+    Path(template_with_ext): Path<String>,
+    Query(params): Query<std::collections::HashMap<String, String>>,
+) -> Response {
+    // 1. Feature gate: no signing key configured → route disabled (dev mode
+    //    keeps unsigned POST only, per the issue's security note).
+    let Some(signing_key) = state.signing_key.clone() else {
+        return error_response(
+            StatusCode::NOT_FOUND,
+            "signed GET rendering is disabled (no API key / signing key configured)".into(),
+        );
+    };
+
+    // 2. Split template.ext
+    let (template_id, image_format) = match template_with_ext.rsplit_once('.') {
+        Some((t, "png")) => (t.to_string(), crate::format::OutputFormat::Png),
+        Some((t, "webp")) => (t.to_string(), crate::format::OutputFormat::WebP),
+        Some((t, _)) => {
+            return error_response(
+                StatusCode::BAD_REQUEST,
+                format!("unsupported extension in '{t}.': use .png or .webp"),
+            );
+        }
+        None => {
+            return error_response(
+                StatusCode::BAD_REQUEST,
+                "path must be /r/{template}.{png|webp}".into(),
+            );
+        }
+    };
+
+    // 3. Required query params
+    let Some(d) = params.get("d") else {
+        return error_response(StatusCode::BAD_REQUEST, "missing d query parameter".into());
+    };
+    let Some(sig) = params.get("sig") else {
+        return error_response(
+            StatusCode::BAD_REQUEST,
+            "missing sig query parameter".into(),
+        );
+    };
+
+    // 4. Verify signature + decode payload (also rejects >8 KB payloads)
+    let data = match verify_signed_request(&signing_key, &template_id, d, sig) {
+        Ok(data) => data,
+        Err((status, msg)) => return error_response(status, msg),
+    };
+
+    if data.slides.is_empty() {
+        return error_response(
+            StatusCode::BAD_REQUEST,
+            "Input data must contain at least one slide".into(),
+        );
+    }
+
+    // 5. Load template + dir (error mapping mirrors render_handler)
+    let Ok(tmpl) = template::load_template(&template_id) else {
+        return error_response(
+            StatusCode::BAD_REQUEST,
+            format!("Template error: template '{template_id}' not found"),
+        );
+    };
+    let Ok(template_dir) = template::find_template_dir_for(&template_id) else {
+        return error_response(
+            StatusCode::NOT_FOUND,
+            format!("Template not found: '{template_id}'"),
+        );
+    };
+
+    let errors = crate::template::validate_input(&tmpl, &data);
+    if !errors.is_empty() {
+        return error_response(
+            StatusCode::BAD_REQUEST,
+            format!("validation failed: {}", errors.join("; ")),
+        );
+    }
+
+    // 6. Render first slide on the blocking pool
+    let font_db = state.font_db.clone();
+    let image_policy = state.image_policy;
+    let scale = 1.0_f32;
+    let dims = tmpl.dimensions.clone();
+    let render_result = tokio::task::spawn_blocking(move || {
+        let pixels = render::render_slide_to_pixels(
+            &tmpl,
+            &template_dir,
+            &data,
+            0,
+            scale,
+            &font_db,
+            image_policy,
+        )?;
+        let w = (dims.width as f32 * scale).round() as u32;
+        let h = (dims.height as f32 * scale).round() as u32;
+        image_format.encode(&pixels, w, h)
+    })
+    .await;
+
+    match render_result {
+        Ok(Ok(bytes)) => {
+            log::info!(
+                "Signed GET render: template={} format={} bytes={}",
+                template_id,
+                image_format.extension(),
+                bytes.len()
+            );
+            (
+                StatusCode::OK,
+                [
+                    (header::CONTENT_TYPE, image_format.mime_type()),
+                    (header::CACHE_CONTROL, "public, max-age=3600"),
+                ],
+                bytes,
+            )
+                .into_response()
+        }
+        Ok(Err(e)) => error_response(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            format!("Render error: {e:#}"),
+        ),
+        Err(e) => error_response(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            format!("Render worker failed: {e}"),
+        ),
+    }
 }

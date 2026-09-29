@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350" viewBox="0 0 1080 1350">
+  <defs>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.bg_color | default('#1e1e2e') }}"/>
+      <stop offset="100%" stop-color="{{ brand.bg_color_end | default('#11111b') }}"/>
+    </linearGradient>
+    <linearGradient id="acc-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="75%" cy="25%" r="55%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <circle cx="20" cy="20" r="1.5" fill="#ffffff" opacity="0.06"/>
+    </pattern>
+  </defs>
+
+  {% macro segout(seg) %}{% if seg.b %}<tspan font-weight="800">{% endif %}{% if seg.i %}<tspan font-style="italic">{% endif %}{% if seg.c %}<tspan fill="{{ seg.c }}">{{ seg.t }}</tspan>{% else %}{{ seg.t }}{% endif %}{% if seg.i %}</tspan>{% endif %}{% if seg.b %}</tspan>{% endif %}{% endmacro %}
+  {% macro lineout(line, first, x) %}{% if first %}{% for seg in line %}{{ segout(seg) }}{% endfor %}{% else %}<tspan x="{{ x }}" dy="46">{% for seg in line %}{{ segout(seg) }}{% endfor %}</tspan>{% endif %}{% endmacro %}
+  {% macro plainout(line, first, x) %}{% if first %}{{ line }}{% else %}<tspan x="{{ x }}" dy="46">{{ line }}</tspan>{% endif %}{% endmacro %}
+
+  <!-- Background -->
+  {% if bg_image_data_uri %}
+  <image href="{{ bg_image_data_uri }}" width="1080" height="1350" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
+  {% endif %}
+  <rect width="1080" height="1350" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}{{ brand.bg_overlay_opacity | default(0.7) }}{% else %}1.0{% endif %}"/>
+  <rect width="1080" height="1350" fill="url(#glow)"/>
+  <rect width="1080" height="1350" fill="url(#dots)"/>
+
+  <!-- Notes app window -->
+  <rect x="80" y="90" width="920" height="1170" rx="24" fill="{{ slide.note_bg | default('#fef9c3') }}"/>
+  <!-- Window grip: macOS traffic lights -->
+  <circle cx="124" cy="126" r="8" fill="#ff5f57"/>
+  <circle cx="152" cy="126" r="8" fill="#febc2e"/>
+  <circle cx="180" cy="126" r="8" fill="#28c840"/>
+  <text x="540" y="133" text-anchor="middle" font-family="Inter,sans-serif" font-size="19" font-weight="600" fill="#00000055">{{ slide.note_timestamp | default('Today') }}</text>
+
+  <!-- Note title -->
+  <text x="140" y="248" font-family="Inter,sans-serif" font-size="44" font-weight="800" fill="{{ slide.title_color | default('#1e1e2e') }}">{{ slide.title | default('Notes') }}</text>
+  <line x1="140" y1="276" x2="940" y2="276" stroke="#00000018" stroke-width="2"/>
+
+  <!-- Note body -->
+  <text x="140" y="345" font-family="Inter,sans-serif" font-size="32" fill="{{ slide.body_color | default('#3a3a3c') }}">{% if body_segments %}{% for line in body_segments %}{{ lineout(line, loop.first, 140) }}{% endfor %}{% elif body_lines %}{% for line in body_lines %}{{ plainout(line, loop.first, 140) }}{% endfor %}{% else %}{{ slide.body }}{% endif %}</text>
+
+  <!-- Brand footer -->
+  {% if brand.show_brand %}
+  <text x="540" y="1320" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
+  {% endif %}
+</svg>

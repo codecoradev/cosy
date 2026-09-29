@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350" viewBox="0 0 1080 1350">
+  <defs>
+    <pattern id="nb-rules" x="0" y="0" width="1080" height="44" patternUnits="userSpaceOnUse">
+      <rect x="0" y="42" width="1080" height="2" fill="#cfe0f2"/>
+    </pattern>
+    <pattern id="nb-spiral" x="0" y="0" width="120" height="156" patternUnits="userSpaceOnUse">
+      <path d="M 30 44 A 32 15 -14 1 1 92 36" fill="none" stroke="#3a3a3a" stroke-width="6"/>
+    </pattern>
+  </defs>
+  <!-- paper background layers -->
+  <rect width="1080" height="1350" fill="{{ brand.bg_color | default('#fdfcf5') }}"/>
+  {% if bg_image_data_uri %}
+  <image href="{{ bg_image_data_uri }}" width="1080" height="1350" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
+  <rect width="1080" height="1350" fill="{{ brand.bg_color | default('#fdfcf5') }}" opacity="0.7"/>
+  {% endif %}
+  <rect width="1080" height="1350" fill="url(#nb-rules)"/>
+  <rect x="88" y="0" width="2" height="1350" fill="#e8a0a8"/>
+  <rect x="0" y="26" width="120" height="1298" fill="url(#nb-spiral)"/>
+  <!-- double frame -->
+  <rect x="96" y="26" width="952" height="1298" fill="none" stroke="{{ brand.accent_color | default('#1e3a8a') }}" stroke-width="3"/>
+  <rect x="104" y="34" width="936" height="1282" fill="none" stroke="{{ brand.accent_color | default('#1e3a8a') }}" stroke-width="2"/>
+
+  <text x="136" y="86" font-family="Kalam,cursive" font-size="30" fill="{{ brand.accent_color | default('#1e3a8a') }}" text-decoration="underline">{{ slide.header_handle }}</text>
+  <text x="{{ (1080-56)|int }}" y="86" text-anchor="end" font-family="Kalam,cursive" font-size="30" font-weight="700" fill="{{ brand.accent_color | default('#1e3a8a') }}" text-decoration="underline">{{ slide.page_label }}</text>
+
+  <!-- chapter title box -->
+  <g>
+    <rect x="230" y="128" width="620" height="74" rx="10" fill="#ffffff" stroke="{{ brand.accent_color | default('#1e3a8a') }}" stroke-width="3"/>
+    {% set clen = slide.chapter_title | length %}
+    {% if clen > 24 %}{% set cfs = (620 / clen) | round | int %}{% else %}{% set cfs = 34 %}{% endif %}
+    <text x="540" y="178" text-anchor="middle" font-family="Kalam,cursive" font-size="{{ cfs }}" font-weight="700" fill="{{ brand.accent_color | default('#1e3a8a') }}">{{ slide.chapter_title }}</text>
+  </g>
+  <!-- lead line -->
+  <text x="136" y="262" font-family="Kalam,cursive" font-size="25" fill="{{ brand.accent_color | default('#1e3a8a') }}">{% for ln in slide.lead_text|wordwrap(56)|split('
+') %}<tspan x="136" dy="{{ 0 if loop.first else 33 }}">{{ ln }}</tspan>{% endfor %}</text>
+  <!-- bullets (3 fixed slots, conditional) -->
+  {% for n in range(3) %}
+  {% set by = 352 + n * 84 %}
+  {% if n == 0 %}{% set b = slide.bullet1 %}
+  {% elif n == 1 %}{% set b = slide.bullet2 %}
+  {% else %}{% set b = slide.bullet3 %}
+  {% endif %}
+  {% if b %}
+  <g transform="translate(136, {{ by - 8 }})"><path d="M 0 -10 L 2.6 -2.6 L 10 0 L 2.6 2.6 L 0 10 L -2.6 2.6 L -10 0 L -2.6 -2.6 Z" fill="{{ brand.accent_color_end | default('#6d28d9') }}" stroke="none"/></g>
+  <text x="176" y="{{ by }}" font-family="Kalam,cursive" font-size="24" fill="{{ brand.accent_color | default('#1e3a8a') }}">{% for ln in b|wordwrap(48)|split('\n') %}<tspan x="176" dy="{{ 0 if loop.first else 32 }}">{{ ln }}</tspan>{% endfor %}</text>
+  {% endif %}
+  {% endfor %}
+  <!-- dashed example box (optional) -->
+  {% if slide.box_title or slide.box_text %}
+  {% set blines = slide.box_text|default('')|wordwrap(60)|split('\n') %}
+  {% set boxh = 74 + blines|length * 34 %}
+  <rect x="136" y="556" width="808" height="{{ boxh }}" rx="10" fill="#ffffff" fill-opacity="0.8" stroke="{{ slide.box_color if slide.box_color else brand.accent_color | default('#1e3a8a') }}" stroke-width="3" stroke-dasharray="10 7"/>
+  <text x="160" y="596" font-family="Kalam,cursive" font-size="24" font-weight="700" fill="{{ slide.box_color if slide.box_color else brand.accent_color_end | default('#6d28d9') }}">{{ slide.box_title }}</text>
+  <text x="160" y="634" font-family="Kalam,cursive" font-size="22" fill="{{ brand.accent_color | default('#1e3a8a') }}">{% for ln in slide.box_text|default('')|wordwrap(60)|split('\n') %}<tspan x="160" dy="{{ 0 if loop.first else 32 }}">{{ ln }}</tspan>{% endfor %}</text>
+  {% endif %}
+  <!-- cloud punchline (height adapts to line count) -->
+  {% set plines = slide.punchline|wordwrap(42)|split('\n') %}
+  {% set bh = 92 + (plines | length - 1) * 36 %}
+  {% set bby = 792 %}
+  <g>
+    <rect x="180" y="{{ bby }}" width="720" height="{{ bh }}" rx="48" fill="#f6f1ff" fill-opacity="0.92" stroke="{{ brand.accent_color_end | default('#6d28d9') }}" stroke-width="3"/>
+    <circle cx="224" cy="{{ bby + bh + 6 }}" r="12" fill="#f6f1ff" fill-opacity="0.92" stroke="{{ brand.accent_color_end | default('#6d28d9') }}" stroke-width="2.5"/>
+    <circle cx="208" cy="{{ bby + bh + 22 }}" r="7" fill="#f6f1ff" fill-opacity="0.92" stroke="{{ brand.accent_color_end | default('#6d28d9') }}" stroke-width="2"/>
+    <text x="540" y="{{ bby + 52 }}" text-anchor="middle" font-family="Kalam,cursive" font-size="26" font-weight="700" font-style="italic" fill="{{ brand.accent_color_end | default('#6d28d9') }}">{% for ln in plines %}<tspan x="540" dy="{{ 0 if loop.first else 36 }}">{{ ln }}</tspan>{% endfor %}</text>
+  </g>
+  <!-- extra content zone -->
+  {% if slide.extra_title %}
+  <rect x="136" y="980" width="808" height="190" rx="10" fill="#ffffff" fill-opacity="0.8" stroke="{{ brand.accent_color | default('#1e3a8a') }}" stroke-width="3" stroke-dasharray="10 7"/>
+  <text x="160" y="1022" font-family="Kalam,cursive" font-size="25" font-weight="700" fill="{{ brand.accent_color | default('#1e3a8a') }}">{{ slide.extra_title }}</text>
+  <text x="160" y="1062" font-family="Kalam,cursive" font-size="22" fill="{{ brand.accent_color | default('#1e3a8a') }}">{% for ln in slide.extra_text|default('')|wordwrap(60)|split('\n') %}<tspan x="160" dy="{{ 0 if loop.first else 32 }}">{{ ln }}</tspan>{% endfor %}</text>
+  {% endif %}
+  <!-- bottom brandline -->
+  <text x="540" y="1256" text-anchor="middle" font-family="Kalam,cursive" font-size="26" fill="{{ brand.accent_color_end | default('#6d28d9') }}">{% for ln in slide.footer_line|wordwrap(60)|split('\n') %}<tspan x="540" dy="{{ 0 if loop.first else 34 }}">{{ ln }}</tspan>{% endfor %}</text>
+</svg>

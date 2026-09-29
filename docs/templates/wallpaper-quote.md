@@ -22,6 +22,8 @@ Phone wallpaper format with centered motivational quote
 |-------|------|----------|------------|
 | `quote` | text | ✅ | 200 |
 | `author` | text | — | 40 |
+| `text_color` | color | — | — |
+| `hashtag` | text | — | 40 |
 
 ## Brand Fields
 
@@ -35,6 +37,7 @@ Phone wallpaper format with centered motivational quote
 | `accent_color_end` | bg | — | #89b4fa |
 | `bg_image` | image | — | — |
 | `bg_image_opacity` | number | — | 0.15 |
+| `bg_overlay_opacity` | number | — | 0.7 |
 | `logo` | image | — | — |
 
 ## Example JSON

@@ -1,0 +1,29 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "contact_name": "Tim Lead",
+      "contact_status": "online",
+      "m1_text": "Bro, besok bisa cover standup aku?",
+      "m1_side": "left",
+      "m2_text": "Bisa. *Standup jam 9 kan?*",
+      "m2_side": "right",
+      "m3_text": "Ye. Tapi jangan bilang siapa siapa",
+      "m3_side": "left",
+      "m4_text": "Alasannya apa _anak baru_ ngerasa dikejar",
+      "m4_side": "left",
+      "m5_text": "*Tenang.* Aku bilang kita yang minta",
+      "m5_side": "right",
+      "m6_text": "Makasih bro, kamu nyelamatin minggu aku",
+      "m6_side": "left"
+    }
+  ]
+}

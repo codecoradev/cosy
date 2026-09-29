@@ -28,6 +28,7 @@ Multiple quotes stacked vertically, each with different author
 | `q2_author` | text | ✅ | 40 |
 | `q3_text` | text | ✅ | 120 |
 | `q3_author` | text | ✅ | 40 |
+| `text_color` | color | — | — |
 
 ## Brand Fields
 
@@ -41,6 +42,7 @@ Multiple quotes stacked vertically, each with different author
 | `accent_color_end` | bg | — | #89b4fa |
 | `bg_image` | image | — | — |
 | `bg_image_opacity` | number | — | 0.15 |
+| `bg_overlay_opacity` | number | — | 0.7 |
 | `logo` | image | — | — |
 
 ## Example JSON

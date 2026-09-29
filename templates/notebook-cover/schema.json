@@ -1,0 +1,287 @@
+{
+  "id": "notebook-cover",
+  "name": "Notebook Cover",
+  "description": "Notebook/study-notes carousel cover with pipeline, TOC and tagline banner (1080x1350).",
+  "dimensions": {
+    "width": 1080,
+    "height": 1350
+  },
+  "fonts": [
+    "Kalam",
+    "Caveat",
+    "Inter"
+  ],
+  "brand_fields": {
+    "show_brand": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Show brand name/handle watermark at bottom. Default: false."
+    },
+    "brand_name": {
+      "type": "text",
+      "required": true,
+      "max": 30
+    },
+    "brand_handle": {
+      "type": "text",
+      "required": false,
+      "max": 30
+    },
+    "bg_color": {
+      "type": "bg",
+      "required": false,
+      "default": "#fdfcf5",
+      "description": "Paper base color."
+    },
+    "bg_color_end": {
+      "type": "bg",
+      "required": false,
+      "default": "#fdfcf5",
+      "description": "Second gradient stop (kept for brand-field uniformity; paper look uses solid color)."
+    },
+    "accent_color": {
+      "type": "bg",
+      "required": false,
+      "default": "#1e3a8a",
+      "description": "Primary ink color."
+    },
+    "accent_color_end": {
+      "type": "bg",
+      "required": false,
+      "default": "#6d28d9",
+      "description": "Secondary accent (purple callouts)."
+    },
+    "bg_image": {
+      "type": "image",
+      "required": false
+    },
+    "bg_image_opacity": {
+      "type": "number",
+      "required": false,
+      "default": 0.15
+    },
+    "logo": {
+      "type": "image",
+      "required": false
+    }
+  },
+  "slide_fields": {
+    "header_handle": {
+      "type": "text",
+      "required": true,
+      "max": 30,
+      "description": "Left header text (e.g. IG handle)."
+    },
+    "page_label": {
+      "type": "text",
+      "required": true,
+      "max": 12,
+      "description": "Right header label (e.g. 'cover')."
+    },
+    "hero_title": {
+      "type": "text",
+      "required": true,
+      "max": 18,
+      "description": "Big display title (Caveat)."
+    },
+    "hero_font_size": {
+      "type": "number",
+      "required": false,
+      "default": 150,
+      "description": "Hero font size (140-170)."
+    },
+    "hero_subtitle": {
+      "type": "text",
+      "required": true,
+      "max": 46,
+      "description": "Uppercase subtitle under hero."
+    },
+    "tagline": {
+      "type": "text",
+      "required": true,
+      "max": 60,
+      "description": "Italic banner line."
+    },
+    "icon1": {
+      "type": "text",
+      "required": false,
+      "default": "note",
+      "description": "Pipeline icon 1: note|phone|brain|search|spark|rocket."
+    },
+    "icon2": {
+      "type": "text",
+      "required": false,
+      "default": "phone",
+      "description": "Pipeline icon 2."
+    },
+    "icon3": {
+      "type": "text",
+      "required": false,
+      "default": "brain",
+      "description": "Pipeline icon 3."
+    },
+    "icon4": {
+      "type": "text",
+      "required": false,
+      "default": "search",
+      "description": "Pipeline icon 4."
+    },
+    "icon5": {
+      "type": "text",
+      "required": false,
+      "default": "spark",
+      "description": "Pipeline icon 5."
+    },
+    "icon6": {
+      "type": "text",
+      "required": false,
+      "default": "rocket",
+      "description": "Pipeline icon 6."
+    },
+    "label1": {
+      "type": "text",
+      "required": true,
+      "max": 14,
+      "description": "Pipeline label 1."
+    },
+    "label2": {
+      "type": "text",
+      "required": true,
+      "max": 14,
+      "description": "Pipeline label 2."
+    },
+    "label3": {
+      "type": "text",
+      "required": true,
+      "max": 14,
+      "description": "Pipeline label 3."
+    },
+    "label4": {
+      "type": "text",
+      "required": true,
+      "max": 14,
+      "description": "Pipeline label 4."
+    },
+    "label5": {
+      "type": "text",
+      "required": true,
+      "max": 14,
+      "description": "Pipeline label 5."
+    },
+    "label6": {
+      "type": "text",
+      "required": true,
+      "max": 14,
+      "description": "Pipeline label 6."
+    },
+    "intro_lead": {
+      "type": "text",
+      "required": true,
+      "max": 20,
+      "description": "Bold lead inside dashed intro box (purple)."
+    },
+    "intro_text": {
+      "type": "text",
+      "required": true,
+      "max": 150,
+      "description": "Intro sentence (wrapped)."
+    },
+    "toc_title": {
+      "type": "text",
+      "required": true,
+      "max": 24,
+      "description": "Table-of-contents heading."
+    },
+    "toc1": {
+      "type": "text",
+      "required": true,
+      "max": 22
+    },
+    "pg1": {
+      "type": "text",
+      "required": true,
+      "max": 8
+    },
+    "toc2": {
+      "type": "text",
+      "required": true,
+      "max": 22
+    },
+    "pg2": {
+      "type": "text",
+      "required": true,
+      "max": 8
+    },
+    "toc3": {
+      "type": "text",
+      "required": true,
+      "max": 22
+    },
+    "pg3": {
+      "type": "text",
+      "required": true,
+      "max": 8
+    },
+    "toc4": {
+      "type": "text",
+      "required": true,
+      "max": 22
+    },
+    "pg4": {
+      "type": "text",
+      "required": true,
+      "max": 8
+    },
+    "toc5": {
+      "type": "text",
+      "required": true,
+      "max": 22
+    },
+    "pg5": {
+      "type": "text",
+      "required": true,
+      "max": 8
+    },
+    "toc6": {
+      "type": "text",
+      "required": true,
+      "max": 22
+    },
+    "pg6": {
+      "type": "text",
+      "required": true,
+      "max": 8
+    },
+    "toc7": {
+      "type": "text",
+      "required": true,
+      "max": 22
+    },
+    "pg7": {
+      "type": "text",
+      "required": true,
+      "max": 8
+    },
+    "toc8": {
+      "type": "text",
+      "required": true,
+      "max": 22
+    },
+    "pg8": {
+      "type": "text",
+      "required": true,
+      "max": 8
+    },
+    "toc9": {
+      "type": "text",
+      "required": true,
+      "max": 22
+    },
+    "pg9": {
+      "type": "text",
+      "required": true,
+      "max": 8
+    }
+  }
+}

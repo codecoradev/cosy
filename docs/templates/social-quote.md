@@ -23,6 +23,8 @@
 | `quote` | text | ✅ | 280 |
 | `author` | text | ✅ | 50 |
 | `author_title` | text | — | 50 |
+| `text_color` | color | — | — |
+| `hashtag` | text | — | 40 |
 
 ## Brand Fields
 
@@ -36,6 +38,7 @@
 | `accent_color_end` | text | — | #89b4fa |
 | `bg_image` | image | — | — |
 | `bg_image_opacity` | number | — | 0.15 |
+| `bg_overlay_opacity` | number | — | 0.7 |
 | `logo` | image | — | — |
 
 ## Example JSON

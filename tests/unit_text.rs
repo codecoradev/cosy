@@ -113,7 +113,7 @@ fn test_data_uri_png_file() {
     std::fs::write(tmp.path(), png_bytes).unwrap();
 
     let path = tmp.path().to_str().unwrap();
-    let data_uri = image_to_data_uri(path);
+    let data_uri = image_to_data_uri(path, cosy::text::ImagePolicy::UNRESTRICTED);
     assert!(data_uri.is_ok());
     let uri = data_uri.unwrap();
     assert!(uri.starts_with("data:image/png;base64,"));
@@ -122,7 +122,10 @@ fn test_data_uri_png_file() {
 
 #[test]
 fn test_data_uri_nonexistent_file() {
-    let result = image_to_data_uri("/nonexistent/path/image.png");
+    let result = image_to_data_uri(
+        "/nonexistent/path/image.png",
+        cosy::text::ImagePolicy::UNRESTRICTED,
+    );
     assert!(result.is_err());
 }
 
@@ -131,7 +134,11 @@ fn test_data_uri_mime_detection_jpg() {
     // Create a dummy file with .jpg extension
     let tmp = tempfile::Builder::new().suffix(".jpg").tempfile().unwrap();
     std::fs::write(tmp.path(), b"fake jpg content").unwrap();
-    let uri = image_to_data_uri(tmp.path().to_str().unwrap()).unwrap();
+    let uri = image_to_data_uri(
+        tmp.path().to_str().unwrap(),
+        cosy::text::ImagePolicy::UNRESTRICTED,
+    )
+    .unwrap();
     assert!(uri.starts_with("data:image/jpeg;base64,"));
 }
 
@@ -139,7 +146,11 @@ fn test_data_uri_mime_detection_jpg() {
 fn test_data_uri_mime_detection_svg() {
     let tmp = tempfile::Builder::new().suffix(".svg").tempfile().unwrap();
     std::fs::write(tmp.path(), b"<svg></svg>").unwrap();
-    let uri = image_to_data_uri(tmp.path().to_str().unwrap()).unwrap();
+    let uri = image_to_data_uri(
+        tmp.path().to_str().unwrap(),
+        cosy::text::ImagePolicy::UNRESTRICTED,
+    )
+    .unwrap();
     assert!(uri.starts_with("data:image/svg+xml;base64,"));
 }
 
@@ -147,7 +158,11 @@ fn test_data_uri_mime_detection_svg() {
 fn test_data_uri_mime_detection_webp() {
     let tmp = tempfile::Builder::new().suffix(".webp").tempfile().unwrap();
     std::fs::write(tmp.path(), b"fake webp").unwrap();
-    let uri = image_to_data_uri(tmp.path().to_str().unwrap()).unwrap();
+    let uri = image_to_data_uri(
+        tmp.path().to_str().unwrap(),
+        cosy::text::ImagePolicy::UNRESTRICTED,
+    )
+    .unwrap();
     assert!(uri.starts_with("data:image/webp;base64,"));
 }
 
@@ -155,7 +170,11 @@ fn test_data_uri_mime_detection_webp() {
 fn test_data_uri_unknown_extension_defaults_png() {
     let tmp = tempfile::Builder::new().suffix(".xyz").tempfile().unwrap();
     std::fs::write(tmp.path(), b"unknown").unwrap();
-    let uri = image_to_data_uri(tmp.path().to_str().unwrap()).unwrap();
+    let uri = image_to_data_uri(
+        tmp.path().to_str().unwrap(),
+        cosy::text::ImagePolicy::UNRESTRICTED,
+    )
+    .unwrap();
     assert!(uri.starts_with("data:image/png;base64,"));
 }
 
@@ -163,7 +182,11 @@ fn test_data_uri_unknown_extension_defaults_png() {
 fn test_data_uri_no_extension_defaults_png() {
     let tmp = tempfile::NamedTempFile::new().unwrap();
     std::fs::write(tmp.path(), b"no extension").unwrap();
-    let uri = image_to_data_uri(tmp.path().to_str().unwrap()).unwrap();
+    let uri = image_to_data_uri(
+        tmp.path().to_str().unwrap(),
+        cosy::text::ImagePolicy::UNRESTRICTED,
+    )
+    .unwrap();
     assert!(uri.starts_with("data:image/png;base64,"));
 }
 
@@ -172,6 +195,10 @@ fn test_data_uri_jpeg_extension() {
     // .jpeg (not just .jpg)
     let tmp = tempfile::Builder::new().suffix(".jpeg").tempfile().unwrap();
     std::fs::write(tmp.path(), b"fake jpeg").unwrap();
-    let uri = image_to_data_uri(tmp.path().to_str().unwrap()).unwrap();
+    let uri = image_to_data_uri(
+        tmp.path().to_str().unwrap(),
+        cosy::text::ImagePolicy::UNRESTRICTED,
+    )
+    .unwrap();
     assert!(uri.starts_with("data:image/jpeg;base64,"));
 }
