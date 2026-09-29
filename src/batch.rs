@@ -209,13 +209,20 @@ fn build_row_job(
         record.insert(k.clone(), serde_json::Value::String(v.clone()));
     }
 
-    // _filename: explicit output stem (sanitized)
-    let stem = record
-        .get("_filename")
-        .and_then(|v| v.as_str())
-        .map(sanitize_filename)
-        .filter(|s| !s.is_empty() && s != "row")
-        .unwrap_or_else(|| format!("{:04}_{}", row_index, derive_slug(&record)));
+    // Stem always carries the row index: row numbers are unique per batch,
+    // so duplicate `_filename` values across rows can never silently
+    // overwrite each other (rows render in parallel — same-path concurrent
+    // writes would race).
+    let stem = format!(
+        "{:04}_{}",
+        row_index,
+        record
+            .get("_filename")
+            .and_then(|v| v.as_str())
+            .map(sanitize_filename)
+            .filter(|s| !s.is_empty() && s != "row")
+            .unwrap_or_else(|| derive_slug(&record))
+    );
 
     // _data: full JSON slide override (multi-slide capable)
     if let Some(raw) = record.get("_data").and_then(|v| v.as_str()) {
