@@ -512,3 +512,96 @@ fn test_cors_header_present() {
     let cors = resp.headers().get("access-control-allow-origin");
     assert!(cors.is_some(), "CORS header should be present");
 }
+
+// ─── Image format: WebP (image_format field) ─────────────────────────
+
+/// Verify WebP bytes: RIFF container + WEBP fourcc.
+fn assert_webp_bytes(bytes: &[u8], label: &str) {
+    assert!(
+        bytes.len() > 32,
+        "{} too small ({} bytes)",
+        label,
+        bytes.len()
+    );
+    assert_eq!(&bytes[..4], b"RIFF", "{} not a RIFF container", label);
+    assert_eq!(&bytes[8..12], b"WEBP", "{} not a WebP payload", label);
+}
+
+#[test]
+fn test_render_webp_binary_response() {
+    let url = start_server();
+    let body = serde_json::json!({
+        "template": "stat-card",
+        "image_format": "webp",
+        "scale": 1.0,
+        "data": {
+            "brand": {"brand_name": "WebP Test"},
+            "slides": [{"stat_number": "42%", "stat_label": "webp binary", "source": "test"}]
+        }
+    });
+    let resp = http_client()
+        .post(format!("{}/api/render", url))
+        .json(&body)
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 200);
+    assert_eq!(resp.headers()["content-type"], "image/webp");
+    assert_webp_bytes(&resp.bytes().unwrap(), "webp binary response");
+}
+
+#[test]
+fn test_render_webp_json_envelope() {
+    let url = start_server();
+    // image_format is orthogonal to response_format: JSON envelope can
+    // carry WebP entries.
+    let body = serde_json::json!({
+        "template": "carousel-default",
+        "response_format": "json",
+        "image_format": "webp",
+        "scale": 0.5,
+        "data": {
+            "brand": {"brand_name": "WebP JSON"},
+            "slides": [
+                {"eyebrow": "s1", "headline": "Slide One", "body": "first"},
+                {"eyebrow": "s2", "headline": "Slide Two", "body": "second"}
+            ]
+        }
+    });
+    let resp = http_client()
+        .post(format!("{}/api/render", url))
+        .json(&body)
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 200);
+    let json: serde_json::Value = resp.json().unwrap();
+    assert_eq!(json["slides"], 2);
+    for slide in json["data"].as_array().unwrap() {
+        assert_eq!(slide["image_format"], "webp");
+        let b64 = slide["png_base64"].as_str().unwrap();
+        use base64::Engine;
+        let raw = base64::engine::general_purpose::STANDARD
+            .decode(b64)
+            .unwrap();
+        assert_webp_bytes(&raw, "json envelope webp slide");
+    }
+}
+
+#[test]
+fn test_render_unknown_image_format_400() {
+    let url = start_server();
+    let body = serde_json::json!({
+        "template": "stat-card",
+        "image_format": "avif",
+        "scale": 1.0,
+        "data": {
+            "brand": {"brand_name": "Bad Format"},
+            "slides": [{"stat_number": "1%", "stat_label": "x", "source": "x"}]
+        }
+    });
+    let resp = http_client()
+        .post(format!("{}/api/render", url))
+        .json(&body)
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 422);
+}

@@ -5,10 +5,28 @@
 //! - `cosy templates`  — list available templates
 //! - `cosy validate`   — validate input data against template schema
 
-use clap::{Parser, Subcommand};
+use clap::{Parser, Subcommand, ValueEnum};
 use std::io::Read;
 use std::path::PathBuf;
 use std::process::ExitCode;
+
+/// Output container format for `cosy render`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum)]
+pub enum OutputFormatArg {
+    /// PNG (default) — lossless.
+    Png,
+    /// WebP — lossless container via the `image` crate.
+    Webp,
+}
+
+impl From<OutputFormatArg> for crate::format::OutputFormat {
+    fn from(arg: OutputFormatArg) -> Self {
+        match arg {
+            OutputFormatArg::Png => Self::Png,
+            OutputFormatArg::Webp => Self::WebP,
+        }
+    }
+}
 
 /// Cosy — Content Easy: Lightning-fast template-based image generation.
 #[derive(Parser, Debug)]
@@ -57,6 +75,10 @@ pub enum Command {
         /// Output machine-readable JSON result to stdout (logging goes to stderr).
         #[arg(long)]
         json_output: bool,
+
+        /// Output image container format (PNG default, WebP lossless).
+        #[arg(long, value_enum, default_value = "png")]
+        format: OutputFormatArg,
     },
 
     /// List available templates.
@@ -119,6 +141,7 @@ impl Cli {
                 font_dir,
                 dump_svg,
                 json_output,
+                format,
             } => {
                 // Local CLI runs are user-driven: no image-source restrictions.
                 let image_policy = crate::text::ImagePolicy::UNRESTRICTED;
@@ -193,6 +216,7 @@ impl Cli {
                     scale,
                     font_dir.as_deref(),
                     image_policy,
+                    format.into(),
                 ) {
                     Ok(result) => {
                         if json_output {
