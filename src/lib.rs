@@ -6,6 +6,7 @@
 pub mod batch;
 pub mod cli;
 pub mod format;
+pub mod highlight;
 pub mod markup;
 pub mod render;
 pub mod schema;

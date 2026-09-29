@@ -5,6 +5,19 @@ All notable changes to Cosy will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **`code-screenshot` template** — macOS editor window (traffic lights,
+  title, filename + language badge) with **real syntax highlighting**:
+  keywords (language-aware: Rust/Go/Python/TS/JS/Bash/SQL), strings,
+  numbers, and comments tokenized per line via the new `highlight`
+  module; colors on both dark (default) and light themes. 1200×675,
+  lines beyond 13 clip inside the code window. Closes #93.
+- **`code` schema option** — `options: ["code"]` on a text field emits
+  `<field>_lines` (plain) + `<field>_segments` (colored) using the
+  sibling `code_lang` field; reusable by other templates.
+
 ## [0.4.0] — 2026-09-29
 
 ### Added

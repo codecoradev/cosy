@@ -105,6 +105,54 @@ pub fn process_template(
         }
     }
 
+    // Code-highlight fields (schema options: ["code"]): emit <field>_lines
+    // (plain string lines) and <field>_segments (lines × colored segments)
+    // using the language id from the sibling `code_lang` slide field.
+    for (field_name, field_spec) in &template.slide_fields {
+        if !field_spec.options.contains(&"code".to_string()) {
+            continue;
+        }
+        if let Some(text) = slide.get(field_name).and_then(|v| v.as_str()) {
+            let lang = slide
+                .get("code_lang")
+                .and_then(|v| v.as_str())
+                .unwrap_or("");
+            let theme = slide.get("theme").and_then(|v| v.as_str()).unwrap_or("");
+            let lines = crate::highlight::highlight(text, lang, theme);
+            let plain_lines: Vec<serde_json::Value> = lines
+                .iter()
+                .map(|line| {
+                    serde_json::Value::String(
+                        line.iter().map(|s| s.text.as_str()).collect::<String>(),
+                    )
+                })
+                .collect();
+            context.insert(
+                format!("{}_lines", field_name),
+                serde_json::Value::Array(plain_lines),
+            );
+            let lines_json: Vec<serde_json::Value> = lines
+                .iter()
+                .map(|line| {
+                    serde_json::Value::Array(
+                        line.iter()
+                            .map(|seg| {
+                                serde_json::json!({
+                                    "t": seg.text,
+                                    "c": seg.color,
+                                })
+                            })
+                            .collect(),
+                    )
+                })
+                .collect();
+            context.insert(
+                format!("{}_segments", field_name),
+                serde_json::Value::Array(lines_json),
+            );
+        }
+    }
+
     // Inline markup fields (schema options: ["markup"]): emit <field>_segments
     // (lines × styled segments) when the value contains marker characters. Plain
     // values keep the legacy wrap path below, byte-for-byte.
