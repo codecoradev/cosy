@@ -17,6 +17,8 @@ pub enum OutputFormatArg {
     Png,
     /// WebP — lossless container via the `image` crate.
     Webp,
+    /// SVG — vector-native, text converted to paths (scale ignored).
+    Svg,
 }
 
 impl From<OutputFormatArg> for crate::format::OutputFormat {
@@ -24,6 +26,7 @@ impl From<OutputFormatArg> for crate::format::OutputFormat {
         match arg {
             OutputFormatArg::Png => Self::Png,
             OutputFormatArg::Webp => Self::WebP,
+            OutputFormatArg::Svg => Self::Svg,
         }
     }
 }

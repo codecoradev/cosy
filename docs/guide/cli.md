@@ -22,7 +22,7 @@ cosy render --template <TEMPLATE> --data <DATA.json> --output <OUTPUT.png>
 | `-d, --data` | path | Yes | Path to JSON input file |
 | `-o, --output` | path | Yes | Output image path (used verbatim — match the extension to `--format`) |
 | `-s, --scale` | float | No | Scale factor (default: 2.0 — retina/2x output) |
-| `--format` | enum | No | Output container: `png` (default) or `webp` |
+| `--format` | enum | No | Output container: `png` (default), `webp`, or `svg` (vector, text-to-path — `--scale` ignored) |
 | `--metadata` | string | No | JSON string echoed in the `--json-output` result (pipeline tracing) |
 | `--dataset` | path | No | CSV file: one render per row (see below) |
 | `--fail-fast` | flag | No | With `--dataset`: stop unscheduled rows after the first failure |

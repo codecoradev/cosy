@@ -550,6 +550,74 @@ fn test_render_webp_binary_response() {
 }
 
 #[test]
+fn test_render_svg_binary_response() {
+    let url = start_server();
+    let body = serde_json::json!({
+        "template": "stat-card",
+        "image_format": "svg",
+        "scale": 1.0,
+        "data": {
+            "brand": {"brand_name": "SVG Test"},
+            "slides": [{"stat_number": "31%", "stat_label": "svg binary", "source": "test"}]
+        }
+    });
+    let resp = http_client()
+        .post(format!("{}/api/render", url))
+        .json(&body)
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 200);
+    assert_eq!(resp.headers()["content-type"], "image/svg+xml");
+    let svg = resp.text().unwrap();
+    assert!(
+        svg.starts_with("<?xml") || svg.starts_with("<svg"),
+        "not an SVG document"
+    );
+    assert!(
+        !svg.contains("<text"),
+        "raw <text> found — text-to-path failed"
+    );
+    assert!(!svg.contains("font-family"), "font-family attribute leaked");
+}
+
+#[test]
+fn test_render_svg_json_envelope() {
+    let url = start_server();
+    let body = serde_json::json!({
+        "template": "carousel-default",
+        "response_format": "json",
+        "image_format": "svg",
+        "scale": 0.5,
+        "data": {
+            "brand": {"brand_name": "SVG JSON"},
+            "slides": [
+                {"eyebrow": "s1", "headline": "Slide One", "body": "first"},
+                {"eyebrow": "s2", "headline": "Slide Two", "body": "second"}
+            ]
+        }
+    });
+    let resp = http_client()
+        .post(format!("{}/api/render", url))
+        .json(&body)
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 200);
+    let json: serde_json::Value = resp.json().unwrap();
+    assert_eq!(json["slides"], 2);
+    for slide in json["data"].as_array().unwrap() {
+        assert_eq!(slide["image_format"], "svg");
+        let b64 = slide["png_base64"].as_str().unwrap();
+        use base64::Engine;
+        let raw = base64::engine::general_purpose::STANDARD
+            .decode(b64)
+            .unwrap();
+        let svg = String::from_utf8(raw).unwrap();
+        assert!(svg.starts_with("<?xml") || svg.starts_with("<svg"));
+        assert!(!svg.contains("<text"), "raw <text> found in envelope slide");
+    }
+}
+
+#[test]
 fn test_render_webp_json_envelope() {
     let url = start_server();
     // image_format is orthogonal to response_format: JSON envelope can
