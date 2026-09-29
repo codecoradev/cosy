@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **6 sosmed templates** — `tweet-screenshot`, `linkedin-text-post`,
+  `testimonial-card` (SVG star rating 0–5), `audiogram-card` (episode
+  hero + static waveform), `meme-text-card` (top/bottom captions +
+  accent frame), `sparkline-card` (polyline + gradient area fill +
+  end-dot marker). All follow the semantic-id convention. Template
+  count 158.
+
+### Fixed
+- Markup fields: the generic pre-wrap loop no longer overwrites `_lines`
+  with raw-marker wrapping (which dropped bold/italic emphasis and
+  desynced from `_segments`).
+
+### Added
 - **Semantic element ids in SVG output** — templates wrap field content
   in `<g id="f-<field>">` (+ `bg` / `brand` / `chrome`); usvg preserves
   the ids through the SVG write path so downstream consumers can target
