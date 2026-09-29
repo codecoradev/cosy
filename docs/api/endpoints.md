@@ -47,6 +47,7 @@ Renders an image from a template.
 | `slide_index` | int | No | Zero-based slide to render with the default `png` format (default: `0`) |
 | `response_format` | string | No | `"png"` (default, binary image) or `"json"` (all slides as base64 entries) |
 | `image_format` | string | No | `"png"` (default) or `"webp"` — container for the rendered bytes, independent of `response_format` |
+| `metadata` | any | No | Arbitrary JSON echoed back in the JSON envelope (pipeline tracing). Max 4 KB serialized. Binary responses log it instead |
 
 **Example:**
 
@@ -124,6 +125,22 @@ bytes instead of PNG. Works with both response formats:
 
 The binary response then has `Content-Type: image/webp`; a JSON envelope's
 per-slide `image_format` becomes `"webp"`.
+
+**Metadata example** — tag a render with a correlation ID and get it back:
+
+```json
+{
+  "template": "carousel-default",
+  "response_format": "json",
+  "metadata": {"job_id": "render-42", "source": "blog-engine"},
+  "data": { "brand": {"brand_name": "CodeCora"}, "slides": [ ... ] }
+}
+```
+
+The JSON envelope echoes `metadata` verbatim. With the default binary
+response the metadata is recorded in the server log instead (the body is
+raw image bytes). Metadata larger than 4 KB serialized is rejected with
+`413`.
 
 ### Responses
 

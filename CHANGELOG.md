@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Metadata passthrough** — optional `metadata` (any JSON value, 4 KB cap)
+  on `POST /api/render`, echoed verbatim in the JSON envelope (binary
+  responses log it instead — raw image bytes can't carry it). CLI:
+  `--metadata '<json>'` echoed in `--json-output`, fail-fast on malformed
+  JSON. Oversized metadata → 413. Closes #97.
 - **WebP output format** — `cosy render --format webp` (CLI) and
   `image_format: "webp"` on `POST /api/render`. Container choice is
   independent of `response_format`: a JSON envelope can carry PNG or WebP

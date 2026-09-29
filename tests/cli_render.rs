@@ -478,3 +478,65 @@ fn test_render_format_png_default_unchanged() {
 
     assert_valid_png(output.path());
 }
+
+#[test]
+fn test_render_metadata_json_output_echo() {
+    let output = tempfile::NamedTempFile::with_suffix(".png").unwrap();
+    let assert = Command::cargo_bin("cosy")
+        .unwrap()
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .args([
+            "render",
+            "-t",
+            "stat-card",
+            "-d",
+            "templates/stat-card/defaults.json",
+            "-o",
+            output.path().to_str().unwrap(),
+            "--scale",
+            "0.5",
+            "--json-output",
+            "--metadata",
+            r#"{"job_id": "cli-7", "lane": "nightly"}"#,
+        ])
+        .assert()
+        .success();
+
+    let stdout = String::from_utf8_lossy(&assert.get_output().stdout);
+    let parsed: serde_json::Value = serde_json::from_str(&stdout).unwrap();
+    assert_eq!(parsed["metadata"]["job_id"], "cli-7");
+    assert_eq!(parsed["metadata"]["lane"], "nightly");
+}
+
+#[test]
+fn test_render_invalid_metadata_fails_fast() {
+    let dir = tempfile::tempdir().unwrap();
+    let out_path = dir.path().join("out.png");
+    let assert = Command::cargo_bin("cosy")
+        .unwrap()
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .args([
+            "render",
+            "-t",
+            "stat-card",
+            "-d",
+            "templates/stat-card/defaults.json",
+            "-o",
+            out_path.to_str().unwrap(),
+            "--metadata",
+            "{not json",
+        ])
+        .assert()
+        .failure()
+        .code(2);
+
+    let stderr = String::from_utf8_lossy(&assert.get_output().stderr);
+    assert!(
+        stderr.contains("Invalid --metadata JSON"),
+        "expected fail-fast metadata error, got: {stderr}"
+    );
+    assert!(
+        !out_path.exists(),
+        "no render output may exist when metadata is malformed"
+    );
+}

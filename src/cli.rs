@@ -79,6 +79,11 @@ pub enum Command {
         /// Output image container format (PNG default, WebP lossless).
         #[arg(long, value_enum, default_value = "png")]
         format: OutputFormatArg,
+
+        /// Optional metadata JSON string echoed in the --json-output result
+        /// (pipeline tracing / correlation IDs).
+        #[arg(long)]
+        metadata: Option<String>,
     },
 
     /// List available templates.
@@ -142,6 +147,7 @@ impl Cli {
                 dump_svg,
                 json_output,
                 format,
+                metadata,
             } => {
                 // Local CLI runs are user-driven: no image-source restrictions.
                 let image_policy = crate::text::ImagePolicy::UNRESTRICTED;
@@ -209,6 +215,19 @@ impl Cli {
                     return dump_processed_svg(&template, &resolved_data);
                 }
 
+                // Parse optional metadata JSON up front so malformed input
+                // fails fast, before any rendering work.
+                let parsed_metadata = match &metadata {
+                    Some(s) => match serde_json::from_str::<serde_json::Value>(s) {
+                        Ok(v) => Some(v),
+                        Err(e) => {
+                            eprintln!("✗ Invalid --metadata JSON: {e}");
+                            return Ok(ExitCode::from(2));
+                        }
+                    },
+                    None => None,
+                };
+
                 match crate::render::render_template(
                     &template,
                     &resolved_data,
@@ -220,9 +239,13 @@ impl Cli {
                 ) {
                     Ok(result) => {
                         if json_output {
-                            // Machine-readable output to stdout
-                            let json_out = serde_json::to_string_pretty(&result)?;
-                            println!("{}", json_out);
+                            // Machine-readable output to stdout, with the
+                            // caller's metadata echoed when provided.
+                            let mut json_out = serde_json::to_value(&result)?;
+                            if let Some(meta) = parsed_metadata {
+                                json_out["metadata"] = meta;
+                            }
+                            println!("{}", serde_json::to_string_pretty(&json_out)?);
                         }
                         Ok(ExitCode::SUCCESS)
                     }

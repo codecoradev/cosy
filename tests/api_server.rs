@@ -605,3 +605,101 @@ fn test_render_unknown_image_format_400() {
         .unwrap();
     assert_eq!(resp.status(), 422);
 }
+
+// ─── Metadata passthrough ────────────────────────────────────────────
+
+#[test]
+fn test_metadata_echoed_in_json_envelope() {
+    let url = start_server();
+    let body = serde_json::json!({
+        "template": "carousel-default",
+        "response_format": "json",
+        "scale": 0.5,
+        "metadata": {"job_id": "render-42", "source": "blog-engine"},
+        "data": {
+            "brand": {"brand_name": "Meta Test"},
+            "slides": [
+                {"eyebrow": "s1", "headline": "Slide One", "body": "first"},
+                {"eyebrow": "s2", "headline": "Slide Two", "body": "second"}
+            ]
+        }
+    });
+    let resp = http_client()
+        .post(format!("{}/api/render", url))
+        .json(&body)
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 200);
+    let json: serde_json::Value = resp.json().unwrap();
+    assert_eq!(json["metadata"]["job_id"], "render-42");
+    assert_eq!(json["metadata"]["source"], "blog-engine");
+}
+
+#[test]
+fn test_metadata_absent_by_default() {
+    let url = start_server();
+    let body = serde_json::json!({
+        "template": "carousel-default",
+        "response_format": "json",
+        "scale": 0.5,
+        "data": {
+            "brand": {"brand_name": "No Meta"},
+            "slides": [{"eyebrow": "s1", "headline": "One", "body": "x"}]
+        }
+    });
+    let resp = http_client()
+        .post(format!("{}/api/render", url))
+        .json(&body)
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 200);
+    let json: serde_json::Value = resp.json().unwrap();
+    assert!(
+        json.get("metadata").is_none(),
+        "metadata must be absent when not provided"
+    );
+}
+
+#[test]
+fn test_metadata_too_large_413() {
+    let url = start_server();
+    let big_string = "x".repeat(5000);
+    let body = serde_json::json!({
+        "template": "stat-card",
+        "scale": 0.5,
+        "metadata": big_string,
+        "data": {
+            "brand": {"brand_name": "Big Meta"},
+            "slides": [{"stat_number": "1%", "stat_label": "x", "source": "x"}]
+        }
+    });
+    let resp = http_client()
+        .post(format!("{}/api/render", url))
+        .json(&body)
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 413);
+}
+
+#[test]
+fn test_metadata_binary_response_still_ok() {
+    // Binary responses can't carry metadata in the body, but providing it
+    // must not fail the render.
+    let url = start_server();
+    let body = serde_json::json!({
+        "template": "stat-card",
+        "scale": 0.5,
+        "metadata": {"note": "binary mode"},
+        "data": {
+            "brand": {"brand_name": "Bin Meta"},
+            "slides": [{"stat_number": "5%", "stat_label": "x", "source": "x"}]
+        }
+    });
+    let resp = http_client()
+        .post(format!("{}/api/render", url))
+        .json(&body)
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 200);
+    assert_eq!(resp.headers()["content-type"], "image/png");
+}

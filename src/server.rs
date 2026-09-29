@@ -55,7 +55,16 @@ pub struct RenderRequest {
     /// envelope can carry PNG or WebP entries.
     #[serde(default)]
     pub image_format: Option<ImageFormatArg>,
+    /// Arbitrary caller metadata echoed back in the JSON envelope
+    /// (pipeline tracing / correlation IDs). Any JSON value, capped at
+    /// [`MAX_METADATA_BYTES`] when serialized. Binary responses cannot
+    /// carry it (the body is raw image bytes) — it is logged instead.
+    #[serde(default)]
+    pub metadata: Option<serde_json::Value>,
 }
+
+/// Maximum serialized size of the optional `metadata` field.
+pub const MAX_METADATA_BYTES: usize = 4096;
 
 /// Image container format for POST /api/render (`image_format` field).
 #[derive(Debug, Clone, Copy, Deserialize, PartialEq, Eq)]
@@ -110,6 +119,9 @@ pub struct RenderResponse {
     pub width: u32,
     pub height: u32,
     pub data: Vec<RenderedSlide>,
+    /// Caller metadata echoed verbatim (absent when not provided).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub metadata: Option<serde_json::Value>,
 }
 
 /// Response for GET /api/health.
@@ -259,6 +271,30 @@ async fn render_handler(
         format
     );
 
+    // Metadata passthrough: size-cap so callers can't smuggle unbounded
+    // payloads through the echo field.
+    if let Some(meta) = &req.metadata {
+        let serialized = match serde_json::to_string(meta) {
+            Ok(s) => s,
+            Err(e) => {
+                return error_response(
+                    StatusCode::BAD_REQUEST,
+                    format!("metadata is not valid JSON: {e}"),
+                );
+            }
+        };
+        if serialized.len() > MAX_METADATA_BYTES {
+            return error_response(
+                StatusCode::PAYLOAD_TOO_LARGE,
+                format!(
+                    "metadata too large: {} bytes (max {})",
+                    serialized.len(),
+                    MAX_METADATA_BYTES
+                ),
+            );
+        }
+    }
+
     if req.data.slides.is_empty() {
         return error_response(
             StatusCode::BAD_REQUEST,
@@ -337,6 +373,9 @@ async fn render_handler(
         Ok(Ok(rendered)) => match format {
             ResponseFormat::Png => {
                 let (_, image_bytes) = rendered.into_iter().next().expect("one slide rendered");
+                if let Some(meta) = &req.metadata {
+                    log::info!("Render metadata: {meta}");
+                }
                 log::info!(
                     "Rendered {} bytes of {}",
                     image_bytes.len(),
@@ -370,6 +409,7 @@ async fn render_handler(
                         width: (dims.width as f32 * scale) as u32,
                         height: (dims.height as f32 * scale) as u32,
                         data: slides_json,
+                        metadata: req.metadata,
                     }),
                 )
                     .into_response()
