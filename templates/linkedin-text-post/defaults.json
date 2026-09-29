@@ -1,0 +1,21 @@
+{
+  "brand": {
+    "brand_name": "ajianaz",
+    "brand_handle": "@ajianaz",
+    "bg_color": "#1e1e2e",
+    "bg_color_end": "#11111b",
+    "accent_color": "#cba6f7",
+    "accent_color_end": "#89b4fa",
+    "show_brand": false
+  },
+  "slides": [
+    {
+      "display_name": "ajianaz",
+      "headline": "Building Cosy — template-based image generation",
+      "body": "Unpopular opinion: design systems are not about colors and fonts.\n\nThey are about *decisions you never have to make again*.\n\nEvery template in Cosy encodes hundreds of them: spacing, hierarchy, contrast, wrap behavior. That is the actual product.",
+      "timestamp": "1h",
+      "reactions": "214",
+      "comments": "38"
+    }
+  ]
+}
