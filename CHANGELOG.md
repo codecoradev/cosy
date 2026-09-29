@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Semantic element ids in SVG output** — templates wrap field content
+  in `<g id="f-<field>">` (+ `bg` / `brand` / `chrome`); usvg preserves
+  the ids through the SVG write path so downstream consumers can target
+  individual elements. First batch: `og-image`, `code-screenshot`.
+  Convention now required for new templates (documented in the
+  authoring guide). Raster output unchanged (md5-identical on defaults).
+  Closes #117.
 - **`code-screenshot` template** — macOS editor window (traffic lights,
   title, filename + language badge) with **real syntax highlighting**:
   keywords (language-aware: Rust/Go/Python/TS/JS/Bash/SQL), strings,
