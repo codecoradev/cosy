@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350" viewBox="0 0 1080 1350">
+  <defs>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="{{ brand.bg_color | default('#1e1e2e') }}"/>
+      <stop offset="100%" stop-color="{{ brand.bg_color_end | default('#11111b') }}"/>
+    </linearGradient>
+    <linearGradient id="acc-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color_end | default('#89b4fa') }}"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="70%" cy="20%" r="55%">
+      <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <circle cx="20" cy="20" r="1.5" fill="#ffffff" opacity="0.05"/>
+    </pattern>
+    <clipPath id="body-clip"><rect x="100" y="360" width="880" height="760"/></clipPath>
+  </defs>
+
+  {% if bg_image_data_uri %}
+  <image href="{{ bg_image_data_uri }}" width="1080" height="1350" preserveAspectRatio="xMidYMid slice" opacity="{{ brand.bg_image_opacity | default(0.15) }}"/>
+  {% endif %}
+  <g id="bg">
+  <rect width="1080" height="1350" fill="url(#bg-grad)" opacity="{% if bg_image_data_uri %}{{ brand.bg_overlay_opacity | default(0.7) }}{% else %}1.0{% endif %}"/>
+  <rect width="1080" height="1350" fill="url(#glow)"/>
+  <rect width="1080" height="1350" fill="url(#dots)"/>
+  </g>
+
+  {# Post card #}
+  <rect x="60" y="90" width="960" height="1170" rx="24" fill="#181825" opacity="0.94"/>
+
+  {# Header: avatar + name + headline #}
+  <g id="chrome">
+  <circle cx="150" cy="190" r="44" fill="url(#acc-grad)"/>
+  {% set initial = slide.display_name | default('?') | list | first | upper %}
+  <text x="150" y="203" text-anchor="middle" font-family="Inter,sans-serif" font-size="40" font-weight="800" fill="#1e1e2e">{{ initial }}</text>
+  </g>
+  <g id="f-display_name">
+  <text x="220" y="182" font-family="Inter,sans-serif" font-size="29" font-weight="700" fill="#cdd6f4">{{ slide.display_name }}</text>
+  </g>
+  <g id="f-headline">
+  <text x="220" y="218" font-family="Inter,sans-serif" font-size="21" fill="#7f849c">{{ slide.headline }}</text>
+  </g>
+
+  {# Body: markup-aware wrapped text, up to 16 lines in the clip window #}
+  {% set body_lines = body_lines %}
+  {% set seg_lines = body_segments %}
+  <g id="f-body" clip-path="url(#body-clip)" font-family="Inter,sans-serif" font-size="28" fill="#b6c0d4">
+    {% set max_lines = body_lines | length %}
+    {% set ns = namespace(y = 405) %}
+    {% for i in range(16) %}
+      {% if i < max_lines %}
+        {% set plain_line = body_lines[i] %}
+        {% if plain_line | length > 0 %}
+          {% if seg_lines is defined and seg_lines | length > i %}
+            {% set seg_line = seg_lines[i] %}
+            <text x="100" y="{{ ns.y }}">{% for seg in seg_line %}{% if seg.b %}<tspan font-weight="800" fill="#cdd6f4">{% if seg.c %}<tspan fill="{{ seg.c }}">{{ seg.t }}</tspan>{% else %}{{ seg.t }}{% endif %}</tspan>{% elif seg.i %}<tspan font-style="italic">{{ seg.t }}</tspan>{% elif seg.c %}<tspan fill="{{ seg.c }}">{{ seg.t }}</tspan>{% else %}{{ seg.t }}{% endif %}{% endfor %}</text>
+          {% else %}
+            <text x="100" y="{{ ns.y }}">{{ plain_line }}</text>
+          {% endif %}
+          {% set ns.y = ns.y + 45 %}
+        {% else %}
+          {% set ns.y = ns.y + 30 %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  </g>
+
+  {# Timestamp #}
+  <g id="f-timestamp">
+  <text x="100" y="1150" font-family="Inter,sans-serif" font-size="21" fill="#7f849c">{{ slide.timestamp | default('') }}</text>
+  <line x1="100" y1="1175" x2="980" y2="1175" stroke="#313244" stroke-width="2"/>
+  </g>
+
+  {# Engagement row: reaction + comment icons as inline SVG shapes #}
+  <g id="f-reactions">
+  <g transform="translate(100, 1205)" fill="none" stroke="#7f849c" stroke-width="2.4">
+    <circle cx="12" cy="12" r="10"/>
+    <path d="M8 13 L11 16 L17 9" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="134" y="1224" font-family="Inter,sans-serif" font-size="23" fill="#a6adc8">{{ slide.reactions | default('') }}</text>
+  </g>
+  <g id="f-comments">
+  <g transform="translate(430, 1205)" fill="none" stroke="#7f849c" stroke-width="2.4">
+    <path d="M3 3 L25 3 L25 19 L15 19 L8 25 L8 19 L3 19 Z" stroke-linejoin="round"/>
+  </g>
+  <text x="466" y="1224" font-family="Inter,sans-serif" font-size="23" fill="#a6adc8">{{ slide.comments | default('') }}</text>
+  </g>
+
+  {# Accent underline #}
+  <g id="brand">
+  <rect x="60" y="1258" width="960" height="4" rx="2" fill="url(#acc-grad)" opacity="0.85"/>
+
+  {% if brand.show_brand %}
+  <text x="540" y="1318" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}{% if brand.brand_handle %} · {{ brand.brand_handle }}{% endif %}</text>
+  {% endif %}
+  </g>
+</svg>

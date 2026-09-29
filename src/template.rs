@@ -166,6 +166,21 @@ pub fn process_template(
             }
             let wrap = field_spec.wrap_width.or(field_spec.max).unwrap_or(60);
             let lines = crate::markup::wrap_segments(text, wrap);
+            // Plain line texts for the wrapped markup content (markers
+            // resolved) — the generic pre-wrap loop below must not overwrite
+            // them with raw-marker wrapping.
+            let plain_lines: Vec<serde_json::Value> = lines
+                .iter()
+                .map(|line| {
+                    serde_json::Value::String(
+                        line.iter().map(|s| s.text.as_str()).collect::<String>(),
+                    )
+                })
+                .collect();
+            context.insert(
+                format!("{}_lines", field_name),
+                serde_json::Value::Array(plain_lines),
+            );
             let lines_json: Vec<serde_json::Value> = lines
                 .iter()
                 .map(|line| {
@@ -193,6 +208,12 @@ pub fn process_template(
     // Pre-wrap text fields that have a max chars limit
     for (field_name, field_spec) in &template.slide_fields {
         if field_spec.field_type == FieldType::Text {
+            // Markup fields already emitted marker-resolved `_lines` from
+            // wrap_segments above; re-wrapping here would resurrect the raw
+            // markers and desync from `_segments`.
+            if field_spec.options.contains(&"markup".to_string()) {
+                continue;
+            }
             // Use wrap_width for visual line breaking, fallback to max
             let wrap = field_spec.wrap_width.or(field_spec.max);
             if let Some(wrap_chars) = wrap {
