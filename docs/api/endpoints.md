@@ -46,7 +46,7 @@ Renders an image from a template.
 | `scale` | float | No | Scale factor (default: `1.0`) |
 | `slide_index` | int | No | Zero-based slide to render with the default `png` format (default: `0`) |
 | `response_format` | string | No | `"png"` (default, binary image) or `"json"` (all slides as base64 entries) |
-| `image_format` | string | No | `"png"` (default) or `"webp"` — container for the rendered bytes, independent of `response_format` |
+| `image_format` | string | No | `"png"` (default), `"webp"`, or `"svg"` — container for the rendered bytes, independent of `response_format` |
 | `metadata` | any | No | Arbitrary JSON echoed back in the JSON envelope (pipeline tracing). Max 4 KB serialized. Binary responses log it instead |
 
 **Example:**
@@ -125,6 +125,18 @@ bytes instead of PNG. Works with both response formats:
 
 The binary response then has `Content-Type: image/webp`; a JSON envelope's
 per-slide `image_format` becomes `"webp"`.
+
+**SVG output** — request `image_format: "svg"` (or `--format svg` on the
+CLI) to receive a vector-native document instead of a raster image:
+
+- Text is **converted to paths** during serialization, so the output is
+  fully self-contained — it renders identically anywhere, with no font
+  dependencies (the same glyphs the PNG path draws, embedded as outlines).
+- `scale` is a raster concept and is ignored: the SVG canvas equals the
+  template's base dimensions.
+- Content-Type: `image/svg+xml`. Works in both response formats; in the
+  JSON envelope the per-slide entries are base64-encoded SVG documents
+  (field name remains `png_base64` for compatibility).
 
 **Metadata example** — tag a render with a correlation ID and get it back:
 

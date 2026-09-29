@@ -1,0 +1,52 @@
+name: Template request
+description: Request a new image template for Cosy
+labels: ["template-request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the request! Check the [template gallery](https://cosy-docs-4f5.pages.dev/templates/) first — 150+ templates exist and yours may already be covered.
+  - type: input
+    id: template-name
+    attributes:
+      label: Template name / concept
+      description: A short name and one-line concept (e.g. "tournament-bracket — esports match results card")
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Target platform
+      description: Where will the rendered image be posted?
+      options:
+        - Instagram / Threads (1080×1350)
+        - X / Twitter (1200×675)
+        - LinkedIn (1200×627)
+        - YouTube thumbnail (1280×720)
+        - OG image (1200×630)
+        - Story / TikTok (1080×1920)
+        - Square 1:1 (1080×1080)
+        - Other / not sure
+    validations:
+      required: true
+  - type: textarea
+    id: content-fields
+    attributes:
+      label: What content goes on the card?
+      description: List the fields a user would fill in (title, author, stats, code snippet, …)
+    validations:
+      required: true
+  - type: textarea
+    id: reference
+    attributes:
+      label: Reference / example
+      description: Link a post, tool, or screenshot showing the pattern you mean
+    validations:
+      required: false
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I searched the template gallery and this pattern does not exist
+          required: true
