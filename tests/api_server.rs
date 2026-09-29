@@ -25,7 +25,13 @@ fn start_server_with_key(api_key: Option<String>) -> String {
 
     thread::spawn(move || {
         let runtime = tokio::runtime::Runtime::new().unwrap();
-        runtime.block_on(server::run(port, api_key)).unwrap();
+        runtime
+            .block_on(server::run(
+                port,
+                api_key,
+                cosy::text::ImagePolicy::UNRESTRICTED,
+            ))
+            .unwrap();
     });
 
     // Wait for server to be ready (poll health endpoint)
@@ -216,6 +222,114 @@ fn test_render_default_scale() {
 }
 
 #[test]
+fn test_render_json_multi_slide() {
+    let url = start_server();
+    // response_format=json renders ALL slides and returns a JSON envelope
+    let body = serde_json::json!({
+        "template": "carousel-default",
+        "response_format": "json",
+        "scale": 0.5,
+        "data": {
+            "brand": {"brand_name": "Multi Test"},
+            "slides": [
+                {"eyebrow": "s1", "headline": "Slide One", "body": "first"},
+                {"eyebrow": "s2", "headline": "Slide Two", "body": "second"},
+                {"eyebrow": "s3", "headline": "Slide Three", "body": "third"}
+            ]
+        }
+    });
+    let resp = http_client()
+        .post(format!("{}/api/render", url))
+        .json(&body)
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 200);
+    let json: serde_json::Value = resp.json().unwrap();
+    assert_eq!(json["template"], "carousel-default");
+    assert_eq!(json["slides"], 3);
+    assert_eq!(json["data"].as_array().unwrap().len(), 3);
+    for (i, slide) in json["data"].as_array().unwrap().iter().enumerate() {
+        assert_eq!(slide["index"], i);
+        let b64 = slide["png_base64"].as_str().unwrap();
+        assert!(b64.len() > 1000, "slide {} png should be substantial", i);
+    }
+    // Slide dimensions: 1080x1350 at 0.5 scale = 540x675
+    assert_eq!(json["width"], 540);
+    assert_eq!(json["height"], 675);
+}
+
+#[test]
+fn test_render_slide_index_png() {
+    let url = start_server();
+    // slide_index picks a specific slide with png format (default)
+    let body = serde_json::json!({
+        "template": "carousel-default",
+        "slide_index": 1,
+        "scale": 0.5,
+        "data": {
+            "brand": {"brand_name": "Index Test"},
+            "slides": [
+                {"eyebrow": "s1", "headline": "Slide One", "body": "first"},
+                {"eyebrow": "s2", "headline": "Slide Two", "body": "second"}
+            ]
+        }
+    });
+    let resp = http_client()
+        .post(format!("{}/api/render", url))
+        .json(&body)
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 200);
+    assert_eq!(resp.headers()["content-type"], "image/png");
+    let bytes = resp.bytes().unwrap();
+    assert_eq!(&bytes[..8], b"\x89PNG\r\n\x1a\n");
+}
+
+#[test]
+fn test_render_slide_index_out_of_range() {
+    let url = start_server();
+    let body = serde_json::json!({
+        "template": "carousel-default",
+        "slide_index": 5,
+        "scale": 0.5,
+        "data": {
+            "brand": {"brand_name": "Range Test"},
+            "slides": [
+                {"eyebrow": "s1", "headline": "Only", "body": "one"}
+            ]
+        }
+    });
+    let resp = http_client()
+        .post(format!("{}/api/render", url))
+        .json(&body)
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 400);
+    let json: serde_json::Value = resp.json().unwrap();
+    assert!(json["error"].as_str().unwrap().contains("out of range"));
+}
+
+#[test]
+fn test_render_empty_slides_rejected() {
+    let url = start_server();
+    let body = serde_json::json!({
+        "template": "carousel-default",
+        "data": {"brand": {"brand_name": "Empty"}, "slides": []}
+    });
+    let resp = http_client()
+        .post(format!("{}/api/render", url))
+        .json(&body)
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 400);
+    let json: serde_json::Value = resp.json().unwrap();
+    assert!(json["error"]
+        .as_str()
+        .unwrap()
+        .contains("at least one slide"));
+}
+
+#[test]
 fn test_render_nonexistent_template() {
     let url = start_server();
     let body = serde_json::json!({
@@ -397,4 +511,300 @@ fn test_cors_header_present() {
     // tower-http CorsLayer should add access-control-allow-origin
     let cors = resp.headers().get("access-control-allow-origin");
     assert!(cors.is_some(), "CORS header should be present");
+}
+
+// ─── Image format: WebP (image_format field) ─────────────────────────
+
+/// Verify WebP bytes: RIFF container + WEBP fourcc.
+fn assert_webp_bytes(bytes: &[u8], label: &str) {
+    assert!(
+        bytes.len() > 32,
+        "{} too small ({} bytes)",
+        label,
+        bytes.len()
+    );
+    assert_eq!(&bytes[..4], b"RIFF", "{} not a RIFF container", label);
+    assert_eq!(&bytes[8..12], b"WEBP", "{} not a WebP payload", label);
+}
+
+#[test]
+fn test_render_webp_binary_response() {
+    let url = start_server();
+    let body = serde_json::json!({
+        "template": "stat-card",
+        "image_format": "webp",
+        "scale": 1.0,
+        "data": {
+            "brand": {"brand_name": "WebP Test"},
+            "slides": [{"stat_number": "42%", "stat_label": "webp binary", "source": "test"}]
+        }
+    });
+    let resp = http_client()
+        .post(format!("{}/api/render", url))
+        .json(&body)
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 200);
+    assert_eq!(resp.headers()["content-type"], "image/webp");
+    assert_webp_bytes(&resp.bytes().unwrap(), "webp binary response");
+}
+
+#[test]
+fn test_render_webp_json_envelope() {
+    let url = start_server();
+    // image_format is orthogonal to response_format: JSON envelope can
+    // carry WebP entries.
+    let body = serde_json::json!({
+        "template": "carousel-default",
+        "response_format": "json",
+        "image_format": "webp",
+        "scale": 0.5,
+        "data": {
+            "brand": {"brand_name": "WebP JSON"},
+            "slides": [
+                {"eyebrow": "s1", "headline": "Slide One", "body": "first"},
+                {"eyebrow": "s2", "headline": "Slide Two", "body": "second"}
+            ]
+        }
+    });
+    let resp = http_client()
+        .post(format!("{}/api/render", url))
+        .json(&body)
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 200);
+    let json: serde_json::Value = resp.json().unwrap();
+    assert_eq!(json["slides"], 2);
+    for slide in json["data"].as_array().unwrap() {
+        assert_eq!(slide["image_format"], "webp");
+        let b64 = slide["png_base64"].as_str().unwrap();
+        use base64::Engine;
+        let raw = base64::engine::general_purpose::STANDARD
+            .decode(b64)
+            .unwrap();
+        assert_webp_bytes(&raw, "json envelope webp slide");
+    }
+}
+
+#[test]
+fn test_render_unknown_image_format_400() {
+    let url = start_server();
+    let body = serde_json::json!({
+        "template": "stat-card",
+        "image_format": "avif",
+        "scale": 1.0,
+        "data": {
+            "brand": {"brand_name": "Bad Format"},
+            "slides": [{"stat_number": "1%", "stat_label": "x", "source": "x"}]
+        }
+    });
+    let resp = http_client()
+        .post(format!("{}/api/render", url))
+        .json(&body)
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 422);
+}
+
+// ─── Metadata passthrough ────────────────────────────────────────────
+
+#[test]
+fn test_metadata_echoed_in_json_envelope() {
+    let url = start_server();
+    let body = serde_json::json!({
+        "template": "carousel-default",
+        "response_format": "json",
+        "scale": 0.5,
+        "metadata": {"job_id": "render-42", "source": "blog-engine"},
+        "data": {
+            "brand": {"brand_name": "Meta Test"},
+            "slides": [
+                {"eyebrow": "s1", "headline": "Slide One", "body": "first"},
+                {"eyebrow": "s2", "headline": "Slide Two", "body": "second"}
+            ]
+        }
+    });
+    let resp = http_client()
+        .post(format!("{}/api/render", url))
+        .json(&body)
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 200);
+    let json: serde_json::Value = resp.json().unwrap();
+    assert_eq!(json["metadata"]["job_id"], "render-42");
+    assert_eq!(json["metadata"]["source"], "blog-engine");
+}
+
+#[test]
+fn test_metadata_absent_by_default() {
+    let url = start_server();
+    let body = serde_json::json!({
+        "template": "carousel-default",
+        "response_format": "json",
+        "scale": 0.5,
+        "data": {
+            "brand": {"brand_name": "No Meta"},
+            "slides": [{"eyebrow": "s1", "headline": "One", "body": "x"}]
+        }
+    });
+    let resp = http_client()
+        .post(format!("{}/api/render", url))
+        .json(&body)
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 200);
+    let json: serde_json::Value = resp.json().unwrap();
+    assert!(
+        json.get("metadata").is_none(),
+        "metadata must be absent when not provided"
+    );
+}
+
+#[test]
+fn test_metadata_too_large_413() {
+    let url = start_server();
+    let big_string = "x".repeat(5000);
+    let body = serde_json::json!({
+        "template": "stat-card",
+        "scale": 0.5,
+        "metadata": big_string,
+        "data": {
+            "brand": {"brand_name": "Big Meta"},
+            "slides": [{"stat_number": "1%", "stat_label": "x", "source": "x"}]
+        }
+    });
+    let resp = http_client()
+        .post(format!("{}/api/render", url))
+        .json(&body)
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 413);
+}
+
+#[test]
+fn test_metadata_binary_response_still_ok() {
+    // Binary responses can't carry metadata in the body, but providing it
+    // must not fail the render.
+    let url = start_server();
+    let body = serde_json::json!({
+        "template": "stat-card",
+        "scale": 0.5,
+        "metadata": {"note": "binary mode"},
+        "data": {
+            "brand": {"brand_name": "Bin Meta"},
+            "slides": [{"stat_number": "5%", "stat_label": "x", "source": "x"}]
+        }
+    });
+    let resp = http_client()
+        .post(format!("{}/api/render", url))
+        .json(&body)
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 200);
+    assert_eq!(resp.headers()["content-type"], "image/png");
+}
+
+// ─── GET /r/:template — signed render URLs ───────────────────────────
+
+fn make_signed_url(base: &str, key: &str, template: &str, data_json: &str, ext: &str) -> String {
+    server::signed_get_url(base, key, template, data_json, ext)
+}
+
+#[test]
+fn test_signed_get_renders_png() {
+    let key = "signkey-1".to_string();
+    let url = start_server_with_key(Some(key.clone()));
+    let data = r#"{"brand":{"brand_name":"OG Test"},"slides":[{"stat_number":"88%","stat_label":"og image","source":"blog"}]}"#;
+    let signed = make_signed_url(&url, &key, "stat-card", data, "png");
+
+    let resp = http_client().get(&signed).send().unwrap();
+    assert_eq!(resp.status(), 200);
+    assert_eq!(resp.headers()["content-type"], "image/png");
+    assert_eq!(resp.headers()["cache-control"], "public, max-age=3600");
+    let bytes = resp.bytes().unwrap();
+    assert_eq!(&bytes[..8], b"\x89PNG\r\n\x1a\n");
+}
+
+#[test]
+fn test_signed_get_webp_extension() {
+    let key = "signkey-2".to_string();
+    let url = start_server_with_key(Some(key.clone()));
+    let data = r#"{"brand":{"brand_name":"OG Test"},"slides":[{"stat_number":"7%","stat_label":"webp og","source":"blog"}]}"#;
+    let signed = make_signed_url(&url, &key, "stat-card", data, "webp");
+
+    let resp = http_client().get(&signed).send().unwrap();
+    assert_eq!(resp.status(), 200);
+    assert_eq!(resp.headers()["content-type"], "image/webp");
+    assert_webp_bytes(&resp.bytes().unwrap(), "signed GET webp");
+}
+
+#[test]
+fn test_signed_get_invalid_signature_403() {
+    let key = "signkey-3".to_string();
+    let url = start_server_with_key(Some(key.clone()));
+    let signed = make_signed_url(
+        &url,
+        &key,
+        "stat-card",
+        r#"{"brand":{},"slides":[]}"#,
+        "png",
+    );
+    let tampered = signed.replace(&signed[signed.find("sig=").unwrap() + 4..], &"0".repeat(64));
+
+    let resp = http_client().get(&tampered).send().unwrap();
+    assert_eq!(resp.status(), 403);
+}
+
+#[test]
+fn test_signed_get_signature_bound_to_template() {
+    // A valid signature for template A must not authorize template B.
+    let key = "signkey-4".to_string();
+    let url = start_server_with_key(Some(key.clone()));
+    let data = r#"{"brand":{"brand_name":"X"},"slides":[{"stat_number":"1%","stat_label":"x","source":"x"}]}"#;
+    let signed_for_stat = make_signed_url(&url, &key, "stat-card", data, "png");
+    // Transplant d+sig onto a different template path.
+    let transplanted = signed_for_stat.replacen("stat-card", "og-image", 1);
+
+    let resp = http_client().get(&transplanted).send().unwrap();
+    assert_eq!(resp.status(), 403);
+}
+
+#[test]
+fn test_signed_get_disabled_without_key() {
+    // No API key → dev mode → signed route must be disabled (404).
+    let url = start_server();
+    let signed = make_signed_url(
+        &url,
+        "anykey",
+        "stat-card",
+        r#"{"brand":{},"slides":[]}"#,
+        "png",
+    );
+    let resp = http_client().get(&signed).send().unwrap();
+    assert_eq!(resp.status(), 404);
+}
+
+#[test]
+fn test_signed_get_unknown_template_400() {
+    let key = "signkey-5".to_string();
+    let url = start_server_with_key(Some(key.clone()));
+    let data = r#"{"brand":{},"slides":[]}"#;
+    let signed = make_signed_url(&url, &key, "no-such-template", data, "png");
+    let resp = http_client().get(&signed).send().unwrap();
+    assert_eq!(resp.status(), 400);
+}
+
+#[test]
+fn test_signed_get_bad_extension_400() {
+    let key = "signkey-6".to_string();
+    let url = start_server_with_key(Some(key.clone()));
+    let signed = make_signed_url(
+        &url,
+        &key,
+        "stat-card",
+        r#"{"brand":{},"slides":[]}"#,
+        "jpg",
+    );
+    let resp = http_client().get(&signed).send().unwrap();
+    assert_eq!(resp.status(), 400);
 }

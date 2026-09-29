@@ -3,6 +3,7 @@
 
 use cosy::schema::{FieldType, InputData, TemplateDef};
 use cosy::template;
+use cosy::text;
 use std::path::Path;
 
 // ─── find_template_dir_for ──────────────────────────────────────────
@@ -279,7 +280,8 @@ fn test_process_template_produces_svg() {
     let brand = serde_json::json!({"brand_name": "CodeCora"});
     let slide = serde_json::json!({"stat_number": "42%", "stat_label": "test", "source": "src"});
 
-    let svg = template::process_template(&tmpl, &dir, &brand, &slide);
+    let svg =
+        template::process_template(&tmpl, &dir, &brand, &slide, text::ImagePolicy::UNRESTRICTED);
     assert!(svg.is_ok());
     let content = svg.unwrap();
     assert!(content.contains("<svg"));
@@ -305,7 +307,8 @@ fn test_process_template_empty_logo_does_not_set_data_uri() {
     });
     let slide = serde_json::json!({"stat_number": "1%", "stat_label": "x", "source": "y"});
 
-    let svg = template::process_template(&tmpl, &dir, &brand, &slide);
+    let svg =
+        template::process_template(&tmpl, &dir, &brand, &slide, text::ImagePolicy::UNRESTRICTED);
     assert!(svg.is_ok(), "Empty logo should not cause error");
     let content = svg.unwrap();
     // logo_data_uri should NOT appear in output since logo is empty
@@ -325,7 +328,8 @@ fn test_process_template_empty_bg_image_does_not_set_data_uri() {
     });
     let slide = serde_json::json!({"stat_number": "2%", "stat_label": "x", "source": "y"});
 
-    let svg = template::process_template(&tmpl, &dir, &brand, &slide);
+    let svg =
+        template::process_template(&tmpl, &dir, &brand, &slide, text::ImagePolicy::UNRESTRICTED);
     assert!(svg.is_ok(), "Empty bg_image should not cause error");
     let content = svg.unwrap();
     assert!(
@@ -345,7 +349,7 @@ fn test_process_template_non_empty_logo_sets_data_uri() {
     let logo_str = logo_path.to_str().unwrap().to_string();
 
     // First verify image_to_data_uri works with this path
-    let data_uri = cosy::text::image_to_data_uri(&logo_str);
+    let data_uri = cosy::text::image_to_data_uri(&logo_str, cosy::text::ImagePolicy::UNRESTRICTED);
     assert!(data_uri.is_ok(), "image_to_data_uri should succeed");
     assert!(data_uri.unwrap().starts_with("data:image/png;base64,"));
 
@@ -357,7 +361,8 @@ fn test_process_template_non_empty_logo_sets_data_uri() {
     });
     let slide = serde_json::json!({"stat_number": "3%", "stat_label": "x", "source": "y"});
 
-    let svg = template::process_template(&tmpl, &dir, &brand, &slide);
+    let svg =
+        template::process_template(&tmpl, &dir, &brand, &slide, text::ImagePolicy::UNRESTRICTED);
     assert!(svg.is_ok(), "Valid logo path should not error");
     let content = svg.unwrap();
     // If logo_data_uri is set, template renders <image href="data:image/png;base64,...">.

@@ -1,0 +1,154 @@
+{
+  "id": "notebook-page",
+  "name": "Notebook Page",
+  "description": "Notebook/study-notes content page: chapter box, bullets, dashed box, cloud punchline (1080x1350).",
+  "dimensions": {
+    "width": 1080,
+    "height": 1350
+  },
+  "fonts": [
+    "Kalam",
+    "Caveat",
+    "Inter"
+  ],
+  "brand_fields": {
+    "show_brand": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Show brand name/handle watermark at bottom. Default: false."
+    },
+    "brand_name": {
+      "type": "text",
+      "required": true,
+      "max": 30
+    },
+    "brand_handle": {
+      "type": "text",
+      "required": false,
+      "max": 30
+    },
+    "bg_color": {
+      "type": "bg",
+      "required": false,
+      "default": "#fdfcf5",
+      "description": "Paper base color."
+    },
+    "bg_color_end": {
+      "type": "bg",
+      "required": false,
+      "default": "#fdfcf5",
+      "description": "Second gradient stop (kept for brand-field uniformity; paper look uses solid color)."
+    },
+    "accent_color": {
+      "type": "bg",
+      "required": false,
+      "default": "#1e3a8a",
+      "description": "Primary ink color."
+    },
+    "accent_color_end": {
+      "type": "bg",
+      "required": false,
+      "default": "#6d28d9",
+      "description": "Secondary accent (purple callouts)."
+    },
+    "bg_image": {
+      "type": "image",
+      "required": false
+    },
+    "bg_image_opacity": {
+      "type": "number",
+      "required": false,
+      "default": 0.15
+    },
+    "logo": {
+      "type": "image",
+      "required": false
+    }
+  },
+  "slide_fields": {
+    "header_handle": {
+      "type": "text",
+      "required": true,
+      "max": 30,
+      "description": "Left header text (e.g. IG handle)."
+    },
+    "page_label": {
+      "type": "text",
+      "required": true,
+      "max": 12,
+      "description": "Right header label (e.g. 'Page 1')."
+    },
+    "chapter_title": {
+      "type": "text",
+      "required": true,
+      "max": 30,
+      "description": "Chapter title inside the box."
+    },
+    "lead_text": {
+      "type": "text",
+      "required": true,
+      "max": 140,
+      "description": "Lead sentence (wrapped)."
+    },
+    "bullet1": {
+      "type": "text",
+      "required": false,
+      "max": 120,
+      "description": "Bullet point 1."
+    },
+    "bullet2": {
+      "type": "text",
+      "required": false,
+      "max": 120,
+      "description": "Bullet point 2."
+    },
+    "bullet3": {
+      "type": "text",
+      "required": false,
+      "max": 120,
+      "description": "Bullet point 3."
+    },
+    "box_title": {
+      "type": "text",
+      "required": false,
+      "max": 30,
+      "description": "Dashed box title (omit to hide box)."
+    },
+    "box_text": {
+      "type": "text",
+      "required": false,
+      "max": 200,
+      "description": "Dashed box body (wrapped)."
+    },
+    "box_color": {
+      "type": "color",
+      "required": false,
+      "description": "Dashed box border/title color (default accent)."
+    },
+    "punchline": {
+      "type": "text",
+      "required": true,
+      "max": 90,
+      "description": "Cloud callout punchline (wrapped)."
+    },
+    "extra_title": {
+      "type": "text",
+      "required": false,
+      "max": 30,
+      "description": "Second dashed box title (omit to hide)."
+    },
+    "extra_text": {
+      "type": "text",
+      "required": false,
+      "max": 180,
+      "description": "Second dashed box body (wrapped)."
+    },
+    "footer_line": {
+      "type": "text",
+      "required": false,
+      "max": 60,
+      "description": "Bottom center line (brand/CTA)."
+    }
+  }
+}

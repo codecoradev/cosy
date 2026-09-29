@@ -1,0 +1,108 @@
+{
+  "id": "notes-app",
+  "name": "Notes App",
+  "dimensions": {
+    "width": 1080,
+    "height": 1350
+  },
+  "fonts": [
+    "Inter"
+  ],
+  "brand_fields": {
+    "show_brand": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "Show brand name/handle watermark at bottom. Default: false."
+    },
+    "brand_name": {
+      "type": "text",
+      "required": true,
+      "max": 30
+    },
+    "brand_handle": {
+      "type": "text",
+      "required": true,
+      "max": 30
+    },
+    "bg_color": {
+      "type": "bg",
+      "required": false,
+      "default": "#1e1e2e"
+    },
+    "bg_color_end": {
+      "type": "bg",
+      "required": false,
+      "default": "#11111b"
+    },
+    "accent_color": {
+      "type": "text",
+      "required": false,
+      "default": "#cba6f7"
+    },
+    "accent_color_end": {
+      "type": "text",
+      "required": false,
+      "default": "#89b4fa"
+    },
+    "bg_image": {
+      "type": "image",
+      "required": false,
+      "description": "Background image — local path or http(s) URL (PNG/JPG/WebP)."
+    },
+    "bg_image_opacity": {
+      "type": "number",
+      "required": false,
+      "default": 0.15,
+      "description": "Opacity of the background image (0.0-1.0)."
+    },
+    "bg_overlay_opacity": {
+      "type": "number",
+      "required": false,
+      "default": 0.7,
+      "description": "Opacity of the gradient overlay when bg_image is set. Default: 0.7."
+    },
+    "logo": {
+      "type": "image",
+      "required": false,
+      "description": "Brand logo path (PNG/SVG). Rendered at bottom-right corner."
+    }
+  },
+  "slide_fields": {
+    "title": {
+      "type": "text",
+      "required": false,
+      "max": 40,
+      "description": "Note title (first line, bold)."
+    },
+    "body": {
+      "type": "text",
+      "required": true,
+      "max": 400,
+      "wrap_width": 34,
+      "options": ["markup"],
+      "description": "Note body text. Supports *bold*, _italic_, *color:#hex*...*color*."
+    },
+    "note_bg": {
+      "type": "color",
+      "required": false,
+      "description": "Note paper color (default iOS yellow #fef9c3)."
+    },
+    "title_color": {
+      "type": "color",
+      "required": false,
+      "description": "Title text color (default #1e1e2e)."
+    },
+    "body_color": {
+      "type": "color",
+      "required": false,
+      "description": "Body text color (default #3a3a3c)."
+    },
+    "note_timestamp": {
+      "type": "text",
+      "required": false,
+      "max": 30,
+      "description": "Timestamp text in the window bar (default 'Today')."
+    }
+  }
+}

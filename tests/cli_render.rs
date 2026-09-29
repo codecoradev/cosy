@@ -375,3 +375,397 @@ fn test_render_multi_slide_carousel() {
         assert_valid_png(&png_path);
     }
 }
+
+// ─── Output format: WebP ────────────────────────────────────────────
+
+/// Verify a file is a valid WebP (RIFF container + WEBP fourcc).
+fn assert_valid_webp(path: &Path) {
+    let bytes = fs::read(path).unwrap_or_else(|_| panic!("Failed to read WebP: {:?}", path));
+    assert!(bytes.len() > 32, "WebP too small ({} bytes)", bytes.len());
+    assert_eq!(&bytes[..4], b"RIFF", "Not a RIFF container: {:?}", path);
+    assert_eq!(&bytes[8..12], b"WEBP", "Not a WebP payload: {:?}", path);
+}
+
+#[test]
+fn test_render_webp_single_file() {
+    let output = tempfile::NamedTempFile::with_suffix(".webp").unwrap();
+
+    Command::cargo_bin("cosy")
+        .unwrap()
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .args([
+            "render",
+            "-t",
+            "stat-card",
+            "-d",
+            "templates/stat-card/defaults.json",
+            "-o",
+            output.path().to_str().unwrap(),
+            "--scale",
+            "1",
+            "--format",
+            "webp",
+        ])
+        .assert()
+        .success();
+
+    assert_valid_webp(output.path());
+}
+
+#[test]
+fn test_render_webp_multi_slide_directory() {
+    let dir = tempfile::tempdir().unwrap();
+    let out_dir = dir.path().join("webp-out");
+
+    Command::cargo_bin("cosy")
+        .unwrap()
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .args([
+            "render",
+            "-t",
+            "carousel-default",
+            "-d",
+            "templates/carousel-default/defaults.json",
+            "-o",
+            out_dir.to_str().unwrap(),
+            "--scale",
+            "0.5",
+            "--format",
+            "webp",
+        ])
+        .assert()
+        .success();
+
+    let entries: Vec<_> = fs::read_dir(&out_dir)
+        .unwrap()
+        .flatten()
+        .map(|e| e.file_name().to_string_lossy().to_string())
+        .collect();
+    assert!(!entries.is_empty(), "no slides rendered");
+    assert!(
+        entries.iter().all(|f| f.ends_with(".webp")),
+        "expected .webp slide files, got: {:?}",
+        entries
+    );
+    for name in &entries {
+        assert_valid_webp(&out_dir.join(name));
+    }
+}
+
+#[test]
+fn test_render_format_png_default_unchanged() {
+    // Explicit --format png must behave exactly like the default.
+    let output = tempfile::NamedTempFile::with_suffix(".png").unwrap();
+
+    Command::cargo_bin("cosy")
+        .unwrap()
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .args([
+            "render",
+            "-t",
+            "stat-card",
+            "-d",
+            "templates/stat-card/defaults.json",
+            "-o",
+            output.path().to_str().unwrap(),
+            "--scale",
+            "1",
+            "--format",
+            "png",
+        ])
+        .assert()
+        .success();
+
+    assert_valid_png(output.path());
+}
+
+#[test]
+fn test_render_metadata_json_output_echo() {
+    let output = tempfile::NamedTempFile::with_suffix(".png").unwrap();
+    let assert = Command::cargo_bin("cosy")
+        .unwrap()
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .args([
+            "render",
+            "-t",
+            "stat-card",
+            "-d",
+            "templates/stat-card/defaults.json",
+            "-o",
+            output.path().to_str().unwrap(),
+            "--scale",
+            "0.5",
+            "--json-output",
+            "--metadata",
+            r#"{"job_id": "cli-7", "lane": "nightly"}"#,
+        ])
+        .assert()
+        .success();
+
+    let stdout = String::from_utf8_lossy(&assert.get_output().stdout);
+    let parsed: serde_json::Value = serde_json::from_str(&stdout).unwrap();
+    assert_eq!(parsed["metadata"]["job_id"], "cli-7");
+    assert_eq!(parsed["metadata"]["lane"], "nightly");
+}
+
+#[test]
+fn test_render_invalid_metadata_fails_fast() {
+    let dir = tempfile::tempdir().unwrap();
+    let out_path = dir.path().join("out.png");
+    let assert = Command::cargo_bin("cosy")
+        .unwrap()
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .args([
+            "render",
+            "-t",
+            "stat-card",
+            "-d",
+            "templates/stat-card/defaults.json",
+            "-o",
+            out_path.to_str().unwrap(),
+            "--metadata",
+            "{not json",
+        ])
+        .assert()
+        .failure()
+        .code(2);
+
+    let stderr = String::from_utf8_lossy(&assert.get_output().stderr);
+    assert!(
+        stderr.contains("Invalid --metadata JSON"),
+        "expected fail-fast metadata error, got: {stderr}"
+    );
+    assert!(
+        !out_path.exists(),
+        "no render output may exist when metadata is malformed"
+    );
+}
+
+// ─── CSV dataset batch mode ──────────────────────────────────────────
+
+#[test]
+fn test_render_dataset_batch_happy_path() {
+    let dir = tempfile::tempdir().unwrap();
+    let csv = dir.path().join("rows.csv");
+    fs::write(
+        &csv,
+        "stat_number,stat_label,source\n50%,Half,unit-test\n75%,Three Quarters,unit-test\n10%,Tiny,unit-test\n",
+    )
+    .unwrap();
+    let out_dir = dir.path().join("out");
+
+    let assert = Command::cargo_bin("cosy")
+        .unwrap()
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .args([
+            "render",
+            "-t",
+            "stat-card",
+            "--dataset",
+            csv.to_str().unwrap(),
+            "-o",
+            out_dir.to_str().unwrap(),
+            "--scale",
+            "0.5",
+        ])
+        .assert()
+        .success();
+
+    let stdout = String::from_utf8_lossy(&assert.get_output().stdout);
+    assert!(stdout.contains("3/3 rows OK"), "got: {stdout}");
+
+    let produced: Vec<_> = fs::read_dir(&out_dir)
+        .unwrap()
+        .flatten()
+        .map(|e| e.file_name().to_string_lossy().to_string())
+        .collect();
+    assert_eq!(produced.len(), 3, "expected 3 files: {produced:?}");
+    // Filenames follow {row_index:04}_{slug}.png with sanitized slugs.
+    for name in &produced {
+        let stem = name.trim_end_matches(".png");
+        let idx = stem.split('_').next().unwrap_or("");
+        assert!(
+            idx.len() == 4 && idx.chars().all(|c| c.is_ascii_digit()),
+            "expected NNNN_ prefix: {produced:?}"
+        );
+        assert_valid_png(&out_dir.join(name));
+    }
+}
+
+#[test]
+fn test_render_dataset_batch_row_failure_exit_code() {
+    let dir = tempfile::tempdir().unwrap();
+    let csv = dir.path().join("rows.csv");
+    // Row 2 carries invalid _data JSON → per-row failure; rows 1 and 3 are
+    // valid single-slide rows.
+    fs::write(
+        &csv,
+        concat!(
+            "_data\n",
+            "\"{\"\"stat_number\"\":\"\"50%\"\",\"\"stat_label\"\":\"\"Half\"\",\"\"source\"\":\"\"unit-test\"\"}\"\n",
+            "\"{broken json\"\n",
+            "\"{\"\"stat_number\"\":\"\"10%\"\",\"\"stat_label\"\":\"\"Tiny\"\",\"\"source\"\":\"\"unit-test\"\"}\"\n",
+        ),
+    )
+    .unwrap();
+    let out_dir = dir.path().join("out");
+
+    let assert = Command::cargo_bin("cosy")
+        .unwrap()
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .args([
+            "render",
+            "-t",
+            "stat-card",
+            "--dataset",
+            csv.to_str().unwrap(),
+            "-o",
+            out_dir.to_str().unwrap(),
+            "--scale",
+            "0.5",
+        ])
+        .assert()
+        .failure()
+        .code(1);
+
+    let stderr = String::from_utf8_lossy(&assert.get_output().stderr);
+    assert!(
+        stderr.contains("row 2"),
+        "failing row index must be reported: {stderr}"
+    );
+
+    // Good rows still rendered.
+    let produced: Vec<_> = fs::read_dir(&out_dir)
+        .unwrap()
+        .flatten()
+        .map(|e| e.file_name().to_string_lossy().to_string())
+        .collect();
+    assert_eq!(
+        produced.len(),
+        2,
+        "good rows must still render: {produced:?}"
+    );
+}
+
+#[test]
+fn test_render_dataset_batch_json_output() {
+    let dir = tempfile::tempdir().unwrap();
+    let csv = dir.path().join("rows.csv");
+    fs::write(
+        &csv,
+        "stat_number,stat_label,source\n50%,Half,unit-test\n25%,Quarter,unit-test\n",
+    )
+    .unwrap();
+    let out_dir = dir.path().join("out");
+
+    let assert = Command::cargo_bin("cosy")
+        .unwrap()
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .args([
+            "render",
+            "-t",
+            "stat-card",
+            "--dataset",
+            csv.to_str().unwrap(),
+            "-o",
+            out_dir.to_str().unwrap(),
+            "--scale",
+            "0.5",
+            "--json-output",
+        ])
+        .assert()
+        .success();
+
+    let stdout = String::from_utf8_lossy(&assert.get_output().stdout);
+    let parsed: serde_json::Value = serde_json::from_str(&stdout).unwrap();
+    assert_eq!(parsed["template"], "stat-card");
+    assert_eq!(parsed["total_rows"], 2);
+    assert_eq!(parsed["succeeded"], 2);
+    assert_eq!(parsed["failed"], 0);
+    assert_eq!(parsed["files"].as_array().unwrap().len(), 2);
+}
+
+#[test]
+fn test_render_dataset_multi_slide_row_via_data_column() {
+    let dir = tempfile::tempdir().unwrap();
+    let csv = dir.path().join("rows.csv");
+    // A _data cell holding an array of two slides (CSV-quoted: "" escapes).
+    let slide_set = r#"[{"eyebrow":"a","headline":"S1","body":"x"},{"eyebrow":"b","headline":"S2","body":"y"}]"#;
+    fs::write(
+        &csv,
+        format!("_data\n\"{}\"\n", slide_set.replace('"', "\"\"")),
+    )
+    .unwrap();
+    let out_dir = dir.path().join("out");
+
+    Command::cargo_bin("cosy")
+        .unwrap()
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .args([
+            "render",
+            "-t",
+            "carousel-default",
+            "--dataset",
+            csv.to_str().unwrap(),
+            "-o",
+            out_dir.to_str().unwrap(),
+            "--scale",
+            "0.5",
+        ])
+        .assert()
+        .success();
+
+    // Multi-slide row → {stem}_slides/NN.png subdirectory
+    let mut subdirs = Vec::new();
+    for e in fs::read_dir(&out_dir).unwrap().flatten() {
+        if e.path().is_dir() {
+            subdirs.push(e.file_name().to_string_lossy().to_string());
+        }
+    }
+    assert_eq!(subdirs.len(), 1, "one subdirectory expected");
+    let slides: Vec<_> = fs::read_dir(out_dir.join(&subdirs[0]))
+        .unwrap()
+        .flatten()
+        .map(|e| e.file_name().to_string_lossy().to_string())
+        .collect();
+    assert_eq!(slides.len(), 2, "both slides rendered: {slides:?}");
+    for name in &slides {
+        assert!(name.ends_with(".png"), "{slides:?}");
+    }
+}
+
+#[test]
+fn test_render_dataset_webp_format_propagates() {
+    let dir = tempfile::tempdir().unwrap();
+    let csv = dir.path().join("rows.csv");
+    fs::write(&csv, "stat_number,stat_label,source\n50%,Half,unit-test\n").unwrap();
+    let out_dir = dir.path().join("out");
+
+    Command::cargo_bin("cosy")
+        .unwrap()
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .args([
+            "render",
+            "-t",
+            "stat-card",
+            "--dataset",
+            csv.to_str().unwrap(),
+            "-o",
+            out_dir.to_str().unwrap(),
+            "--scale",
+            "0.5",
+            "--format",
+            "webp",
+        ])
+        .assert()
+        .success();
+
+    let produced: Vec<_> = fs::read_dir(&out_dir)
+        .unwrap()
+        .flatten()
+        .map(|e| e.file_name().to_string_lossy().to_string())
+        .collect();
+    assert_eq!(produced.len(), 1);
+    assert!(produced[0].ends_with(".webp"), "{produced:?}");
+    assert_valid_webp(&out_dir.join(&produced[0]));
+}

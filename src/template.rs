@@ -72,6 +72,7 @@ pub fn process_template(
     template_dir: &Path,
     brand: &serde_json::Value,
     slide: &serde_json::Value,
+    image_policy: crate::text::ImagePolicy,
 ) -> anyhow::Result<String> {
     let svg_template = load_svg(template_dir)?;
 
@@ -81,7 +82,7 @@ pub fn process_template(
 
     // Register custom filters
     env.add_filter("wordwrap", filter_wordwrap);
-    env.add_filter("b64", filter_b64);
+    env.add_filter("b64", move |path: String| filter_b64(path, image_policy));
 
     // Build context
     let mut context = serde_json::Map::new();
@@ -104,6 +105,43 @@ pub fn process_template(
         }
     }
 
+    // Inline markup fields (schema options: ["markup"]): emit <field>_segments
+    // (lines × styled segments) when the value contains marker characters. Plain
+    // values keep the legacy wrap path below, byte-for-byte.
+    for (field_name, field_spec) in &template.slide_fields {
+        if !field_spec.options.contains(&"markup".to_string()) {
+            continue;
+        }
+        if let Some(text) = slide.get(field_name).and_then(|v| v.as_str()) {
+            if !crate::markup::has_markup(text) {
+                continue;
+            }
+            let wrap = field_spec.wrap_width.or(field_spec.max).unwrap_or(60);
+            let lines = crate::markup::wrap_segments(text, wrap);
+            let lines_json: Vec<serde_json::Value> = lines
+                .iter()
+                .map(|line| {
+                    serde_json::Value::Array(
+                        line.iter()
+                            .map(|seg| {
+                                serde_json::json!({
+                                    "t": seg.text,
+                                    "b": seg.bold,
+                                    "i": seg.italic,
+                                    "c": seg.color,
+                                })
+                            })
+                            .collect(),
+                    )
+                })
+                .collect();
+            context.insert(
+                format!("{}_segments", field_name),
+                serde_json::Value::Array(lines_json),
+            );
+        }
+    }
+
     // Pre-wrap text fields that have a max chars limit
     for (field_name, field_spec) in &template.slide_fields {
         if field_spec.field_type == FieldType::Text {
@@ -121,6 +159,41 @@ pub fn process_template(
                                 .collect(),
                         ),
                     );
+
+                    // Autofit: when the schema declares slot metrics AND the
+                    // field opts in via options ["autofit"], compute the
+                    // font-size scale factor so the wrapped text fits the
+                    // slot. Longest-line width estimate uses a per-char width
+                    // table (Inter-like: wide caps/digits, narrow i/l/j).
+                    if field_spec.options.contains(&"autofit".to_string()) {
+                        if let (Some(sw), Some(fs)) = (field_spec.slot_width, field_spec.font_size)
+                        {
+                            let lh = field_spec.line_height.unwrap_or(fs * 1.3);
+                            let longest =
+                                wrapped.iter().map(|l| l.chars().count()).max().unwrap_or(0) as f32;
+                            let est_width = longest * fs * 0.52; // avg advance width for Inter-ish sans
+                            let needed_h = wrapped.len() as f32 * lh;
+                            let mut scale = 1.0f32;
+                            if est_width > sw {
+                                scale = scale.min(sw / est_width);
+                            }
+                            if let Some(sh) = field_spec.slot_height {
+                                if needed_h > sh {
+                                    scale = scale.min(sh / needed_h);
+                                }
+                            }
+                            let scale = scale.clamp(0.1, 1.0);
+                            context.insert(
+                                format!("{}_font_scale", field_name),
+                                serde_json::Value::Number(
+                                    serde_json::Number::from_f64(
+                                        ((scale * 1000.0).round() / 1000.0) as f64,
+                                    )
+                                    .expect("finite scale"),
+                                ),
+                            );
+                        }
+                    }
                 }
             }
         }
@@ -129,7 +202,7 @@ pub fn process_template(
     // Convert logo path to data URI if present
     if let Some(logo_path) = brand.get("logo").and_then(|v| v.as_str()) {
         if !logo_path.is_empty() {
-            match crate::text::image_to_data_uri(logo_path) {
+            match crate::text::image_to_data_uri(logo_path, image_policy) {
                 Ok(data_uri) => {
                     context.insert("logo_data_uri".into(), serde_json::Value::String(data_uri));
                 }
@@ -147,11 +220,37 @@ pub fn process_template(
         .and_then(|v| v.as_str());
     if let Some(bg_path) = bg_image {
         if !bg_path.is_empty() {
-            match crate::text::image_to_data_uri(bg_path) {
-                Ok(data_uri) => {
+            match crate::text::image_to_data_uri_with_size(bg_path, image_policy) {
+                Ok(loaded) => {
                     context.insert(
                         "bg_image_data_uri".into(),
-                        serde_json::Value::String(data_uri),
+                        serde_json::Value::String(loaded.data_uri),
+                    );
+                    // Positioning geometry: cover-fit at user zoom with a
+                    // focal point. Defaults reproduce the old center-crop.
+                    let scale = num_field(brand, slide, "bg_image_scale", 1.0, 0.1, 5.0);
+                    let fx = num_field(brand, slide, "bg_image_x", 0.5, 0.0, 1.0);
+                    let fy = num_field(brand, slide, "bg_image_y", 0.5, 0.0, 1.0);
+                    let iw = loaded.width.unwrap_or(template.dimensions.width) as f64;
+                    let ih = loaded.height.unwrap_or(template.dimensions.height) as f64;
+                    let (gx, gy, gw, gh) = bg_image_geom(
+                        template.dimensions.width as f64,
+                        template.dimensions.height as f64,
+                        iw,
+                        ih,
+                        scale,
+                        fx,
+                        fy,
+                    );
+                    let r2 = |v: f64| (v * 100.0).round() / 100.0;
+                    context.insert(
+                        "bg_image_geom".into(),
+                        serde_json::json!({
+                            "x": r2(gx),
+                            "y": r2(gy),
+                            "w": r2(gw),
+                            "h": r2(gh),
+                        }),
                     );
                 }
                 Err(e) => {
@@ -178,16 +277,55 @@ pub fn process_template(
     Ok(rendered)
 }
 
+/// Cover-fit geometry for a user-positioned background image.
+///
+/// Returns `(x, y, w, h)` for the `<image>` element: the image is scaled to
+/// cover the canvas (identical to `preserveAspectRatio="slice"`) multiplied
+/// by `scale`, then placed so the focal point `(fx, fy)` — fractions of the
+/// scaled image — sits at the canvas center. Defaults (`scale=1`, `fx=fy=0.5`)
+/// reproduce the old fixed center-crop exactly.
+pub fn bg_image_geom(
+    canvas_w: f64,
+    canvas_h: f64,
+    img_w: f64,
+    img_h: f64,
+    scale: f64,
+    fx: f64,
+    fy: f64,
+) -> (f64, f64, f64, f64) {
+    let img_w = img_w.max(1.0);
+    let img_h = img_h.max(1.0);
+    let cover = (canvas_w / img_w).max(canvas_h / img_h);
+    let s = cover * scale.clamp(0.1, 5.0);
+    let w = img_w * s;
+    let h = img_h * s;
+    let x = canvas_w / 2.0 - fx.clamp(0.0, 1.0) * w;
+    let y = canvas_h / 2.0 - fy.clamp(0.0, 1.0) * h;
+    (x, y, w, h)
+}
+
+/// Read a numeric field with brand-over-slide precedence, clamped.
+fn num_field(
+    brand: &serde_json::Value,
+    slide: &serde_json::Value,
+    name: &str,
+    default: f64,
+    min: f64,
+    max: f64,
+) -> f64 {
+    let value = brand
+        .get(name)
+        .or_else(|| slide.get(name))
+        .and_then(|v| v.as_f64())
+        .unwrap_or(default);
+    value.clamp(min, max)
+}
+
 /// Recursively XML-escape all string values in a JSON value.
 fn xml_escape_value(value: &mut serde_json::Value) {
     match value {
         serde_json::Value::String(s) => {
-            *s = s
-                .replace('&', "&amp;")
-                .replace('<', "&lt;")
-                .replace('>', "&gt;")
-                .replace('"', "&quot;")
-                .replace('\'', "&apos;");
+            *s = escape_xml_preserving_entities(s);
         }
         serde_json::Value::Array(items) => {
             for item in items {
@@ -203,6 +341,70 @@ fn xml_escape_value(value: &mut serde_json::Value) {
     }
 }
 
+/// XML-escape a string while preserving valid entity references.
+///
+/// The five predefined XML entities (`&amp;` `&lt;` `&gt;` `&quot;` `&apos;`)
+/// and numeric references (`&#78;`, `&#x4E;`) pass through untouched, so data
+/// that already contains entities is not double-escaped. A bare `&`, an
+/// HTML-only entity like `&ldquo;`, or a malformed fragment (`&amp` without
+/// the semicolon) is escaped — passing those through would produce malformed
+/// XML and fail the render.
+fn escape_xml_preserving_entities(s: &str) -> String {
+    let mut out = String::with_capacity(s.len());
+    let bytes = s.as_bytes();
+    let mut i = 0;
+    while i < bytes.len() {
+        match bytes[i] {
+            b'&' => {
+                let entity = s[i + 1..]
+                    .find(';')
+                    .map(|end| &s[i..i + end + 2])
+                    .filter(|entity| is_valid_entity(&entity[1..entity.len() - 1]));
+                if let Some(entity) = entity {
+                    out.push_str(entity);
+                    i += entity.len();
+                } else {
+                    out.push_str("&amp;");
+                    i += 1;
+                }
+            }
+            b'<' => {
+                out.push_str("&lt;");
+                i += 1;
+            }
+            b'>' => {
+                out.push_str("&gt;");
+                i += 1;
+            }
+            b'"' => {
+                out.push_str("&quot;");
+                i += 1;
+            }
+            b'\'' => {
+                out.push_str("&apos;");
+                i += 1;
+            }
+            _ => {
+                let ch_len = s[i..].chars().next().map_or(1, char::len_utf8);
+                out.push_str(&s[i..i + ch_len]);
+                i += ch_len;
+            }
+        }
+    }
+    out
+}
+
+fn is_valid_entity(name: &str) -> bool {
+    const PREDEFINED: [&str; 5] = ["amp", "lt", "gt", "quot", "apos"];
+    if let Some(hex) = name.strip_prefix("#x").or_else(|| name.strip_prefix("#X")) {
+        return !hex.is_empty() && hex.bytes().all(|b| b.is_ascii_hexdigit());
+    }
+    if let Some(dec) = name.strip_prefix('#') {
+        return !dec.is_empty() && dec.bytes().all(|b| b.is_ascii_digit());
+    }
+    PREDEFINED.contains(&name)
+}
+
 // ─── Custom minijinja Filters ───────────────────────────────────────
 
 /// wordwrap filter: wrap text to N chars per line, returns joined string.
@@ -214,8 +416,8 @@ fn filter_wordwrap(text: String, width: usize) -> String {
 
 /// b64 filter: convert file path to base64 data URI.
 /// Usage: `{{ slide.image|b64 }}`
-fn filter_b64(path: String) -> String {
-    crate::text::image_to_data_uri(&path).unwrap_or_default()
+fn filter_b64(path: String, policy: crate::text::ImagePolicy) -> String {
+    crate::text::image_to_data_uri(&path, policy).unwrap_or_default()
 }
 
 // ─── Template Listing ───────────────────────────────────────────────
@@ -317,6 +519,26 @@ pub fn validate_input(template: &TemplateDef, data: &InputData) -> Vec<String> {
                             type_name(value)
                         ));
                     }
+                    FieldType::Color => {
+                        // Hex color string: #rgb or #rrggbb. Brand-level colors
+                        // are Bg-typed and intentionally unchecked (legacy).
+                        let ok = value
+                            .as_str()
+                            .map(|s| {
+                                let body = s.strip_prefix('#').unwrap_or(s);
+                                (body.len() == 3 || body.len() == 6)
+                                    && body.chars().all(|c| c.is_ascii_hexdigit())
+                            })
+                            .unwrap_or(false);
+                        if !ok {
+                            errors.push(format!(
+                                "Slide {}: field '{}' must be a hex color (#rgb or #rrggbb), got {}",
+                                i + 1,
+                                name,
+                                type_name(value)
+                            ));
+                        }
+                    }
                     _ => {}
                 }
             }
@@ -360,13 +582,88 @@ mod filter_tests {
         let brand = serde_json::json!({});
         let slide =
             serde_json::json!({"stat_number": "R&D & Co", "stat_label": "x", "source": "y"});
-        let result = process_template(&template, dir, &brand, &slide);
+        let result = process_template(
+            &template,
+            dir,
+            &brand,
+            &slide,
+            crate::text::ImagePolicy::SECURE,
+        );
         match result {
             Ok(svg) => assert!(
                 svg.contains("R&amp;D &amp; Co"),
                 "ampersand must be escaped in SVG"
             ),
             Err(_) => panic!("render with '&' in data must not fail"),
+        }
+    }
+
+    #[test]
+    fn test_escape_xml_preserves_predefined_entities() {
+        assert_eq!(
+            escape_xml_preserving_entities("&amp; &lt; &gt; &quot; &apos;"),
+            "&amp; &lt; &gt; &quot; &apos;"
+        );
+    }
+
+    #[test]
+    fn test_escape_xml_preserves_numeric_references() {
+        assert_eq!(
+            escape_xml_preserving_entities("&#78; &#x4E; &#Xff10;"),
+            "&#78; &#x4E; &#Xff10;"
+        );
+    }
+
+    #[test]
+    fn test_escape_xml_escapes_bare_and_unknown() {
+        // bare ampersand
+        assert_eq!(escape_xml_preserving_entities("R&D"), "R&amp;D");
+        // HTML-only entities are invalid XML → escape the ampersand
+        assert_eq!(
+            escape_xml_preserving_entities("&ldquo;q&rdquo;"),
+            "&amp;ldquo;q&amp;rdquo;"
+        );
+        // malformed: missing semicolon
+        assert_eq!(escape_xml_preserving_entities("&amp x"), "&amp;amp x");
+        // malformed: empty or non-hex numeric reference
+        assert_eq!(escape_xml_preserving_entities("&#;"), "&amp;#;");
+        assert_eq!(escape_xml_preserving_entities("&#xZZ;"), "&amp;#xZZ;");
+        // ampersand with no semicolon anywhere
+        assert_eq!(escape_xml_preserving_entities("a & b"), "a &amp; b");
+    }
+
+    #[test]
+    fn test_escape_xml_mixed_entities_and_specials() {
+        let input = "AT&T &amp; Sons <b> \"q\"";
+        let expected = "AT&amp;T &amp; Sons &lt;b&gt; &quot;q&quot;";
+        assert_eq!(escape_xml_preserving_entities(input), expected);
+    }
+
+    #[test]
+    fn test_process_template_preserves_entities_in_render() {
+        let dir = std::path::Path::new("templates/stat-card");
+        let template = crate::template::load_template("stat-card").expect("template def");
+        let brand = serde_json::json!({});
+        let slide = serde_json::json!({
+            "stat_number": "AT&T &amp; Sons",
+            "stat_label": "x",
+            "source": "y"
+        });
+        let result = process_template(
+            &template,
+            dir,
+            &brand,
+            &slide,
+            crate::text::ImagePolicy::SECURE,
+        );
+        match result {
+            Ok(svg) => {
+                assert!(
+                    svg.contains("AT&amp;T &amp; Sons"),
+                    "bare & escaped but existing entity preserved, got: {svg}"
+                );
+            }
+            Err(_) => panic!("render with pre-existing entity must not fail"),
         }
     }
 
@@ -400,7 +697,13 @@ mod filter_tests {
         std::fs::write(&filepath, b"fake-image").unwrap();
         let path_str = filepath.to_str().unwrap().to_string();
 
-        let result = filter_b64(path_str);
+        let result = filter_b64(
+            path_str,
+            crate::text::ImagePolicy {
+                allow_private: true,
+                allow_local: true,
+            },
+        );
         assert!(
             result.starts_with("data:image/png;base64,"),
             "b64 filter should return data URI, got: {}",
@@ -413,7 +716,10 @@ mod filter_tests {
 
     #[test]
     fn test_filter_b64_invalid_path_returns_empty() {
-        let result = filter_b64("/nonexistent/path/to/file.png".into());
+        let result = filter_b64(
+            "/nonexistent/path/to/file.png".into(),
+            crate::text::ImagePolicy::UNRESTRICTED,
+        );
         assert_eq!(result, "");
     }
 }

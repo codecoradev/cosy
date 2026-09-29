@@ -5,6 +5,64 @@ All notable changes to Cosy will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] — 2026-09-29
+
+### Added
+- **GET signed-URL rendering** — `GET /r/{template}.{png|webp}?d=<base64url
+  JSON>&sig=<hmac-sha256>` for `<meta property="og:image">`-style dynamic
+  images: blog engines embed a plain URL, no client library, no POST. The
+  signature covers `{template}:{d}` (URLs can't be transplanted across
+  templates), is compared in constant time, and uses the API key as the
+  signing key; the route is disabled (404) when no key is configured.
+  Payload cap 8 KB → 413, bad signature → 403, cacheable response
+  (`Cache-Control: public, max-age=3600`). New deps: `hmac` + `sha2`
+  (pure Rust). Closes #95.
+- **CSV batch rendering** — `cosy render --dataset rows.csv --out-dir out/`
+  renders one image per row in parallel (rayon). Header = field names;
+  number/boolean columns are type-coerced per the template schema; brand
+  defaults come from the template's `defaults.json`. Optional `_filename`
+  column names the output (sanitized), optional `_data` column carries a
+  full JSON slide/array (multi-slide rows write a `{stem}_slides/`
+  subdirectory). `--fail-fast` stops unscheduled rows after the first
+  failure; exit code 1 if any row failed; `--json-output` emits a
+  structured summary. Works with `--format webp`. Closes #96.
+- **Metadata passthrough** — optional `metadata` (any JSON value, 4 KB cap)
+  on `POST /api/render`, echoed verbatim in the JSON envelope (binary
+  responses log it instead — raw image bytes can't carry it). CLI:
+  `--metadata '<json>'` echoed in `--json-output`, fail-fast on malformed
+  JSON. Oversized metadata → 413. Closes #97.
+- **WebP output format** — `cosy render --format webp` (CLI) and
+  `image_format: "webp"` on `POST /api/render`. Container choice is
+  independent of `response_format`: a JSON envelope can carry PNG or WebP
+  entries (`image_format` field added per slide in the envelope). Binary
+  responses get the correct `Content-Type` (`image/png` / `image/webp`).
+  WebP encoding is lossless via the `image` crate (no new dependencies);
+  the `-o` path is used verbatim, multi-slide directory mode names files
+  `NN.webp`. Closes #94.
+- **Notebook-style templates** - `notebook-cover` and `notebook-page`
+  (1080x1350) replicate the viral handwritten study-notes carousel format:
+  ruled paper, spiral binding, dashed callout boxes, and a cloud punchline.
+  Includes bundled handwritten fonts Kalam (Light/Regular/Bold) and Caveat
+  (Medium/Bold), drawn inline SVG pipeline icons (no emoji), shrink-to-fit
+  hero/chapter titles, and dynamic-height dashed boxes and punchline bubble.
+
+- **Multi-slide HTTP API** — `POST /api/render` now accepts
+  `response_format: "json"` to render every slide of a carousel and return them
+  as base64 PNG entries with template dimensions, and `slide_index` to pick a
+  specific slide with the default binary PNG response. Empty slide arrays and
+  out-of-range indices are rejected with a 400.
+- **Inline text markup** — `*bold*`, `_italic_`, and `*color:#hex*...*color*` in
+  markup-enabled text fields (opt-in via schema `options: ["markup"]`), rendered as
+  styled `<tspan>` runs with markup-aware line wrapping. Bundled Inter Italic,
+  Inter Bold Italic, and Inter Black fonts so emphasis resolves to real faces.
+- **`text_color`** slide field on the 9 text-quote templates — per-page text color
+  for light backgrounds, validated as hex at render time (`color` field type is now
+  type-checked).
+- **`hashtag`** slide field on the 9 text-quote templates — accent-colored `#tag`
+  line near the bottom.
+- **`bg_overlay_opacity`** brand field on the 10 quote-family templates — gradient
+  overlay opacity when `bg_image` is set (default `0.7`, backward compatible).
+
 ## [0.2.0] — 2026-08-28
 
 ### Added

@@ -6,6 +6,7 @@
 //! 3. For each slide: process_template → SVG string → usvg::Tree → resvg → PNG
 //! 4. Write PNG file(s)
 
+use crate::format::OutputFormat;
 use crate::schema::{InputData, TemplateDef};
 use std::path::{Path, PathBuf};
 use std::time::Instant;
@@ -23,14 +24,18 @@ pub struct RenderResult {
 
 /// Render a template with pre-loaded data to output file(s).
 ///
-/// If output has an extension (e.g. `slide.png`), renders a single PNG.
-/// If output is a directory, renders each slide as `{NN}.png`.
+/// If output has an extension (e.g. `slide.png`), renders a single image.
+/// If output is a directory, renders each slide as `{NN}.<ext>`.
+/// Slides are always encoded as PNG internally; `format` only selects the
+/// container written to disk (see [`OutputFormat`]).
 pub fn render_template_data(
     template_name: &str,
     data: &InputData,
     output: &Path,
     scale: f32,
     font_dir: Option<&Path>,
+    image_policy: crate::text::ImagePolicy,
+    format: OutputFormat,
 ) -> anyhow::Result<RenderResult> {
     let start = Instant::now();
 
@@ -53,20 +58,49 @@ pub fn render_template_data(
     let mut output_files = Vec::new();
 
     if data.is_single_slide() || output.extension().is_some() {
-        // Single PNG output
-        let png = render_slide(&template, &template_dir, data, 0, scale, &font_db)?;
+        // Single image output
+        let png = render_slide(
+            &template,
+            &template_dir,
+            data,
+            0,
+            scale,
+            &font_db,
+            image_policy,
+        )?;
+        let bytes = format.encode(
+            &png,
+            output_width(&template.dimensions, scale),
+            output_height(&template.dimensions, scale),
+        )?;
+        // The -o path is used verbatim (no extension rewriting) — existing
+        // scripts that render to exact paths stay byte-path compatible.
+        // Recommend matching the extension to --format for clarity.
         ensure_parent_dir(output)?;
-        std::fs::write(output, &png)?;
+        std::fs::write(output, &bytes)?;
         log::info!("Written: {}", output.display());
         output_files.push(output.to_string_lossy().to_string());
     } else {
         // Multi-slide output to directory
         std::fs::create_dir_all(output)?;
         for i in 0..data.slides.len() {
-            let png = render_slide(&template, &template_dir, data, i, scale, &font_db)?;
-            let filename = format!("{:02}.png", i + 1);
+            let png = render_slide(
+                &template,
+                &template_dir,
+                data,
+                i,
+                scale,
+                &font_db,
+                image_policy,
+            )?;
+            let filename = format!("{:02}.{}", i + 1, format.extension());
             let path: PathBuf = output.join(&filename);
-            std::fs::write(&path, &png)?;
+            let bytes = format.encode(
+                &png,
+                output_width(&template.dimensions, scale),
+                output_height(&template.dimensions, scale),
+            )?;
+            std::fs::write(&path, &bytes)?;
             log::info!("Written: {}", path.display());
             output_files.push(path.to_string_lossy().to_string());
         }
@@ -95,15 +129,35 @@ pub fn render_template(
     output: &Path,
     scale: f32,
     font_dir: Option<&Path>,
+    image_policy: crate::text::ImagePolicy,
+    format: OutputFormat,
 ) -> anyhow::Result<RenderResult> {
     let data = InputData::from_file(data_path)?;
     log::info!("Loaded data: {} slide(s)", data.slides.len());
-    render_template_data(template_name, &data, output, scale, font_dir)
+    render_template_data(
+        template_name,
+        &data,
+        output,
+        scale,
+        font_dir,
+        image_policy,
+        format,
+    )
+}
+
+/// Final pixel width after applying the scale factor.
+fn output_width(dims: &crate::schema::Dimensions, scale: f32) -> u32 {
+    (dims.width as f32 * scale).round() as u32
+}
+
+/// Final pixel height after applying the scale factor.
+fn output_height(dims: &crate::schema::Dimensions, scale: f32) -> u32 {
+    (dims.height as f32 * scale).round() as u32
 }
 
 // ─── Render Single Slide ────────────────────────────────────────────
 
-/// Render a single slide to PNG bytes.
+/// Render a single slide to raw RGBA pixels.
 fn render_slide(
     template: &TemplateDef,
     template_dir: &Path,
@@ -111,24 +165,40 @@ fn render_slide(
     slide_index: usize,
     scale: f32,
     font_db: &usvg::fontdb::Database,
+    image_policy: crate::text::ImagePolicy,
 ) -> anyhow::Result<Vec<u8>> {
-    render_slide_to_png(template, template_dir, data, slide_index, scale, font_db)
+    render_slide_to_pixels(
+        template,
+        template_dir,
+        data,
+        slide_index,
+        scale,
+        font_db,
+        image_policy,
+    )
 }
 
-/// Render a single slide to PNG bytes (public API for server).
-pub fn render_slide_to_png(
+/// Render a single slide to raw RGBA8 pixels (public API for
+/// format-aware callers — pair with `OutputFormat::encode`).
+pub fn render_slide_to_pixels(
     template: &TemplateDef,
     template_dir: &Path,
     data: &InputData,
     slide_index: usize,
     scale: f32,
     font_db: &usvg::fontdb::Database,
+    image_policy: crate::text::ImagePolicy,
 ) -> anyhow::Result<Vec<u8>> {
     let slide_data = &data.slides[slide_index];
 
     // 1. Process minijinja template → SVG string
-    let svg_string =
-        crate::template::process_template(template, template_dir, &data.brand, slide_data)?;
+    let svg_string = crate::template::process_template(
+        template,
+        template_dir,
+        &data.brand,
+        slide_data,
+        image_policy,
+    )?;
 
     log::debug!("SVG generated: {} bytes", svg_string.len());
 
@@ -154,8 +224,32 @@ pub fn render_slide_to_png(
     let transform = tiny_skia::Transform::from_scale(scale, scale);
     resvg::render(&tree, transform, &mut pixmap.as_mut());
 
-    // 5. Encode to PNG
-    Ok(pixmap.encode_png()?)
+    // 5. Return raw RGBA pixels for container-format encoding
+    Ok(pixmap.data().to_vec())
+}
+
+/// Render a single slide to PNG bytes (legacy convenience wrapper).
+pub fn render_slide_to_png(
+    template: &TemplateDef,
+    template_dir: &Path,
+    data: &InputData,
+    slide_index: usize,
+    scale: f32,
+    font_db: &usvg::fontdb::Database,
+    image_policy: crate::text::ImagePolicy,
+) -> anyhow::Result<Vec<u8>> {
+    let pixels = render_slide_to_pixels(
+        template,
+        template_dir,
+        data,
+        slide_index,
+        scale,
+        font_db,
+        image_policy,
+    )?;
+    let w = (template.dimensions.width as f32 * scale).round() as u32;
+    let h = (template.dimensions.height as f32 * scale).round() as u32;
+    OutputFormat::Png.encode(&pixels, w, h)
 }
 
 // ─── Font Database ──────────────────────────────────────────────────
@@ -190,6 +284,24 @@ pub fn build_font_db(custom_dir: Option<&Path>) -> anyhow::Result<usvg::fontdb::
     );
     load_bundled_font(
         &mut db,
+        "Inter",
+        "Italic",
+        include_bytes!("assets/fonts/Inter-Italic.ttf"),
+    );
+    load_bundled_font(
+        &mut db,
+        "Inter",
+        "Bold Italic",
+        include_bytes!("assets/fonts/Inter-BoldItalic.ttf"),
+    );
+    load_bundled_font(
+        &mut db,
+        "Inter",
+        "Black",
+        include_bytes!("assets/fonts/Inter-Black.ttf"),
+    );
+    load_bundled_font(
+        &mut db,
         "JetBrains Mono",
         "Regular",
         include_bytes!("assets/fonts/JetBrainsMono-Regular.ttf"),
@@ -213,7 +325,40 @@ pub fn build_font_db(custom_dir: Option<&Path>) -> anyhow::Result<usvg::fontdb::
         "Bold",
         include_bytes!("assets/fonts/SpaceGrotesk-Bold.ttf"),
     );
-    log::debug!("Loaded 7 bundled fonts (Inter R/B/SB, JetBrains Mono R, SpaceGrotesk M/SB/B)");
+    // Handwritten fonts: Kalam (body) + Caveat (display) for notebook-style templates
+    load_bundled_font(
+        &mut db,
+        "Kalam",
+        "Light",
+        include_bytes!("assets/fonts/Kalam-Light.ttf"),
+    );
+    load_bundled_font(
+        &mut db,
+        "Kalam",
+        "Regular",
+        include_bytes!("assets/fonts/Kalam-Regular.ttf"),
+    );
+    load_bundled_font(
+        &mut db,
+        "Kalam",
+        "Bold",
+        include_bytes!("assets/fonts/Kalam-Bold.ttf"),
+    );
+    load_bundled_font(
+        &mut db,
+        "Caveat",
+        "Medium",
+        include_bytes!("assets/fonts/Caveat-Medium.ttf"),
+    );
+    load_bundled_font(
+        &mut db,
+        "Caveat",
+        "Bold",
+        include_bytes!("assets/fonts/Caveat-Bold.ttf"),
+    );
+    log::debug!(
+        "Loaded 15 bundled fonts (Inter R/B/SB/Black/I/BI, JetBrains Mono R, SpaceGrotesk M/SB/B, Kalam L/R/B, Caveat M/B)"
+    );
 
     // 2. Load system fonts (may fail in containers — that's OK)
     db.load_system_fonts();
