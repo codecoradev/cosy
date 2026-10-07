@@ -126,10 +126,20 @@ pub enum Command {
         #[arg(short, long, default_value = "3000")]
         port: u16,
 
+        /// Address to bind. Defaults to all interfaces (needed in Docker);
+        /// use 127.0.0.1 for local dev without auth.
+        #[arg(long, default_value = "0.0.0.0")]
+        host: String,
+
         /// API key for bearer token auth. If not set, reads COSY_API_KEY env var.
         /// When neither is set, auth is disabled (dev mode).
         #[arg(short, long)]
         token: Option<String>,
+
+        /// HMAC key for signed GET render URLs (`/r/...`). If not set, reads
+        /// COSY_SIGNING_KEY, then falls back to the API key.
+        #[arg(long)]
+        signing_key: Option<String>,
 
         /// Allow bg_image/logo URLs pointing at private/internal addresses.
         /// Off by default: the API renders attacker-controlled JSON, so
@@ -373,12 +383,17 @@ impl Cli {
 
             Command::Serve {
                 port,
+                host,
                 token,
+                signing_key,
                 allow_private_images,
                 allow_local_image_paths,
             } => {
                 // Resolve API key: --token flag takes priority, then COSY_API_KEY env
-                let api_key = token.or_else(|| std::env::var("COSY_API_KEY").ok());
+                let api_key = token
+                    .or_else(|| std::env::var("COSY_API_KEY").ok())
+                    .filter(|k| !k.is_empty());
+                let signing_key = signing_key.or_else(|| std::env::var("COSY_SIGNING_KEY").ok());
                 let image_policy = crate::text::ImagePolicy {
                     allow_private: allow_private_images,
                     allow_local: allow_local_image_paths,
@@ -392,7 +407,13 @@ impl Cli {
                 println!("Starting Cosy API server on port {}...", port);
                 // Tokio runtime for async server
                 let runtime = tokio::runtime::Runtime::new()?;
-                runtime.block_on(crate::server::run(port, api_key, image_policy))?;
+                runtime.block_on(crate::server::run_with(
+                    &host,
+                    port,
+                    api_key,
+                    signing_key,
+                    image_policy,
+                ))?;
                 Ok(ExitCode::SUCCESS)
             }
         }

@@ -60,7 +60,7 @@ pub fn render_template_data(
     if data.is_single_slide() || output.extension().is_some() {
         // Single image output
         if format.is_pixel_based() {
-            let png = render_slide(
+            let png = render_slide_to_pixels(
                 &template,
                 &template_dir,
                 data,
@@ -69,8 +69,8 @@ pub fn render_template_data(
                 &font_db,
                 image_policy,
             )?;
-            let bytes = format.encode(
-                &png,
+            let bytes = format.encode_owned(
+                png,
                 output_width(&template.dimensions, scale),
                 output_height(&template.dimensions, scale),
             )?;
@@ -97,7 +97,7 @@ pub fn render_template_data(
             let filename = format!("{:02}.{}", i + 1, format.extension());
             let path: PathBuf = output.join(&filename);
             if format.is_pixel_based() {
-                let png = render_slide(
+                let png = render_slide_to_pixels(
                     &template,
                     &template_dir,
                     data,
@@ -106,8 +106,8 @@ pub fn render_template_data(
                     &font_db,
                     image_policy,
                 )?;
-                let bytes = format.encode(
-                    &png,
+                let bytes = format.encode_owned(
+                    png,
                     output_width(&template.dimensions, scale),
                     output_height(&template.dimensions, scale),
                 )?;
@@ -173,27 +173,6 @@ fn output_height(dims: &crate::schema::Dimensions, scale: f32) -> u32 {
 
 // ─── Render Single Slide ────────────────────────────────────────────
 
-/// Render a single slide to raw RGBA pixels.
-fn render_slide(
-    template: &TemplateDef,
-    template_dir: &Path,
-    data: &InputData,
-    slide_index: usize,
-    scale: f32,
-    font_db: &usvg::fontdb::Database,
-    image_policy: crate::text::ImagePolicy,
-) -> anyhow::Result<Vec<u8>> {
-    render_slide_to_pixels(
-        template,
-        template_dir,
-        data,
-        slide_index,
-        scale,
-        font_db,
-        image_policy,
-    )
-}
-
 /// Render a single slide to raw RGBA8 pixels (public API for
 /// format-aware callers — pair with `OutputFormat::encode`).
 pub fn render_slide_to_pixels(
@@ -202,7 +181,7 @@ pub fn render_slide_to_pixels(
     data: &InputData,
     slide_index: usize,
     scale: f32,
-    font_db: &usvg::fontdb::Database,
+    font_db: &std::sync::Arc<usvg::fontdb::Database>,
     image_policy: crate::text::ImagePolicy,
 ) -> anyhow::Result<Vec<u8>> {
     let slide_data = &data.slides[slide_index];
@@ -221,7 +200,7 @@ pub fn render_slide_to_pixels(
     // 2. Parse SVG via usvg with font database
     let opts = usvg::Options {
         font_family: "Inter".to_string(),
-        fontdb: std::sync::Arc::new(font_db.clone()),
+        fontdb: std::sync::Arc::clone(font_db),
         ..Default::default()
     };
 
@@ -240,8 +219,9 @@ pub fn render_slide_to_pixels(
     let transform = tiny_skia::Transform::from_scale(scale, scale);
     resvg::render(&tree, transform, &mut pixmap.as_mut());
 
-    // 5. Return raw RGBA pixels for container-format encoding
-    Ok(pixmap.data().to_vec())
+    // 5. Return raw RGBA pixels for container-format encoding (moved out of
+    //    the pixmap, not copied)
+    Ok(pixmap.take())
 }
 
 /// Render a single slide to a self-contained SVG string (public API for
@@ -258,7 +238,7 @@ pub fn render_slide_to_svg(
     template_dir: &Path,
     data: &InputData,
     slide_index: usize,
-    font_db: &usvg::fontdb::Database,
+    font_db: &std::sync::Arc<usvg::fontdb::Database>,
     image_policy: crate::text::ImagePolicy,
 ) -> anyhow::Result<String> {
     let slide_data = &data.slides[slide_index];
@@ -276,7 +256,7 @@ pub fn render_slide_to_svg(
     //    the font DB, resolves hrefs, normalizes the tree)…
     let opts = usvg::Options {
         font_family: "Inter".to_string(),
-        fontdb: std::sync::Arc::new(font_db.clone()),
+        fontdb: std::sync::Arc::clone(font_db),
         ..Default::default()
     };
     let tree = usvg::Tree::from_str(&svg_string, &opts)?;
@@ -296,7 +276,7 @@ pub fn render_slide_to_png(
     data: &InputData,
     slide_index: usize,
     scale: f32,
-    font_db: &usvg::fontdb::Database,
+    font_db: &std::sync::Arc<usvg::fontdb::Database>,
     image_policy: crate::text::ImagePolicy,
 ) -> anyhow::Result<Vec<u8>> {
     let pixels = render_slide_to_pixels(
@@ -310,7 +290,7 @@ pub fn render_slide_to_png(
     )?;
     let w = (template.dimensions.width as f32 * scale).round() as u32;
     let h = (template.dimensions.height as f32 * scale).round() as u32;
-    OutputFormat::Png.encode(&pixels, w, h)
+    OutputFormat::Png.encode_owned(pixels, w, h)
 }
 
 // ─── Font Database ──────────────────────────────────────────────────
@@ -321,7 +301,9 @@ pub fn render_slide_to_png(
 /// 1. Bundled fonts (Inter Regular/Bold/SemiBold, JetBrains Mono Regular)
 /// 2. System fonts
 /// 3. User-specified --font-dir
-pub fn build_font_db(custom_dir: Option<&Path>) -> anyhow::Result<usvg::fontdb::Database> {
+pub fn build_font_db(
+    custom_dir: Option<&Path>,
+) -> anyhow::Result<std::sync::Arc<usvg::fontdb::Database>> {
     let mut db = usvg::fontdb::Database::new();
 
     // 1. Load bundled fonts (embedded at compile time)
@@ -437,7 +419,7 @@ pub fn build_font_db(custom_dir: Option<&Path>) -> anyhow::Result<usvg::fontdb::
         }
     }
 
-    Ok(db)
+    Ok(std::sync::Arc::new(db))
 }
 
 /// Register a bundled font from embedded bytes.

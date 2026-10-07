@@ -317,7 +317,7 @@ fn empty_input() -> InputData {
 fn render_one_row(
     template: &TemplateDef,
     template_dir: &Path,
-    font_db: &usvg::fontdb::Database,
+    font_db: &std::sync::Arc<usvg::fontdb::Database>,
     image_policy: crate::text::ImagePolicy,
     scale: f32,
     format: OutputFormat,
@@ -354,7 +354,7 @@ fn render_one_row(
                     font_db,
                     image_policy,
                 )?;
-                let bytes = encode_pixels(template, scale, format, &pixels)?;
+                let bytes = encode_pixels(template, scale, format, pixels)?;
                 let path = dir.join(format!("{:02}.{}", i + 1, format.extension()));
                 std::fs::write(&path, &bytes)?;
                 out.push(path.to_string_lossy().to_string());
@@ -372,7 +372,7 @@ fn render_one_row(
             font_db,
             image_policy,
         )?;
-        let bytes = encode_pixels(template, scale, format, &pixels)?;
+        let bytes = encode_pixels(template, scale, format, pixels)?;
         let path = out_dir.join(format!("{}.{}", job.stem, format.extension()));
         std::fs::write(&path, &bytes)?;
         Ok(vec![path.to_string_lossy().to_string()])
@@ -396,11 +396,11 @@ fn encode_pixels(
     template: &TemplateDef,
     scale: f32,
     format: OutputFormat,
-    pixels: &[u8],
+    pixels: Vec<u8>,
 ) -> anyhow::Result<Vec<u8>> {
     let w = (template.dimensions.width as f32 * scale).round() as u32;
     let h = (template.dimensions.height as f32 * scale).round() as u32;
-    format.encode(pixels, w, h)
+    format.encode_owned(pixels, w, h)
 }
 
 /// Split a `_data` document into (brand, slides). Accepts:

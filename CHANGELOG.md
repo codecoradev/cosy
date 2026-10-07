@@ -5,6 +5,34 @@ All notable changes to Cosy will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.1] — 2026-10-07
+
+### Security
+- `POST /api/render` hardening (#127): `scale` limited to 0.1–4.0, at most
+  20 slides per JSON request, renders bounded by a CPU-sized semaphore,
+  `template` must be a plain name (no filesystem paths), and input is
+  validated against the template schema like the CLI/signed GET route.
+- An empty `COSY_API_KEY` (docker-compose default) now means "auth
+  disabled" instead of an unusable empty secret / empty signing key.
+
+### Added
+- Signed GET URLs (#129): dedicated `--signing-key` / `COSY_SIGNING_KEY`
+  (falls back to the API key) and optional signed `exp` expiry.
+- `cosy serve --host` to choose the bind address; a warning is logged when
+  auth is disabled on a non-loopback address.
+
+### Performance
+- Render pipeline (#128): the font database is shared as `Arc` instead of
+  cloned per slide, pixel buffers are moved (not copied) into the encoder
+  (`OutputFormat::encode_owned`), `template.svg` sources are cached by
+  mtime, and remote images are cached for 5 minutes (32 entries / 64 MB).
+- `/api/health` returns the startup template count instead of re-parsing
+  every `schema.json` (restart to pick up templates added at runtime);
+  `/api/templates` reads off the async workers.
+
+### Docs
+- Brand: logo symbol variants and 3-tone fan mark icon set (#125, #126).
+
 ## [0.5.0] — 2026-09-30
 
 ### Added

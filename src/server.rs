@@ -26,7 +26,12 @@ use tower_http::cors::CorsLayer;
 
 /// Shared server state — font DB built once at startup.
 struct AppState {
-    font_db: usvg::fontdb::Database,
+    font_db: Arc<usvg::fontdb::Database>,
+    /// Template count captured at startup (health checks must stay cheap).
+    template_count: usize,
+    /// Bounds concurrent renders so a burst of requests cannot exhaust
+    /// CPU/memory (each render allocates a full-size pixmap).
+    render_slots: tokio::sync::Semaphore,
     image_policy: crate::text::ImagePolicy,
     api_key: Option<String>,
     /// Signing key for GET /r/:template signed render URLs. Falls back to
@@ -68,6 +73,27 @@ pub struct RenderRequest {
 
 /// Maximum serialized size of the optional `metadata` field.
 pub const MAX_METADATA_BYTES: usize = 4096;
+
+/// Accepted `scale` range for POST /api/render. The pixmap is
+/// `width*scale × height*scale` RGBA and is copied twice while encoding, so an
+/// unbounded value lets one request exhaust memory (and `panic = "abort"`
+/// takes the whole server down with it).
+pub const MIN_SCALE: f32 = 0.1;
+pub const MAX_SCALE: f32 = 4.0;
+
+/// Maximum slides rendered by one request (`response_format: "json"`).
+pub const MAX_SLIDES_PER_REQUEST: usize = 20;
+
+/// True for a plain template id (`stat-card`). The HTTP API only serves
+/// templates from `./templates`; path-like values (`/tmp/x`, `../x`, `a/b`)
+/// would let callers render arbitrary directories on the server.
+fn is_safe_template_name(name: &str) -> bool {
+    !name.is_empty()
+        && name.len() <= 64
+        && name
+            .chars()
+            .all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_')
+}
 
 /// Image container format for POST /api/render (`image_format` field).
 #[derive(Debug, Clone, Copy, Deserialize, PartialEq, Eq)]
@@ -165,20 +191,50 @@ fn constant_time_str_eq(a: &str, b: &str) -> bool {
     constant_time_eq(a.as_bytes(), b.as_bytes())
 }
 
+/// Canonical string that is signed: `{template}:{d}` (legacy, no expiry) or
+/// `{template}:{d}:{exp}`.
+fn signed_payload(template_id: &str, d: &str, exp: Option<&str>) -> String {
+    match exp {
+        Some(exp) => format!("{template_id}:{d}:{exp}"),
+        None => format!("{template_id}:{d}"),
+    }
+}
+
+fn unix_now() -> u64 {
+    std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_secs())
+        .unwrap_or(0)
+}
+
 /// Parse and verify a signed GET render request.
 /// Returns the decoded input data, or an HTTP status + message.
 fn verify_signed_request(
     signing_key: &str,
     template_id: &str,
     query_d: &str,
+    query_exp: Option<&str>,
     query_sig: &str,
 ) -> Result<InputData, (StatusCode, String)> {
-    // Payload = template + data so URLs can't be transplanted across
-    // templates (a signature for template A must not render template B).
-    let payload = format!("{template_id}:{query_d}");
+    // Payload = template + data (+ expiry) so URLs can't be transplanted
+    // across templates (a signature for template A must not render template
+    // B) and an `exp` can neither be added nor stripped after signing.
+    let payload = signed_payload(template_id, query_d, query_exp);
 
     if !constant_time_str_eq(&sign_payload(signing_key, payload.as_bytes()), query_sig) {
         return Err((StatusCode::FORBIDDEN, "invalid signature".into()));
+    }
+
+    if let Some(exp) = query_exp {
+        let exp: u64 = exp.parse().map_err(|_| {
+            (
+                StatusCode::BAD_REQUEST,
+                "exp must be unix seconds".to_string(),
+            )
+        })?;
+        if exp < unix_now() {
+            return Err((StatusCode::FORBIDDEN, "signed URL expired".into()));
+        }
     }
 
     // d = base64url(JSON) — decode leniently (padded or not).
@@ -237,11 +293,33 @@ pub fn signed_get_url(
     data_json: &str,
     ext: &str,
 ) -> String {
+    signed_get_url_with_expiry(base, signing_key, template, data_json, ext, None)
+}
+
+/// Like [`signed_get_url`], optionally adding an `exp` (unix seconds) after
+/// which the server answers `403`. `exp` is part of the signed payload.
+pub fn signed_get_url_with_expiry(
+    base: &str,
+    signing_key: &str,
+    template: &str,
+    data_json: &str,
+    ext: &str,
+    exp: Option<u64>,
+) -> String {
     use base64::Engine;
     let d = base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(data_json.as_bytes());
-    let payload = format!("{template}:{d}");
+    let exp_s = exp.map(|e| e.to_string());
+    let payload = signed_payload(template, &d, exp_s.as_deref());
     let sig = sign_payload(signing_key, payload.as_bytes());
-    format!("{base}/r/{template}.{ext}?d={d}&sig={sig}")
+    match exp_s {
+        Some(e) => format!("{base}/r/{template}.{ext}?d={d}&exp={e}&sig={sig}"),
+        None => format!("{base}/r/{template}.{ext}?d={d}&sig={sig}"),
+    }
+}
+
+/// Treat an empty string as "not set".
+fn non_blank(value: Option<String>) -> Option<String> {
+    value.filter(|v| !v.is_empty())
 }
 
 /// Start the HTTP server.
@@ -253,6 +331,35 @@ pub async fn run(
     api_key: Option<String>,
     image_policy: crate::text::ImagePolicy,
 ) -> anyhow::Result<()> {
+    run_on("0.0.0.0", port, api_key, image_policy).await
+}
+
+/// Like [`run`], but with an explicit bind address (`--host`).
+pub async fn run_on(
+    host: &str,
+    port: u16,
+    api_key: Option<String>,
+    image_policy: crate::text::ImagePolicy,
+) -> anyhow::Result<()> {
+    run_with(host, port, api_key, None, image_policy).await
+}
+
+/// Full-control entry point. `signing_key` is the HMAC key for `/r/...`
+/// URLs; when `None` it falls back to the API key (legacy behavior).
+pub async fn run_with(
+    host: &str,
+    port: u16,
+    api_key: Option<String>,
+    signing_key: Option<String>,
+    image_policy: crate::text::ImagePolicy,
+) -> anyhow::Result<()> {
+    // Blank values (docker-compose passes one when the variable is unset)
+    // mean "not configured".
+    let api_key = non_blank(api_key);
+    let signing_key = non_blank(signing_key).or_else(|| api_key.clone());
+    let ip: std::net::IpAddr = host
+        .parse()
+        .map_err(|_| anyhow::anyhow!("invalid --host '{host}': expected an IP address"))?;
     let font_db = render::build_font_db(None)?;
 
     let template_count = template::list_templates(std::path::Path::new("./templates")).len();
@@ -262,13 +369,23 @@ pub async fn run(
         log::info!("Authentication enabled (bearer token required)");
     } else {
         log::warn!("Authentication disabled — set COSY_API_KEY to secure the API");
+        if !ip.is_loopback() {
+            log::warn!(
+                "Listening on {ip} without authentication — anyone who can reach this port can render; use --host 127.0.0.1 for local dev"
+            );
+        }
     }
 
+    let max_concurrent = std::thread::available_parallelism()
+        .map(|n| n.get())
+        .unwrap_or(2);
     let state = Arc::new(AppState {
         font_db,
+        template_count,
+        render_slots: tokio::sync::Semaphore::new(max_concurrent),
         image_policy,
         api_key: api_key.clone(),
-        signing_key: api_key.clone(),
+        signing_key,
     });
 
     // Protected routes require auth
@@ -289,7 +406,7 @@ pub async fn run(
         .layer(CorsLayer::permissive())
         .with_state(state);
 
-    let addr = SocketAddr::from(([0, 0, 0, 0], port));
+    let addr = SocketAddr::new(ip, port);
     log::info!("Cosy API server listening on http://{}", addr);
     log::info!("Loaded {} templates", template_count);
 
@@ -351,18 +468,21 @@ fn constant_time_eq(a: &[u8], b: &[u8]) -> bool {
 // ─── Handlers ──────────────────────────────────────────────────────
 
 async fn health(State(state): State<Arc<AppState>>) -> Json<HealthResponse> {
-    let templates = template::list_templates(std::path::Path::new("./templates"));
-    let _ = &state; // font_db ready
     Json(HealthResponse {
         status: "ok",
         version: env!("CARGO_PKG_VERSION"),
-        templates: templates.len(),
+        templates: state.template_count,
         auth_enabled: state.api_key.is_some(),
     })
 }
 
 async fn list_templates() -> Json<Vec<crate::schema::TemplateDef>> {
-    let templates = template::list_templates(std::path::Path::new("./templates"));
+    // Reads every schema.json from disk — keep it off the async workers.
+    let templates = tokio::task::spawn_blocking(|| {
+        template::list_templates(std::path::Path::new("./templates"))
+    })
+    .await
+    .unwrap_or_default();
     Json(templates)
 }
 
@@ -410,6 +530,21 @@ async fn render_handler(
         );
     }
 
+    if !req.scale.is_finite() || !(MIN_SCALE..=MAX_SCALE).contains(&req.scale) {
+        return error_response(
+            StatusCode::BAD_REQUEST,
+            format!("scale must be between {MIN_SCALE} and {MAX_SCALE}"),
+        );
+    }
+
+    if !is_safe_template_name(&req.template) {
+        return error_response(
+            StatusCode::BAD_REQUEST,
+            "Template error: template must be a plain template name (letters, digits, '-', '_')"
+                .into(),
+        );
+    }
+
     // Load template definition
     let tmpl = match template::load_template(&req.template) {
         Ok(t) => t,
@@ -425,6 +560,26 @@ async fn render_handler(
             return error_response(StatusCode::NOT_FOUND, format!("Template not found: {e:#}"));
         }
     };
+
+    // Same schema validation as the CLI and signed GET route.
+    let errors = template::validate_input(&tmpl, &req.data);
+    if !errors.is_empty() {
+        return error_response(
+            StatusCode::BAD_REQUEST,
+            format!("validation failed: {}", errors.join("; ")),
+        );
+    }
+
+    if format == ResponseFormat::Json && req.data.slides.len() > MAX_SLIDES_PER_REQUEST {
+        return error_response(
+            StatusCode::PAYLOAD_TOO_LARGE,
+            format!(
+                "too many slides: {} (max {} per request)",
+                req.data.slides.len(),
+                MAX_SLIDES_PER_REQUEST
+            ),
+        );
+    }
 
     // Which slides to render: all for json format, one for image format.
     let slide_indices: Vec<usize> = match format {
@@ -447,7 +602,7 @@ async fn render_handler(
 
     // Blocking work (template IO, resvg, possibly remote image fetches) runs
     // on the blocking thread pool so the async runtime is never blocked.
-    let font_db = state.font_db.clone();
+    let font_db = Arc::clone(&state.font_db);
     let image_policy = state.image_policy;
     let scale = req.scale;
     let data = req.data;
@@ -457,6 +612,11 @@ async fn render_handler(
         req.image_format.map(Into::into).unwrap_or_default();
     let out_w = (dims.width as f32 * scale).round() as u32;
     let out_h = (dims.height as f32 * scale).round() as u32;
+    let _permit = state
+        .render_slots
+        .acquire()
+        .await
+        .expect("render semaphore is never closed");
     let render_result = tokio::task::spawn_blocking(move || {
         slide_indices
             .into_iter()
@@ -471,7 +631,7 @@ async fn render_handler(
                         &font_db,
                         image_policy,
                     )?;
-                    let bytes = image_format.encode(&png, out_w, out_h)?;
+                    let bytes = image_format.encode_owned(png, out_w, out_h)?;
                     Ok((i, bytes))
                 } else {
                     // SVG: vector path — scale does not apply.
@@ -604,8 +764,9 @@ async fn signed_render_handler(
         );
     };
 
-    // 4. Verify signature + decode payload (also rejects >8 KB payloads)
-    let data = match verify_signed_request(&signing_key, &template_id, d, sig) {
+    // 4. Verify signature + expiry + decode payload (also rejects >8 KB payloads)
+    let exp = params.get("exp").map(String::as_str);
+    let data = match verify_signed_request(&signing_key, &template_id, d, exp, sig) {
         Ok(data) => data,
         Err((status, msg)) => return error_response(status, msg),
     };
@@ -618,6 +779,12 @@ async fn signed_render_handler(
     }
 
     // 5. Load template + dir (error mapping mirrors render_handler)
+    if !is_safe_template_name(&template_id) {
+        return error_response(
+            StatusCode::BAD_REQUEST,
+            "Template error: invalid template name".into(),
+        );
+    }
     let Ok(tmpl) = template::load_template(&template_id) else {
         return error_response(
             StatusCode::BAD_REQUEST,
@@ -640,10 +807,20 @@ async fn signed_render_handler(
     }
 
     // 6. Render first slide on the blocking pool
-    let font_db = state.font_db.clone();
+    // Don't let a CDN cache an image past the URL's own expiry.
+    let max_age = exp
+        .and_then(|e| e.parse::<u64>().ok())
+        .map(|e| e.saturating_sub(unix_now()).min(3600))
+        .unwrap_or(3600);
+    let font_db = Arc::clone(&state.font_db);
     let image_policy = state.image_policy;
     let scale = 1.0_f32;
     let dims = tmpl.dimensions.clone();
+    let _permit = state
+        .render_slots
+        .acquire()
+        .await
+        .expect("render semaphore is never closed");
     let render_result = tokio::task::spawn_blocking(move || {
         let pixels = render::render_slide_to_pixels(
             &tmpl,
@@ -656,7 +833,7 @@ async fn signed_render_handler(
         )?;
         let w = (dims.width as f32 * scale).round() as u32;
         let h = (dims.height as f32 * scale).round() as u32;
-        image_format.encode(&pixels, w, h)
+        image_format.encode_owned(pixels, w, h)
     })
     .await;
 
@@ -671,8 +848,8 @@ async fn signed_render_handler(
             (
                 StatusCode::OK,
                 [
-                    (header::CONTENT_TYPE, image_format.mime_type()),
-                    (header::CACHE_CONTROL, "public, max-age=3600"),
+                    (header::CONTENT_TYPE, image_format.mime_type().to_string()),
+                    (header::CACHE_CONTROL, format!("public, max-age={max_age}")),
                 ],
                 bytes,
             )
