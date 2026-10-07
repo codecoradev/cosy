@@ -435,26 +435,27 @@ async fn auth_middleware(
         .get(header::AUTHORIZATION)
         .and_then(|v| v.to_str().ok());
 
-    match auth_header {
-        Some(header_val)
-            if header_val
-                .split_once(' ')
-                .is_some_and(|(scheme, _)| scheme.eq_ignore_ascii_case("bearer")) =>
-        {
-            // RFC 7235: the auth scheme is case-insensitive
-            let token = header_val.split_once(' ').map_or("", |(_, t)| t);
+    match auth_header.and_then(bearer_credentials) {
+        Some(presented) => {
             // Constant-time comparison to prevent timing attacks
-            if constant_time_eq(token.as_bytes(), expected.as_bytes()) {
+            if constant_time_eq(presented.as_bytes(), expected.as_bytes()) {
                 next.run(req).await
             } else {
                 error_response(StatusCode::UNAUTHORIZED, "Invalid API key".into())
             }
         }
-        _ => error_response(
+        None => error_response(
             StatusCode::UNAUTHORIZED,
             "Missing or invalid Authorization header. Expected: Bearer <token>".into(),
         ),
     }
+}
+
+/// Credentials part of an `Authorization: Bearer <credentials>` header.
+/// RFC 7235: the auth scheme is case-insensitive.
+fn bearer_credentials(header_value: &str) -> Option<&str> {
+    let (scheme, rest) = header_value.split_once(' ')?;
+    scheme.eq_ignore_ascii_case("bearer").then_some(rest)
 }
 
 /// Constant-time byte comparison to prevent timing side-channel attacks.
