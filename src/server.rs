@@ -268,6 +268,11 @@ pub fn signed_get_url(
     format!("{base}/r/{template}.{ext}?d={d}&sig={sig}")
 }
 
+/// Treat an empty string as "not set".
+fn non_blank(value: Option<String>) -> Option<String> {
+    value.filter(|v| !v.is_empty())
+}
+
 /// Start the HTTP server.
 ///
 /// If `api_key` is Some, all endpoints except /api/health require
@@ -287,9 +292,9 @@ pub async fn run_on(
     api_key: Option<String>,
     image_policy: crate::text::ImagePolicy,
 ) -> anyhow::Result<()> {
-    // An empty key (e.g. docker-compose's `COSY_API_KEY=${COSY_API_KEY:-}`)
-    // means "not configured", not "the empty string is the secret".
-    let api_key = api_key.filter(|k| !k.is_empty());
+    // Blank values (docker-compose passes one when the variable is unset)
+    // mean "not configured".
+    let api_key = non_blank(api_key);
     let ip: std::net::IpAddr = host
         .parse()
         .map_err(|_| anyhow::anyhow!("invalid --host '{host}': expected an IP address"))?;
