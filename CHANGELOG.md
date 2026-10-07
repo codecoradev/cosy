@@ -5,7 +5,7 @@ All notable changes to Cosy will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.5.1] — 2026-10-07
 
 ### Security
 - `POST /api/render` hardening (#127): `scale` limited to 0.1–4.0, at most
@@ -27,7 +27,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (`OutputFormat::encode_owned`), `template.svg` sources are cached by
   mtime, and remote images are cached for 5 minutes (32 entries / 64 MB).
 - `/api/health` returns the startup template count instead of re-parsing
-  every `schema.json`; `/api/templates` reads off the async workers.
+  every `schema.json` (restart to pick up templates added at runtime);
+  `/api/templates` reads off the async workers.
+
+### Docs
+- Brand: logo symbol variants and 3-tone fan mark icon set (#125, #126).
 
 ## [0.5.0] — 2026-09-30
 
