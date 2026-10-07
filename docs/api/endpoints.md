@@ -163,16 +163,21 @@ GET /r/og-image.png?d=<base64url(JSON)>&sig=<hex hmac-sha256>
 
 - `d` = base64url-encoded input JSON (`{"data": {...}}` or a bare
   brand+slides object); max 8 KB decoded → `413`.
-- `sig` = HMAC-SHA256 hex over `{template}:{d}` using the API key as the
-  signing key. Wrong/missing signature → `403`. Signatures are bound to
+- `exp` (optional) = unix seconds after which the URL answers `403`. When
+  present it is part of the signed payload (`{template}:{d}:{exp}`), so it
+  can't be added or stripped without invalidating `sig`.
+- `sig` = HMAC-SHA256 hex over `{template}:{d}` (or `{template}:{d}:{exp}`)
+  using the signing key (`--signing-key` / `COSY_SIGNING_KEY`, falling back
+  to the API key). Wrong/missing signature → `403`. Signatures are bound to
   the template name, so a URL for one template can't render another.
 - `{ext}` selects the container: `.png` (default) or `.webp`.
-- Responses carry `Cache-Control: public, max-age=3600` for re-crawls.
-- Disabled with `404` when the server has no API key configured
+- Responses carry `Cache-Control: public, max-age=3600` for re-crawls
+  (capped to the remaining lifetime when `exp` is set).
+- Disabled with `404` when the server has no signing key or API key configured
   (dev mode keeps unsigned POST only).
 
 Generating a URL (pseudo-code): `d = base64url(json); sig =
-hmac_sha256_hex(api_key, template + ":" + d)`.
+hmac_sha256_hex(signing_key, template + ":" + d [+ ":" + exp])`.
 
 ### Responses
 

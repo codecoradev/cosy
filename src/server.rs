@@ -191,20 +191,50 @@ fn constant_time_str_eq(a: &str, b: &str) -> bool {
     constant_time_eq(a.as_bytes(), b.as_bytes())
 }
 
+/// Canonical string that is signed: `{template}:{d}` (legacy, no expiry) or
+/// `{template}:{d}:{exp}`.
+fn signed_payload(template_id: &str, d: &str, exp: Option<&str>) -> String {
+    match exp {
+        Some(exp) => format!("{template_id}:{d}:{exp}"),
+        None => format!("{template_id}:{d}"),
+    }
+}
+
+fn unix_now() -> u64 {
+    std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|d| d.as_secs())
+        .unwrap_or(0)
+}
+
 /// Parse and verify a signed GET render request.
 /// Returns the decoded input data, or an HTTP status + message.
 fn verify_signed_request(
     signing_key: &str,
     template_id: &str,
     query_d: &str,
+    query_exp: Option<&str>,
     query_sig: &str,
 ) -> Result<InputData, (StatusCode, String)> {
-    // Payload = template + data so URLs can't be transplanted across
-    // templates (a signature for template A must not render template B).
-    let payload = format!("{template_id}:{query_d}");
+    // Payload = template + data (+ expiry) so URLs can't be transplanted
+    // across templates (a signature for template A must not render template
+    // B) and an `exp` can neither be added nor stripped after signing.
+    let payload = signed_payload(template_id, query_d, query_exp);
 
     if !constant_time_str_eq(&sign_payload(signing_key, payload.as_bytes()), query_sig) {
         return Err((StatusCode::FORBIDDEN, "invalid signature".into()));
+    }
+
+    if let Some(exp) = query_exp {
+        let exp: u64 = exp.parse().map_err(|_| {
+            (
+                StatusCode::BAD_REQUEST,
+                "exp must be unix seconds".to_string(),
+            )
+        })?;
+        if exp < unix_now() {
+            return Err((StatusCode::FORBIDDEN, "signed URL expired".into()));
+        }
     }
 
     // d = base64url(JSON) — decode leniently (padded or not).
@@ -263,11 +293,28 @@ pub fn signed_get_url(
     data_json: &str,
     ext: &str,
 ) -> String {
+    signed_get_url_with_expiry(base, signing_key, template, data_json, ext, None)
+}
+
+/// Like [`signed_get_url`], optionally adding an `exp` (unix seconds) after
+/// which the server answers `403`. `exp` is part of the signed payload.
+pub fn signed_get_url_with_expiry(
+    base: &str,
+    signing_key: &str,
+    template: &str,
+    data_json: &str,
+    ext: &str,
+    exp: Option<u64>,
+) -> String {
     use base64::Engine;
     let d = base64::engine::general_purpose::URL_SAFE_NO_PAD.encode(data_json.as_bytes());
-    let payload = format!("{template}:{d}");
+    let exp_s = exp.map(|e| e.to_string());
+    let payload = signed_payload(template, &d, exp_s.as_deref());
     let sig = sign_payload(signing_key, payload.as_bytes());
-    format!("{base}/r/{template}.{ext}?d={d}&sig={sig}")
+    match exp_s {
+        Some(e) => format!("{base}/r/{template}.{ext}?d={d}&exp={e}&sig={sig}"),
+        None => format!("{base}/r/{template}.{ext}?d={d}&sig={sig}"),
+    }
 }
 
 /// Treat an empty string as "not set".
@@ -294,9 +341,22 @@ pub async fn run_on(
     api_key: Option<String>,
     image_policy: crate::text::ImagePolicy,
 ) -> anyhow::Result<()> {
+    run_with(host, port, api_key, None, image_policy).await
+}
+
+/// Full-control entry point. `signing_key` is the HMAC key for `/r/...`
+/// URLs; when `None` it falls back to the API key (legacy behavior).
+pub async fn run_with(
+    host: &str,
+    port: u16,
+    api_key: Option<String>,
+    signing_key: Option<String>,
+    image_policy: crate::text::ImagePolicy,
+) -> anyhow::Result<()> {
     // Blank values (docker-compose passes one when the variable is unset)
     // mean "not configured".
     let api_key = non_blank(api_key);
+    let signing_key = non_blank(signing_key).or_else(|| api_key.clone());
     let ip: std::net::IpAddr = host
         .parse()
         .map_err(|_| anyhow::anyhow!("invalid --host '{host}': expected an IP address"))?;
@@ -325,7 +385,7 @@ pub async fn run_on(
         render_slots: tokio::sync::Semaphore::new(max_concurrent),
         image_policy,
         api_key: api_key.clone(),
-        signing_key: api_key.clone(),
+        signing_key,
     });
 
     // Protected routes require auth
@@ -704,8 +764,9 @@ async fn signed_render_handler(
         );
     };
 
-    // 4. Verify signature + decode payload (also rejects >8 KB payloads)
-    let data = match verify_signed_request(&signing_key, &template_id, d, sig) {
+    // 4. Verify signature + expiry + decode payload (also rejects >8 KB payloads)
+    let exp = params.get("exp").map(String::as_str);
+    let data = match verify_signed_request(&signing_key, &template_id, d, exp, sig) {
         Ok(data) => data,
         Err((status, msg)) => return error_response(status, msg),
     };
@@ -746,6 +807,11 @@ async fn signed_render_handler(
     }
 
     // 6. Render first slide on the blocking pool
+    // Don't let a CDN cache an image past the URL's own expiry.
+    let max_age = exp
+        .and_then(|e| e.parse::<u64>().ok())
+        .map(|e| e.saturating_sub(unix_now()).min(3600))
+        .unwrap_or(3600);
     let font_db = Arc::clone(&state.font_db);
     let image_policy = state.image_policy;
     let scale = 1.0_f32;
@@ -782,8 +848,8 @@ async fn signed_render_handler(
             (
                 StatusCode::OK,
                 [
-                    (header::CONTENT_TYPE, image_format.mime_type()),
-                    (header::CACHE_CONTROL, "public, max-age=3600"),
+                    (header::CONTENT_TYPE, image_format.mime_type().to_string()),
+                    (header::CACHE_CONTROL, format!("public, max-age={max_age}")),
                 ],
                 bytes,
             )

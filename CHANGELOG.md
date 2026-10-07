@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   disabled" instead of an unusable empty secret / empty signing key.
 
 ### Added
+- Signed GET URLs (#129): dedicated `--signing-key` / `COSY_SIGNING_KEY`
+  (falls back to the API key) and optional signed `exp` expiry.
 - `cosy serve --host` to choose the bind address; a warning is logged when
   auth is disabled on a non-loopback address.
 

@@ -18,6 +18,11 @@ fn start_server() -> String {
 
 /// Start the API server with an optional API key for auth testing.
 fn start_server_with_key(api_key: Option<String>) -> String {
+    start_server_with_keys(api_key, None)
+}
+
+/// Start the API server with an API key and an optional separate signing key.
+fn start_server_with_keys(api_key: Option<String>, signing_key: Option<String>) -> String {
     // Find a free port by binding a temporary listener
     let listener = TcpListener::bind("127.0.0.1:0").unwrap();
     let port = listener.local_addr().unwrap().port();
@@ -26,9 +31,11 @@ fn start_server_with_key(api_key: Option<String>) -> String {
     thread::spawn(move || {
         let runtime = tokio::runtime::Runtime::new().unwrap();
         runtime
-            .block_on(server::run(
+            .block_on(server::run_with(
+                "127.0.0.1",
                 port,
                 api_key,
+                signing_key,
                 cosy::text::ImagePolicy::UNRESTRICTED,
             ))
             .unwrap();
@@ -980,4 +987,83 @@ fn test_empty_api_key_means_auth_disabled() {
         .json()
         .unwrap();
     assert_eq!(health["auth_enabled"], false);
+}
+
+// ─── Signing key + expiry (#129) ────────────────────────────────────
+
+const SIGNED_DATA: &str =
+    r#"{"brand":{"brand_name":"T"},"slides":[{"stat_number":"1%","stat_label":"x","source":"x"}]}"#;
+
+fn now_secs() -> u64 {
+    std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap()
+        .as_secs()
+}
+
+#[test]
+fn test_signed_get_separate_signing_key() {
+    let url = start_server_with_keys(Some("api-key".into()), Some("sign-key".into()));
+    // API key must NOT be able to sign when a dedicated signing key is set
+    let with_api = server::signed_get_url(&url, "api-key", "stat-card", SIGNED_DATA, "png");
+    assert_eq!(http_client().get(&with_api).send().unwrap().status(), 403);
+    let with_sign = server::signed_get_url(&url, "sign-key", "stat-card", SIGNED_DATA, "png");
+    assert_eq!(http_client().get(&with_sign).send().unwrap().status(), 200);
+}
+
+#[test]
+fn test_signed_get_enabled_by_signing_key_alone() {
+    let url = start_server_with_keys(None, Some("sign-key".into()));
+    let signed = server::signed_get_url(&url, "sign-key", "stat-card", SIGNED_DATA, "png");
+    assert_eq!(http_client().get(&signed).send().unwrap().status(), 200);
+}
+
+#[test]
+fn test_signed_get_expiry() {
+    let key = "exp-key";
+    let url = start_server_with_key(Some(key.into()));
+    let exp = now_secs() + 120;
+    let ok =
+        server::signed_get_url_with_expiry(&url, key, "stat-card", SIGNED_DATA, "png", Some(exp));
+    let resp = http_client().get(&ok).send().unwrap();
+    assert_eq!(resp.status(), 200);
+    let cc = resp.headers()["cache-control"]
+        .to_str()
+        .unwrap()
+        .to_string();
+    let max_age: u64 = cc.trim_start_matches("public, max-age=").parse().unwrap();
+    assert!(max_age <= 120, "cache must not outlive exp, got {cc}");
+
+    let expired = server::signed_get_url_with_expiry(
+        &url,
+        key,
+        "stat-card",
+        SIGNED_DATA,
+        "png",
+        Some(now_secs() - 5),
+    );
+    assert_eq!(http_client().get(&expired).send().unwrap().status(), 403);
+}
+
+#[test]
+fn test_signed_get_exp_cannot_be_stripped_or_added() {
+    let key = "exp-key-2";
+    let url = start_server_with_key(Some(key.into()));
+    // strip exp from an expiring URL (even an already-expired one)
+    let expired = server::signed_get_url_with_expiry(
+        &url,
+        key,
+        "stat-card",
+        SIGNED_DATA,
+        "png",
+        Some(now_secs() - 5),
+    );
+    let stripped = expired.split("&exp=").next().unwrap().to_string()
+        + "&sig="
+        + expired.split("&sig=").nth(1).unwrap();
+    assert_eq!(http_client().get(&stripped).send().unwrap().status(), 403);
+    // add exp to a legacy (no-exp) signature
+    let legacy = server::signed_get_url(&url, key, "stat-card", SIGNED_DATA, "png");
+    let injected = format!("{legacy}&exp={}", now_secs() + 3600);
+    assert_eq!(http_client().get(&injected).send().unwrap().status(), 403);
 }
