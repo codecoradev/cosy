@@ -19,6 +19,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `cosy serve --host` to choose the bind address; a warning is logged when
   auth is disabled on a non-loopback address.
 
+### Performance
+- Render pipeline (#128): the font database is shared as `Arc` instead of
+  cloned per slide, pixel buffers are moved (not copied) into the encoder
+  (`OutputFormat::encode_owned`), `template.svg` sources are cached by
+  mtime, and remote images are cached for 5 minutes (32 entries / 64 MB).
+- `/api/health` returns the startup template count instead of re-parsing
+  every `schema.json`; `/api/templates` reads off the async workers.
+
 ## [0.5.0] — 2026-09-30
 
 ### Added
