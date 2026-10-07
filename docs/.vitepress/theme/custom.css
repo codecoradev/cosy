@@ -16,3 +16,23 @@
   --vp-c-brand-2: #b4befe;
   --vp-c-brand-3: #89b4fa;
 }
+
+/* Light mode: pastel brand colors fail WCAG AA against white (2.0:1).
+   Use darker violet tones for text/buttons; keep pastels for dark mode. */
+:root:not(.dark) {
+  --vp-c-brand-1: #6d28d9;
+  --vp-c-brand-2: #5b21b6;
+  --vp-c-brand-3: #7c3aed;
+  --vp-c-brand-soft: rgba(124, 58, 237, 0.14);
+  --vp-button-brand-bg: #6d28d9;
+  --vp-button-brand-hover-bg: #5b21b6;
+  --vp-button-brand-text: #ffffff;
+}
+.dark {
+  --vp-button-brand-text: #1e1e2e;
+}
+
+/* Scrollable tables/code on small screens keep a visible edge cue */
+@media (max-width: 640px) {
+  .vp-doc table { display: block; max-width: 100%; overflow-x: auto; }
+}

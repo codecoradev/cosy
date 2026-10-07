@@ -2,9 +2,14 @@
 aside: false
 ---
 
+<script setup>
+import { useData } from 'vitepress'
+const { theme } = useData()
+</script>
+
 # Templates
 
-Cosy ships with **148 templates** out of the box. Browse the gallery below, or use the sidebar to filter by category.
+Cosy ships with **{{ theme.templateCount }} templates** out of the box. Browse the gallery below, or use the sidebar to filter by category.
 
 <style>
 .template-masonry {

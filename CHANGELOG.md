@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Docs
+- Fix blank Template Authoring page (inline `{{ }}` parsed as Vue), derive the
+  template count from `templates/`, WCAG-compliant brand colors in light mode,
+  favicon and header logo, and fail the docs CI build on render errors (#138).
+
 ### Fixed
 - Findings from a Cora scan (#136): `--stdin`/`--json` temp input is now
   unique, `O_EXCL`-created and removed afterwards (was a fixed `/tmp` name);

@@ -105,7 +105,7 @@ templates/
 ├── twitter-quote/
 │   ├── template.svg
 │   └── schema.json
-└── ...                       # 18 templates included
+└── ...                       # 150+ templates included
 ```
 
 ## Documentation

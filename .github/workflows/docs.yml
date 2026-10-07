@@ -28,8 +28,16 @@ jobs:
           bun-version: latest
       - run: bun install
         working-directory: docs
-      - run: bun run build
+      - name: Build docs (fail on render errors)
         working-directory: docs
+        run: |
+          # vitepress prints SSR render errors but still exits 0, leaving blank pages
+          set -o pipefail
+          bun run build 2>&1 | tee build.log
+          if grep -qE "(TypeError|ReferenceError|SyntaxError|\[vitepress\].*error)" build.log; then
+            echo "::error::Docs build logged render errors (see above)."
+            exit 1
+          fi
       - name: Verify build output
         run: |
           if [ ! -d "docs/.vitepress/dist" ] || [ -z "$(ls -A docs/.vitepress/dist)" ]; then
