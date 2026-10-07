@@ -5,6 +5,20 @@ All notable changes to Cosy will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Security
+- `POST /api/render` hardening (#127): `scale` limited to 0.1–4.0, at most
+  20 slides per JSON request, renders bounded by a CPU-sized semaphore,
+  `template` must be a plain name (no filesystem paths), and input is
+  validated against the template schema like the CLI/signed GET route.
+- An empty `COSY_API_KEY` (docker-compose default) now means "auth
+  disabled" instead of an unusable empty secret / empty signing key.
+
+### Added
+- `cosy serve --host` to choose the bind address; a warning is logged when
+  auth is disabled on a non-loopback address.
+
 ## [0.5.0] — 2026-09-30
 
 ### Added

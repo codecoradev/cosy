@@ -11,6 +11,9 @@ COSY_API_KEY=your-secret cosy serve --port 3000
 
 # Or via flag
 cosy serve --port 3000 --token your-secret
+
+# Bind to loopback only (recommended for local dev without a key)
+cosy serve --host 127.0.0.1
 ```
 
 ## Remote Image Security

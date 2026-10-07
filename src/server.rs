@@ -27,6 +27,9 @@ use tower_http::cors::CorsLayer;
 /// Shared server state — font DB built once at startup.
 struct AppState {
     font_db: usvg::fontdb::Database,
+    /// Bounds concurrent renders so a burst of requests cannot exhaust
+    /// CPU/memory (each render allocates a full-size pixmap).
+    render_slots: tokio::sync::Semaphore,
     image_policy: crate::text::ImagePolicy,
     api_key: Option<String>,
     /// Signing key for GET /r/:template signed render URLs. Falls back to
@@ -68,6 +71,27 @@ pub struct RenderRequest {
 
 /// Maximum serialized size of the optional `metadata` field.
 pub const MAX_METADATA_BYTES: usize = 4096;
+
+/// Accepted `scale` range for POST /api/render. The pixmap is
+/// `width*scale × height*scale` RGBA and is copied twice while encoding, so an
+/// unbounded value lets one request exhaust memory (and `panic = "abort"`
+/// takes the whole server down with it).
+pub const MIN_SCALE: f32 = 0.1;
+pub const MAX_SCALE: f32 = 4.0;
+
+/// Maximum slides rendered by one request (`response_format: "json"`).
+pub const MAX_SLIDES_PER_REQUEST: usize = 20;
+
+/// True for a plain template id (`stat-card`). The HTTP API only serves
+/// templates from `./templates`; path-like values (`/tmp/x`, `../x`, `a/b`)
+/// would let callers render arbitrary directories on the server.
+fn is_safe_template_name(name: &str) -> bool {
+    !name.is_empty()
+        && name.len() <= 64
+        && name
+            .chars()
+            .all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_')
+}
 
 /// Image container format for POST /api/render (`image_format` field).
 #[derive(Debug, Clone, Copy, Deserialize, PartialEq, Eq)]
@@ -253,6 +277,22 @@ pub async fn run(
     api_key: Option<String>,
     image_policy: crate::text::ImagePolicy,
 ) -> anyhow::Result<()> {
+    run_on("0.0.0.0", port, api_key, image_policy).await
+}
+
+/// Like [`run`], but with an explicit bind address (`--host`).
+pub async fn run_on(
+    host: &str,
+    port: u16,
+    api_key: Option<String>,
+    image_policy: crate::text::ImagePolicy,
+) -> anyhow::Result<()> {
+    // An empty key (e.g. docker-compose's `COSY_API_KEY=${COSY_API_KEY:-}`)
+    // means "not configured", not "the empty string is the secret".
+    let api_key = api_key.filter(|k| !k.is_empty());
+    let ip: std::net::IpAddr = host
+        .parse()
+        .map_err(|_| anyhow::anyhow!("invalid --host '{host}': expected an IP address"))?;
     let font_db = render::build_font_db(None)?;
 
     let template_count = template::list_templates(std::path::Path::new("./templates")).len();
@@ -262,10 +302,19 @@ pub async fn run(
         log::info!("Authentication enabled (bearer token required)");
     } else {
         log::warn!("Authentication disabled — set COSY_API_KEY to secure the API");
+        if !ip.is_loopback() {
+            log::warn!(
+                "Listening on {ip} without authentication — anyone who can reach this port can render; use --host 127.0.0.1 for local dev"
+            );
+        }
     }
 
+    let max_concurrent = std::thread::available_parallelism()
+        .map(|n| n.get())
+        .unwrap_or(2);
     let state = Arc::new(AppState {
         font_db,
+        render_slots: tokio::sync::Semaphore::new(max_concurrent),
         image_policy,
         api_key: api_key.clone(),
         signing_key: api_key.clone(),
@@ -289,7 +338,7 @@ pub async fn run(
         .layer(CorsLayer::permissive())
         .with_state(state);
 
-    let addr = SocketAddr::from(([0, 0, 0, 0], port));
+    let addr = SocketAddr::new(ip, port);
     log::info!("Cosy API server listening on http://{}", addr);
     log::info!("Loaded {} templates", template_count);
 
@@ -410,6 +459,21 @@ async fn render_handler(
         );
     }
 
+    if !req.scale.is_finite() || !(MIN_SCALE..=MAX_SCALE).contains(&req.scale) {
+        return error_response(
+            StatusCode::BAD_REQUEST,
+            format!("scale must be between {MIN_SCALE} and {MAX_SCALE}"),
+        );
+    }
+
+    if !is_safe_template_name(&req.template) {
+        return error_response(
+            StatusCode::BAD_REQUEST,
+            "Template error: template must be a plain template name (letters, digits, '-', '_')"
+                .into(),
+        );
+    }
+
     // Load template definition
     let tmpl = match template::load_template(&req.template) {
         Ok(t) => t,
@@ -425,6 +489,26 @@ async fn render_handler(
             return error_response(StatusCode::NOT_FOUND, format!("Template not found: {e:#}"));
         }
     };
+
+    // Same schema validation as the CLI and signed GET route.
+    let errors = template::validate_input(&tmpl, &req.data);
+    if !errors.is_empty() {
+        return error_response(
+            StatusCode::BAD_REQUEST,
+            format!("validation failed: {}", errors.join("; ")),
+        );
+    }
+
+    if format == ResponseFormat::Json && req.data.slides.len() > MAX_SLIDES_PER_REQUEST {
+        return error_response(
+            StatusCode::PAYLOAD_TOO_LARGE,
+            format!(
+                "too many slides: {} (max {} per request)",
+                req.data.slides.len(),
+                MAX_SLIDES_PER_REQUEST
+            ),
+        );
+    }
 
     // Which slides to render: all for json format, one for image format.
     let slide_indices: Vec<usize> = match format {
@@ -457,6 +541,11 @@ async fn render_handler(
         req.image_format.map(Into::into).unwrap_or_default();
     let out_w = (dims.width as f32 * scale).round() as u32;
     let out_h = (dims.height as f32 * scale).round() as u32;
+    let _permit = state
+        .render_slots
+        .acquire()
+        .await
+        .expect("render semaphore is never closed");
     let render_result = tokio::task::spawn_blocking(move || {
         slide_indices
             .into_iter()
@@ -618,6 +707,12 @@ async fn signed_render_handler(
     }
 
     // 5. Load template + dir (error mapping mirrors render_handler)
+    if !is_safe_template_name(&template_id) {
+        return error_response(
+            StatusCode::BAD_REQUEST,
+            "Template error: invalid template name".into(),
+        );
+    }
     let Ok(tmpl) = template::load_template(&template_id) else {
         return error_response(
             StatusCode::BAD_REQUEST,
@@ -644,6 +739,11 @@ async fn signed_render_handler(
     let image_policy = state.image_policy;
     let scale = 1.0_f32;
     let dims = tmpl.dimensions.clone();
+    let _permit = state
+        .render_slots
+        .acquire()
+        .await
+        .expect("render semaphore is never closed");
     let render_result = tokio::task::spawn_blocking(move || {
         let pixels = render::render_slide_to_pixels(
             &tmpl,
