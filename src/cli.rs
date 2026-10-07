@@ -136,6 +136,11 @@ pub enum Command {
         #[arg(short, long)]
         token: Option<String>,
 
+        /// HMAC key for signed GET render URLs (`/r/...`). If not set, reads
+        /// COSY_SIGNING_KEY, then falls back to the API key.
+        #[arg(long)]
+        signing_key: Option<String>,
+
         /// Allow bg_image/logo URLs pointing at private/internal addresses.
         /// Off by default: the API renders attacker-controlled JSON, so
         /// image fetches to loopback/RFC1918/link-local targets are blocked.
@@ -380,6 +385,7 @@ impl Cli {
                 port,
                 host,
                 token,
+                signing_key,
                 allow_private_images,
                 allow_local_image_paths,
             } => {
@@ -387,6 +393,7 @@ impl Cli {
                 let api_key = token
                     .or_else(|| std::env::var("COSY_API_KEY").ok())
                     .filter(|k| !k.is_empty());
+                let signing_key = signing_key.or_else(|| std::env::var("COSY_SIGNING_KEY").ok());
                 let image_policy = crate::text::ImagePolicy {
                     allow_private: allow_private_images,
                     allow_local: allow_local_image_paths,
@@ -400,7 +407,13 @@ impl Cli {
                 println!("Starting Cosy API server on port {}...", port);
                 // Tokio runtime for async server
                 let runtime = tokio::runtime::Runtime::new()?;
-                runtime.block_on(crate::server::run_on(&host, port, api_key, image_policy))?;
+                runtime.block_on(crate::server::run_with(
+                    &host,
+                    port,
+                    api_key,
+                    signing_key,
+                    image_policy,
+                ))?;
                 Ok(ExitCode::SUCCESS)
             }
         }
