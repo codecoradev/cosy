@@ -1067,3 +1067,40 @@ fn test_signed_get_exp_cannot_be_stripped_or_added() {
     let injected = format!("{legacy}&exp={}", now_secs() + 3600);
     assert_eq!(http_client().get(&injected).send().unwrap().status(), 403);
 }
+
+// ─── Cora scan findings (#136) ──────────────────────────────────────
+
+#[test]
+fn test_bearer_scheme_is_case_insensitive() {
+    let url = start_server_with_key(Some("k".into()));
+    for scheme in ["Bearer", "bearer", "BEARER"] {
+        let resp = http_client()
+            .get(format!("{}/api/templates", url))
+            .header("Authorization", format!("{scheme} k"))
+            .send()
+            .unwrap();
+        assert_eq!(resp.status(), 200, "scheme {scheme}");
+    }
+    let basic = http_client()
+        .get(format!("{}/api/templates", url))
+        .header("Authorization", "Basic k")
+        .send()
+        .unwrap();
+    assert_eq!(basic.status(), 401);
+}
+
+#[test]
+fn test_json_envelope_dimensions_match_image() {
+    use base64::Engine;
+    let url = start_server();
+    // 0.3333 × canvas width has a fractional part ≥ .5 → truncation ≠ rounding
+    let body = render_body(serde_json::json!({ "scale": 0.3333, "response_format": "json" }));
+    let json: serde_json::Value = post_render(&url, &body).json().unwrap();
+    let png = base64::engine::general_purpose::STANDARD
+        .decode(json["data"][0]["png_base64"].as_str().unwrap())
+        .unwrap();
+    let w = u32::from_be_bytes(png[16..20].try_into().unwrap());
+    let h = u32::from_be_bytes(png[20..24].try_into().unwrap());
+    assert_eq!(json["width"], w);
+    assert_eq!(json["height"], h);
+}

@@ -957,3 +957,99 @@ fn test_render_dataset_webp_format_propagates() {
     assert!(produced[0].ends_with(".webp"), "{produced:?}");
     assert_valid_webp(&out_dir.join(&produced[0]));
 }
+
+// ─── Cora scan findings (#136) ──────────────────────────────────────
+
+fn cosy() -> Command {
+    let mut cmd = Command::cargo_bin("cosy").unwrap();
+    cmd.current_dir(env!("CARGO_MANIFEST_DIR"));
+    cmd
+}
+
+const STAT_JSON: &str =
+    r#"{"brand":{"brand_name":"T"},"slides":[{"stat_number":"1%","stat_label":"x","source":"y"}]}"#;
+
+#[test]
+fn test_inline_json_temp_file_is_cleaned_up() {
+    let tmp = tempfile::tempdir().unwrap();
+    let out = tempfile::NamedTempFile::new().unwrap();
+    cosy()
+        .env("TMPDIR", tmp.path())
+        .args(["render", "-t", "stat-card", "--json", STAT_JSON, "-o"])
+        .arg(out.path())
+        .args(["--scale", "0.5"])
+        .assert()
+        .success();
+    let leftovers: Vec<_> = fs::read_dir(tmp.path()).unwrap().flatten().collect();
+    assert!(
+        leftovers.is_empty(),
+        "temp input left behind: {leftovers:?}"
+    );
+}
+
+#[test]
+fn test_concurrent_inline_json_runs_do_not_clobber() {
+    // Fixed temp names used to let parallel runs overwrite each other's input.
+    let handles: Vec<_> = (0..4)
+        .map(|i| {
+            std::thread::spawn(move || {
+                let json = STAT_JSON.replace("\"1%\"", &format!("\"{i}00%\""));
+                let out = tempfile::NamedTempFile::new().unwrap();
+                cosy()
+                    .args(["render", "-t", "stat-card", "--json", &json, "-o"])
+                    .arg(out.path())
+                    .args(["--scale", "0.5"])
+                    .assert()
+                    .success();
+                assert_valid_png(out.path());
+            })
+        })
+        .collect();
+    for h in handles {
+        h.join().unwrap();
+    }
+}
+
+#[test]
+fn test_empty_slides_is_an_error_not_a_panic() {
+    let out = tempfile::NamedTempFile::new().unwrap();
+    for extra in [&[][..], &["--dump-svg"][..]] {
+        let assert = cosy()
+            .args([
+                "render",
+                "-t",
+                "stat-card",
+                "--json",
+                r#"{"brand":{"brand_name":"T"},"slides":[]}"#,
+                "-o",
+            ])
+            .arg(out.path())
+            .args(extra)
+            .assert()
+            .failure();
+        // exit code (not a signal/abort) and a readable message
+        let output = assert.get_output();
+        assert!(
+            output.status.code().is_some(),
+            "process was killed: {output:?}"
+        );
+        assert!(
+            String::from_utf8_lossy(&output.stderr).contains("at least one slide"),
+            "stderr: {}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+    }
+}
+
+#[test]
+fn test_invalid_scale_rejected() {
+    let out = tempfile::NamedTempFile::new().unwrap();
+    for bad in ["0", "-1", "NaN", "inf", "17", "abc"] {
+        cosy()
+            .args(["render", "-t", "stat-card", "--json", STAT_JSON, "-o"])
+            .arg(out.path())
+            .args(["--scale", bad])
+            .assert()
+            .failure();
+    }
+}

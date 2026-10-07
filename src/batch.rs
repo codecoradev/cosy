@@ -477,6 +477,8 @@ pub fn parse_csv(input: String) -> anyhow::Result<Vec<Vec<String>>> {
     let mut row: Vec<String> = Vec::new();
     let mut cell = String::new();
     let mut in_quotes = false;
+    // Excel and friends prepend a UTF-8 BOM; it would corrupt the first header.
+    let input = input.strip_prefix('\u{feff}').unwrap_or(&input).to_string();
     let mut chars = input.chars().peekable();
 
     while let Some(c) = chars.next() {

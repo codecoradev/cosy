@@ -64,7 +64,7 @@ pub enum Command {
         output: PathBuf,
 
         /// Scale factor (1 = normal, 2 = retina/2x).
-        #[arg(long, default_value = "2")]
+        #[arg(long, default_value = "2", value_parser = parse_scale)]
         scale: f32,
 
         /// Additional font directory to load.
@@ -214,7 +214,10 @@ impl Cli {
                 }
 
                 // Resolve input data source
-                let resolved_data = match Self::resolve_input(data, stdin, json)? {
+                // `_temp_input` removes the stdin/--json temp file when this arm
+                // returns, on every path.
+                let (resolved, _temp_input) = Self::resolve_input(data, stdin, json)?;
+                let resolved_data = match resolved {
                     Some(d) => d,
                     None => {
                         eprintln!("✗ Error: must provide one of --data, --stdin, or --json");
@@ -224,7 +227,7 @@ impl Cli {
 
                 // Validate input against the template schema before rendering.
                 // Fails fast with a clear field-level message instead of a
-                // confusing Tera "invalid float literal" engine error.
+                // confusing minijinja "invalid float literal" engine error.
                 let tmpl_def = match crate::template::load_template(&template) {
                     Ok(t) => t,
                     Err(e) => {
@@ -420,30 +423,93 @@ impl Cli {
     }
 
     /// Resolve input data from --data (file), --stdin, or --json (inline string).
-    /// Returns Some(json_string) or None if no source provided.
+    /// Returns the data file path (None if no source was provided) plus a guard
+    /// that deletes the temp file, when one had to be written.
     fn resolve_input(
         data: Option<String>,
         stdin: bool,
         json: Option<String>,
-    ) -> anyhow::Result<Option<String>> {
+    ) -> anyhow::Result<(Option<String>, Option<TempInput>)> {
         if let Some(path) = data {
             // --data: treat as file path
-            Ok(Some(path))
+            Ok((Some(path), None))
         } else if stdin {
             // --stdin: read from stdin, write to temp file for from_file compatibility
             let mut buffer = String::new();
             std::io::stdin().read_to_string(&mut buffer)?;
-            let tmp = std::env::temp_dir().join("cosy-stdin-input.json");
-            std::fs::write(&tmp, &buffer)?;
-            Ok(Some(tmp.to_string_lossy().to_string()))
+            let tmp = TempInput::create(&buffer)?;
+            Ok((Some(tmp.path_string()), Some(tmp)))
         } else if let Some(json_str) = json {
             // --json: write inline JSON to temp file
-            let tmp = std::env::temp_dir().join("cosy-json-input.json");
-            std::fs::write(&tmp, &json_str)?;
-            Ok(Some(tmp.to_string_lossy().to_string()))
+            let tmp = TempInput::create(&json_str)?;
+            Ok((Some(tmp.path_string()), Some(tmp)))
         } else {
-            Ok(None)
+            Ok((None, None))
         }
+    }
+}
+
+/// Clap value parser for `--scale`: finite and positive, capped so a typo
+/// can't ask for a multi-gigabyte pixmap.
+fn parse_scale(s: &str) -> Result<f32, String> {
+    let v: f32 = s.parse().map_err(|_| format!("'{s}' is not a number"))?;
+    if v.is_finite() && v > 0.0 && v <= 16.0 {
+        Ok(v)
+    } else {
+        Err("scale must be greater than 0 and at most 16".into())
+    }
+}
+
+/// Temp file holding inline/stdin JSON for the duration of a render.
+///
+/// Uniquely named (pid + clock + counter) and created with `create_new`
+/// (`O_EXCL`), so concurrent runs never clobber each other and a pre-planted
+/// symlink in the temp dir is not followed. Removed on drop.
+struct TempInput(PathBuf);
+
+impl TempInput {
+    fn create(contents: &str) -> anyhow::Result<Self> {
+        use std::io::Write;
+        use std::sync::atomic::{AtomicU32, Ordering};
+        static COUNTER: AtomicU32 = AtomicU32::new(0);
+        for _ in 0..16 {
+            let nanos = std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .map(|d| d.as_nanos())
+                .unwrap_or(0);
+            let path = std::env::temp_dir().join(format!(
+                "cosy-input-{}-{}-{}.json",
+                std::process::id(),
+                nanos,
+                COUNTER.fetch_add(1, Ordering::Relaxed)
+            ));
+            let mut opts = std::fs::OpenOptions::new();
+            opts.write(true).create_new(true);
+            #[cfg(unix)]
+            {
+                use std::os::unix::fs::OpenOptionsExt;
+                opts.mode(0o600);
+            }
+            match opts.open(&path) {
+                Ok(mut f) => {
+                    f.write_all(contents.as_bytes())?;
+                    return Ok(Self(path));
+                }
+                Err(e) if e.kind() == std::io::ErrorKind::AlreadyExists => continue,
+                Err(e) => return Err(e.into()),
+            }
+        }
+        anyhow::bail!("could not create a unique temp file for input data")
+    }
+
+    fn path_string(&self) -> String {
+        self.0.to_string_lossy().to_string()
+    }
+}
+
+impl Drop for TempInput {
+    fn drop(&mut self) {
+        let _ = std::fs::remove_file(&self.0);
     }
 }
 
@@ -452,11 +518,15 @@ fn dump_processed_svg(template_name: &str, data_path: &str) -> anyhow::Result<Ex
     let template = crate::template::load_template(template_name)?;
     let dir = crate::template::find_template_dir_for(template_name)?;
     let data = crate::schema::InputData::from_file(data_path)?;
+    let slide = data
+        .slides
+        .first()
+        .ok_or_else(|| anyhow::anyhow!("Input data must contain at least one slide"))?;
     let svg = crate::template::process_template(
         &template,
         &dir,
         &data.brand,
-        &data.slides[0],
+        slide,
         crate::text::ImagePolicy::UNRESTRICTED,
     )?;
     println!("{}", svg);

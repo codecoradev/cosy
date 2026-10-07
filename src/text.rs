@@ -105,7 +105,17 @@ pub fn image_to_data_uri_with_size(path: &str, policy: ImagePolicy) -> anyhow::R
             .unwrap_or("png"),
     );
 
-    let bytes = std::fs::read(path)?;
+    // Capped read: a device/endless file (`/dev/zero`) must not exhaust memory.
+    let mut bytes = Vec::new();
+    std::fs::File::open(path)?
+        .take(MAX_REMOTE_IMAGE_BYTES + 1)
+        .read_to_end(&mut bytes)?;
+    if bytes.len() as u64 > MAX_REMOTE_IMAGE_BYTES {
+        anyhow::bail!(
+            "local image exceeds the {} MB size limit",
+            MAX_REMOTE_IMAGE_BYTES / 1024 / 1024
+        );
+    }
     let (width, height) = decode_dimensions(&bytes);
     Ok(LoadedImage {
         data_uri: encode_data_uri(&bytes, mime)?,
@@ -128,7 +138,12 @@ fn decode_dimensions(bytes: &[u8]) -> (Option<u32>, Option<u32>) {
 
 /// True if the value looks like an http(s) URL rather than a file path.
 pub fn is_remote_url(value: &str) -> bool {
-    value.starts_with("http://") || value.starts_with("https://")
+    let has_prefix = |prefix: &str| {
+        value
+            .get(..prefix.len())
+            .is_some_and(|head| head.eq_ignore_ascii_case(prefix))
+    };
+    has_prefix("http://") || has_prefix("https://")
 }
 
 fn encode_data_uri(bytes: &[u8], mime: &str) -> anyhow::Result<String> {
@@ -309,6 +324,33 @@ fn fetch_image_bytes_uncached(
     Ok((bytes, mime))
 }
 
+/// `getaddrinfo` has no timeout of its own, so a black-holed resolver would
+/// stall the (blocking) render thread far beyond [`FETCH_TIMEOUT`]. Resolve on
+/// a helper thread and give up after `timeout`; the helper finishes (or fails)
+/// on its own and is then discarded.
+fn resolve_with_timeout(
+    host: &str,
+    port: u16,
+    timeout: Duration,
+) -> anyhow::Result<Vec<SocketAddr>> {
+    let (tx, rx) = std::sync::mpsc::channel();
+    let host = host.to_string();
+    std::thread::spawn(move || {
+        let _ = tx.send(
+            (host.as_str(), port)
+                .to_socket_addrs()
+                .map(Iterator::collect),
+        );
+    });
+    match rx.recv_timeout(timeout) {
+        Ok(result) => Ok(result?),
+        Err(_) => {
+            log::warn!("DNS resolution timed out");
+            anyhow::bail!("failed to load remote image")
+        }
+    }
+}
+
 /// Resolve the URL host and return its first globally routable address.
 /// Rejects URLs whose hosts resolve only to non-public targets.
 fn validated_public_addr(url: &reqwest::Url) -> anyhow::Result<SocketAddr> {
@@ -316,8 +358,8 @@ fn validated_public_addr(url: &reqwest::Url) -> anyhow::Result<SocketAddr> {
         .host_str()
         .ok_or_else(|| anyhow::anyhow!("failed to load remote image"))?;
     let port = url.port_or_known_default().unwrap_or(80);
-    let addr = (host, port)
-        .to_socket_addrs()?
+    let addr = resolve_with_timeout(host, port, FETCH_TIMEOUT)?
+        .into_iter()
         .find(|addr| is_public_ip(addr.ip()));
     match addr {
         Some(addr) => Ok(addr),
@@ -352,6 +394,19 @@ fn is_public_ip(ip: IpAddr) -> bool {
             // deprecated IPv4-compatible (::a.b.c.d) forms, e.g. ::127.0.0.1
             if let Some(v4) = v6.to_ipv4() {
                 return is_public_ip(IpAddr::V4(v4));
+            }
+            let seg = v6.segments();
+            // NAT64 well-known prefix 64:ff9b::/96 embeds an IPv4 target
+            if seg[0] == 0x64 && seg[1] == 0xff9b && seg[2..6] == [0, 0, 0, 0] {
+                let [a, b] = seg[6..8] else { unreachable!() };
+                let v4 = std::net::Ipv4Addr::new((a >> 8) as u8, a as u8, (b >> 8) as u8, b as u8);
+                return is_public_ip(IpAddr::V4(v4));
+            }
+            // 64:ff9b:1::/48 (local-use NAT64) and 2001:db8::/32 (documentation)
+            if (seg[0] == 0x64 && seg[1] == 0xff9b && seg[2] == 1)
+                || (seg[0] == 0x2001 && seg[1] == 0x0db8)
+            {
+                return false;
             }
             !(v6.is_loopback()
                 || v6.is_unspecified()
@@ -432,6 +487,31 @@ mod tests {
         let second = fetch_image_bytes(&url, true).expect("second fetch from cache");
         assert_eq!(first, second);
         assert_eq!(second.0, b"cachedbytes");
+    }
+
+    #[test]
+    fn test_is_remote_url_scheme_case_insensitive() {
+        assert!(is_remote_url("HTTP://example.com/a.png"));
+        assert!(is_remote_url("Https://example.com/a.png"));
+        assert!(!is_remote_url("httpx://example.com"));
+        assert!(!is_remote_url("é"));
+    }
+
+    #[test]
+    fn test_local_image_read_is_capped() {
+        let path = std::env::temp_dir().join(format!("cosy_big_{}.png", std::process::id()));
+        let f = std::fs::File::create(&path).unwrap();
+        f.set_len(MAX_REMOTE_IMAGE_BYTES + 1).unwrap(); // sparse
+        let err = image_to_data_uri(path.to_str().unwrap(), ImagePolicy::UNRESTRICTED)
+            .expect_err("oversized local file must be rejected");
+        assert!(err.to_string().contains("size limit"), "got: {err}");
+        let _ = std::fs::remove_file(&path);
+    }
+
+    #[test]
+    fn test_resolve_with_timeout_resolves_literal() {
+        let addrs = resolve_with_timeout("127.0.0.1", 80, Duration::from_secs(5)).unwrap();
+        assert_eq!(addrs[0].ip(), "127.0.0.1".parse::<IpAddr>().unwrap());
     }
 
     #[test]
@@ -564,12 +644,22 @@ mod tests {
             "::127.0.0.1",
             "::169.254.169.254",
             "::10.0.0.1",
+            "2001:db8::1",
+            "64:ff9b::7f00:1",    // NAT64 → 127.0.0.1
+            "64:ff9b::a9fe:a9fe", // NAT64 → 169.254.169.254
+            "64:ff9b:1::1",
         ] {
             let ip: IpAddr = ip.parse().unwrap();
             assert!(!is_public_ip(ip), "{ip} must not be public");
         }
         // globally routable → public
-        for ip in ["8.8.8.8", "1.1.1.1", "172.32.0.1", "2606:4700::1111"] {
+        for ip in [
+            "8.8.8.8",
+            "1.1.1.1",
+            "172.32.0.1",
+            "2606:4700::1111",
+            "64:ff9b::808:808", // NAT64 → 8.8.8.8
+        ] {
             let ip: IpAddr = ip.parse().unwrap();
             assert!(is_public_ip(ip), "{ip} must be public");
         }

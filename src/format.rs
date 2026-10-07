@@ -74,8 +74,8 @@ impl OutputFormat {
     /// `pixels` is premultiplied-alpha-independent RGBA8 from tiny-skia's
     /// `pixmap.data()`; `w`/`h` are the final (scaled) dimensions.
     ///
-    /// WebP is lossy at quality 90: visually indistinguishable for social
-    /// cards while cutting file size ~3-5x vs PNG.
+    /// WebP is encoded losslessly (the `image` crate has no lossy encoder),
+    /// so it is pixel-identical to PNG and usually somewhat smaller.
     pub fn encode(&self, pixels: &[u8], w: u32, h: u32) -> anyhow::Result<Vec<u8>> {
         self.encode_owned(pixels.to_vec(), w, h)
     }
