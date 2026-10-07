@@ -77,6 +77,12 @@ impl OutputFormat {
     /// WebP is lossy at quality 90: visually indistinguishable for social
     /// cards while cutting file size ~3-5x vs PNG.
     pub fn encode(&self, pixels: &[u8], w: u32, h: u32) -> anyhow::Result<Vec<u8>> {
+        self.encode_owned(pixels.to_vec(), w, h)
+    }
+
+    /// Like [`OutputFormat::encode`] but takes ownership of the pixel
+    /// buffer, avoiding a full-frame copy (the hot render paths use this).
+    pub fn encode_owned(&self, pixels: Vec<u8>, w: u32, h: u32) -> anyhow::Result<Vec<u8>> {
         assert!(
             self.is_pixel_based(),
             "SVG output is produced via render_slide_to_svg, not encode()"
@@ -89,7 +95,7 @@ impl OutputFormat {
                 h
             ));
         }
-        let img = image::RgbaImage::from_raw(w, h, pixels.to_vec())
+        let img = image::RgbaImage::from_raw(w, h, pixels)
             .ok_or_else(|| anyhow::anyhow!("Failed to wrap pixel buffer as RGBA image"))?;
 
         let mut out = std::io::Cursor::new(Vec::new());
@@ -103,7 +109,7 @@ impl OutputFormat {
                 // (lossy requires libwebp via the `webp` crate — C dep,
                 // deliberately avoided in this build).
                 let encoder = image::codecs::webp::WebPEncoder::new_lossless(&mut out);
-                encoder.write_image(pixels, w, h, image::ExtendedColorType::Rgba8)?;
+                encoder.write_image(img.as_raw(), w, h, image::ExtendedColorType::Rgba8)?;
             }
             // Unreachable via the assert above; kept exhaustive for the
             // compiler (SVG bypasses the pixel path entirely).

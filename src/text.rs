@@ -165,6 +165,63 @@ fn mime_for_extension(ext: &str) -> &'static str {
 ///
 /// Download a remote image, returning raw bytes plus its mime type.
 fn fetch_image_bytes(url_str: &str, allow_private: bool) -> anyhow::Result<(Vec<u8>, String)> {
+    if let Some(hit) = image_cache_get(url_str, allow_private) {
+        return Ok(hit);
+    }
+    let fetched = fetch_image_bytes_uncached(url_str, allow_private)?;
+    image_cache_put(url_str, allow_private, &fetched);
+    Ok(fetched)
+}
+
+/// Small in-process cache of successfully fetched remote images so a brand
+/// logo / shared background is downloaded once per batch or server session
+/// instead of once per slide. Only successful, size-capped fetches are stored;
+/// every entry was fetched under the same `allow_private` policy it is served
+/// for (part of the key), and expires after [`IMAGE_CACHE_TTL`].
+const IMAGE_CACHE_TTL: Duration = Duration::from_secs(300);
+const IMAGE_CACHE_MAX_ENTRIES: usize = 32;
+const IMAGE_CACHE_MAX_BYTES: usize = 64 * 1024 * 1024;
+
+type ImageCacheEntry = ((String, bool), std::time::Instant, Vec<u8>, String);
+
+fn image_cache() -> &'static std::sync::Mutex<Vec<ImageCacheEntry>> {
+    static CACHE: std::sync::OnceLock<std::sync::Mutex<Vec<ImageCacheEntry>>> =
+        std::sync::OnceLock::new();
+    CACHE.get_or_init(Default::default)
+}
+
+fn image_cache_get(url: &str, allow_private: bool) -> Option<(Vec<u8>, String)> {
+    let mut cache = image_cache().lock().ok()?;
+    cache.retain(|(_, at, _, _)| at.elapsed() < IMAGE_CACHE_TTL);
+    cache
+        .iter()
+        .find(|((u, p), _, _, _)| u == url && *p == allow_private)
+        .map(|(_, _, bytes, mime)| (bytes.clone(), mime.clone()))
+}
+
+fn image_cache_put(url: &str, allow_private: bool, fetched: &(Vec<u8>, String)) {
+    let Ok(mut cache) = image_cache().lock() else {
+        return;
+    };
+    cache.retain(|((u, p), _, _, _)| !(u == url && *p == allow_private));
+    cache.push((
+        (url.to_string(), allow_private),
+        std::time::Instant::now(),
+        fetched.0.clone(),
+        fetched.1.clone(),
+    ));
+    // Evict oldest until within entry and byte budgets.
+    while cache.len() > IMAGE_CACHE_MAX_ENTRIES
+        || cache.iter().map(|e| e.2.len()).sum::<usize>() > IMAGE_CACHE_MAX_BYTES
+    {
+        cache.remove(0);
+    }
+}
+
+fn fetch_image_bytes_uncached(
+    url_str: &str,
+    allow_private: bool,
+) -> anyhow::Result<(Vec<u8>, String)> {
     let url = reqwest::Url::parse(url_str)?;
     let scheme_ok = url.scheme() == "https" || (allow_private && url.scheme() == "http");
     if !scheme_ok {
@@ -364,6 +421,17 @@ mod tests {
             content_type,
             body.len()
         ) + std::str::from_utf8(body).unwrap()
+    }
+
+    #[test]
+    fn test_fetch_url_second_call_served_from_cache() {
+        // serve_one answers exactly one connection: a second network fetch
+        // would fail, so success proves the cache hit.
+        let url = serve_one(response_with("image/png", b"cachedbytes"));
+        let first = fetch_image_bytes(&url, true).expect("first fetch");
+        let second = fetch_image_bytes(&url, true).expect("second fetch from cache");
+        assert_eq!(first, second);
+        assert_eq!(second.0, b"cachedbytes");
     }
 
     #[test]
