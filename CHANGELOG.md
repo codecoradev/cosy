@@ -5,6 +5,20 @@ All notable changes to Cosy will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+- Findings from a Cora scan (#136): `--stdin`/`--json` temp input is now
+  unique, `O_EXCL`-created and removed afterwards (was a fixed `/tmp` name);
+  empty `slides` is an error instead of a panic; remote-image DNS resolution
+  has a timeout and local image reads are capped at 10 MB; the `b64` and
+  `wordwrap` filters now work on unescaped text (URLs with `&` were broken,
+  wrapping could split an XML entity); out-of-range numeric XML references
+  are escaped; `/api/templates` returns 500 if listing fails; JSON envelope
+  `width`/`height` now match the image; `Bearer` and `HTTP://` are
+  case-insensitive; CLI `--scale` must be in (0, 16]; CSV UTF-8 BOM is
+  stripped; `is_public_ip` rejects `2001:db8::/32` and NAT64 targets.
+
 ## [0.5.1] — 2026-10-07
 
 ### Security

@@ -490,27 +490,91 @@ fn escape_xml_preserving_entities(s: &str) -> String {
 fn is_valid_entity(name: &str) -> bool {
     const PREDEFINED: [&str; 5] = ["amp", "lt", "gt", "quot", "apos"];
     if let Some(hex) = name.strip_prefix("#x").or_else(|| name.strip_prefix("#X")) {
-        return !hex.is_empty() && hex.bytes().all(|b| b.is_ascii_hexdigit());
+        return !hex.is_empty()
+            && hex.bytes().all(|b| b.is_ascii_hexdigit())
+            && u32::from_str_radix(hex, 16).is_ok_and(is_xml_char);
     }
     if let Some(dec) = name.strip_prefix('#') {
-        return !dec.is_empty() && dec.bytes().all(|b| b.is_ascii_digit());
+        return !dec.is_empty()
+            && dec.bytes().all(|b| b.is_ascii_digit())
+            && dec.parse::<u32>().is_ok_and(is_xml_char);
     }
     PREDEFINED.contains(&name)
+}
+
+/// XML 1.0 `Char` production: a numeric reference outside it (e.g. `&#0;`,
+/// `&#xD800;`, `&#x110000;`) makes the whole document malformed.
+fn is_xml_char(c: u32) -> bool {
+    matches!(c, 0x9 | 0xA | 0xD | 0x20..=0xD7FF | 0xE000..=0xFFFD | 0x10000..=0x10FFFF)
+}
+
+/// Inverse of [`escape_xml_preserving_entities`] for the entities it can emit
+/// (predefined + numeric). Filters receive context values that were already
+/// escaped; they must work on the real text and escape their own output.
+fn unescape_xml_entities(s: &str) -> String {
+    let mut out = String::with_capacity(s.len());
+    let mut rest = s;
+    while let Some(i) = rest.find('&') {
+        out.push_str(&rest[..i]);
+        let tail = &rest[i..];
+        let decoded = tail.find(';').and_then(|end| {
+            let name = &tail[1..end];
+            let ch = match name {
+                "amp" => Some('&'),
+                "lt" => Some('<'),
+                "gt" => Some('>'),
+                "quot" => Some('"'),
+                "apos" => Some('\''),
+                _ => name
+                    .strip_prefix("#x")
+                    .or_else(|| name.strip_prefix("#X"))
+                    .and_then(|h| u32::from_str_radix(h, 16).ok())
+                    .or_else(|| name.strip_prefix('#').and_then(|d| d.parse().ok()))
+                    .and_then(char::from_u32),
+            };
+            ch.map(|c| (c, end + 1))
+        });
+        match decoded {
+            Some((c, len)) => {
+                out.push(c);
+                rest = &tail[len..];
+            }
+            None => {
+                out.push('&');
+                rest = &tail[1..];
+            }
+        }
+    }
+    out.push_str(rest);
+    out
 }
 
 // ─── Custom minijinja Filters ───────────────────────────────────────
 
 /// wordwrap filter: wrap text to N chars per line, returns joined string.
 /// Usage: `{{ slide.body|wordwrap(40) }}`
+///
+/// The input is the already-escaped context value: wrapping it as-is would
+/// count `&amp;` as 5 characters and could split an entity across lines
+/// (malformed XML). Wrap the real text, then escape the result again.
 fn filter_wordwrap(text: String, width: usize) -> String {
-    let lines = crate::text::wrap_text(&text, width);
-    lines.join("\n")
+    let lines = crate::text::wrap_text(&unescape_xml_entities(&text), width);
+    escape_xml_preserving_entities(&lines.join("\n"))
 }
 
 /// b64 filter: convert file path to base64 data URI.
 /// Usage: `{{ slide.image|b64 }}`
 fn filter_b64(path: String, policy: crate::text::ImagePolicy) -> String {
-    crate::text::image_to_data_uri(&path, policy).unwrap_or_default()
+    // The context value is XML-escaped; a URL like `?a=1&b=2` arrives as
+    // `?a=1&amp;b=2` and must be restored before fetching.
+    let path = unescape_xml_entities(&path);
+    match crate::text::image_to_data_uri(&path, policy) {
+        Ok(uri) => uri,
+        Err(e) => {
+            log::warn!("b64 filter failed to load '{}': {}", path, e);
+            String::new()
+        }
+    }
 }
 
 // ─── Template Listing ───────────────────────────────────────────────
@@ -587,7 +651,7 @@ pub fn validate_input(template: &TemplateDef, data: &InputData) -> Vec<String> {
             }
             // Type check: numeric/boolean fields must not be strings.
             // Templates use these fields in arithmetic expressions; a string
-            // value fails late inside the Tera engine with a confusing
+            // value fails late inside the minijinja engine with a confusing
             // "invalid float literal" error instead of a validation message.
             if let Some(value) = slide.get(name) {
                 match spec.field_type {
@@ -773,6 +837,89 @@ mod filter_tests {
         std::thread::sleep(std::time::Duration::from_millis(1100));
         std::fs::write(&file, "<svg>two</svg>").unwrap();
         assert_eq!(load_svg(dir.path()).unwrap().as_str(), "<svg>two</svg>");
+    }
+
+    #[test]
+    fn test_unescape_roundtrip() {
+        for raw in [
+            "a & b < c > d \"q\" 'p'",
+            "R&D",
+            "&amp; literal",
+            "&",
+            "a&b&c",
+        ] {
+            let escaped = escape_xml_preserving_entities(raw);
+            let back = unescape_xml_entities(&escaped);
+            assert_eq!(
+                escape_xml_preserving_entities(&back),
+                escaped,
+                "raw={raw:?}"
+            );
+        }
+        assert_eq!(unescape_xml_entities("a=1&amp;b=2"), "a=1&b=2");
+        assert_eq!(unescape_xml_entities("&#x41;&#66;"), "AB");
+        assert_eq!(unescape_xml_entities("bare & text"), "bare & text");
+    }
+
+    #[test]
+    fn test_wordwrap_never_splits_entities() {
+        let escaped = escape_xml_preserving_entities("AT&T & Sons & Co & more & more & more");
+        for width in 2..12 {
+            let wrapped = filter_wordwrap(escaped.clone(), width);
+            for line in wrapped.lines() {
+                // every '&' on a line must start a complete valid entity
+                for (i, _) in line.match_indices('&') {
+                    let end = line[i..]
+                        .find(';')
+                        .unwrap_or_else(|| panic!("entity split at width {width}: {line:?}"));
+                    assert!(is_valid_entity(&line[i + 1..i + end]), "line {line:?}");
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn test_b64_filter_restores_escaped_query_string() {
+        use std::io::{Read, Write};
+        let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+        let addr = listener.local_addr().unwrap();
+        let handle = std::thread::spawn(move || {
+            let (mut stream, _) = listener.accept().unwrap();
+            let mut buf = [0u8; 2048];
+            let n = stream.read(&mut buf).unwrap();
+            let req = String::from_utf8_lossy(&buf[..n]).to_string();
+            stream
+                .write_all(b"HTTP/1.1 200 OK\r\nContent-Type: image/png\r\nContent-Length: 2\r\nConnection: close\r\n\r\nok")
+                .unwrap();
+            req
+        });
+        let uri = filter_b64(
+            format!("http://{addr}/i.png?a=1&amp;b=2"),
+            crate::text::ImagePolicy::UNRESTRICTED,
+        );
+        assert!(uri.starts_with("data:image/png;base64,"), "got {uri:?}");
+        let req = handle.join().unwrap();
+        assert!(req.starts_with("GET /i.png?a=1&b=2 "), "request was: {req}");
+    }
+
+    #[test]
+    fn test_escape_xml_rejects_out_of_range_numeric_refs() {
+        for bad in [
+            "&#0;",
+            "&#xD800;",
+            "&#x110000;",
+            "&#99999999999;",
+            "&#xFFFFFFFFF;",
+        ] {
+            assert!(
+                escape_xml_preserving_entities(bad).starts_with("&amp;#"),
+                "{bad} must be escaped"
+            );
+        }
+        assert_eq!(
+            escape_xml_preserving_entities("&#9;&#x1F600;"),
+            "&#9;&#x1F600;"
+        );
     }
 
     #[test]

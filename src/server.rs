@@ -435,21 +435,27 @@ async fn auth_middleware(
         .get(header::AUTHORIZATION)
         .and_then(|v| v.to_str().ok());
 
-    match auth_header {
-        Some(header_val) if header_val.starts_with("Bearer ") => {
-            let token = &header_val[7..];
+    match auth_header.and_then(bearer_credentials) {
+        Some(presented) => {
             // Constant-time comparison to prevent timing attacks
-            if constant_time_eq(token.as_bytes(), expected.as_bytes()) {
+            if constant_time_eq(presented.as_bytes(), expected.as_bytes()) {
                 next.run(req).await
             } else {
                 error_response(StatusCode::UNAUTHORIZED, "Invalid API key".into())
             }
         }
-        _ => error_response(
+        None => error_response(
             StatusCode::UNAUTHORIZED,
             "Missing or invalid Authorization header. Expected: Bearer <token>".into(),
         ),
     }
+}
+
+/// Credentials part of an `Authorization: Bearer <credentials>` header.
+/// RFC 7235: the auth scheme is case-insensitive.
+fn bearer_credentials(header_value: &str) -> Option<&str> {
+    let (scheme, rest) = header_value.split_once(' ')?;
+    scheme.eq_ignore_ascii_case("bearer").then_some(rest)
 }
 
 /// Constant-time byte comparison to prevent timing side-channel attacks.
@@ -476,14 +482,19 @@ async fn health(State(state): State<Arc<AppState>>) -> Json<HealthResponse> {
     })
 }
 
-async fn list_templates() -> Json<Vec<crate::schema::TemplateDef>> {
+async fn list_templates() -> Response {
     // Reads every schema.json from disk — keep it off the async workers.
-    let templates = tokio::task::spawn_blocking(|| {
+    match tokio::task::spawn_blocking(|| {
         template::list_templates(std::path::Path::new("./templates"))
     })
     .await
-    .unwrap_or_default();
-    Json(templates)
+    {
+        Ok(templates) => Json(templates).into_response(),
+        Err(e) => error_response(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            format!("Template listing failed: {e}"),
+        ),
+    }
 }
 
 async fn render_handler(
@@ -687,8 +698,8 @@ async fn render_handler(
                     Json(RenderResponse {
                         template: template_id,
                         slides: slides_json.len(),
-                        width: (dims.width as f32 * scale) as u32,
-                        height: (dims.height as f32 * scale) as u32,
+                        width: out_w,
+                        height: out_h,
                         data: slides_json,
                         metadata: req.metadata,
                     }),

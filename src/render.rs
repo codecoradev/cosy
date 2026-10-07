@@ -39,6 +39,10 @@ pub fn render_template_data(
 ) -> anyhow::Result<RenderResult> {
     let start = Instant::now();
 
+    if data.slides.is_empty() {
+        anyhow::bail!("Input data must contain at least one slide");
+    }
+
     // 1. Load template
     let template = crate::template::load_template(template_name)?;
     log::info!(
@@ -173,6 +177,18 @@ fn output_height(dims: &crate::schema::Dimensions, scale: f32) -> u32 {
 
 // ─── Render Single Slide ────────────────────────────────────────────
 
+/// Slide lookup that reports a bad index as an error instead of panicking
+/// (`panic = "abort"` in release would kill the whole process).
+fn slide_at(data: &InputData, slide_index: usize) -> anyhow::Result<&serde_json::Value> {
+    data.slides.get(slide_index).ok_or_else(|| {
+        anyhow::anyhow!(
+            "slide {} out of range (input has {} slide(s))",
+            slide_index,
+            data.slides.len()
+        )
+    })
+}
+
 /// Render a single slide to raw RGBA8 pixels (public API for
 /// format-aware callers — pair with `OutputFormat::encode`).
 pub fn render_slide_to_pixels(
@@ -184,7 +200,7 @@ pub fn render_slide_to_pixels(
     font_db: &std::sync::Arc<usvg::fontdb::Database>,
     image_policy: crate::text::ImagePolicy,
 ) -> anyhow::Result<Vec<u8>> {
-    let slide_data = &data.slides[slide_index];
+    let slide_data = slide_at(data, slide_index)?;
 
     // 1. Process minijinja template → SVG string
     let svg_string = crate::template::process_template(
@@ -241,7 +257,7 @@ pub fn render_slide_to_svg(
     font_db: &std::sync::Arc<usvg::fontdb::Database>,
     image_policy: crate::text::ImagePolicy,
 ) -> anyhow::Result<String> {
-    let slide_data = &data.slides[slide_index];
+    let slide_data = slide_at(data, slide_index)?;
 
     // 1. Process minijinja template → SVG string
     let svg_string = crate::template::process_template(
