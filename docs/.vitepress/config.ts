@@ -1,4 +1,10 @@
+import { readdirSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vitepress'
+
+// Single source of truth: one directory per bundled template.
+const templatesDir = fileURLToPath(new URL('../../templates', import.meta.url))
+const templateCount = readdirSync(templatesDir, { withFileTypes: true }).filter((e) => e.isDirectory()).length
 
 export default defineConfig({
   title: 'Cosy',
@@ -9,15 +15,36 @@ export default defineConfig({
   lastUpdated: true,
   ignoreDeadLinks: true,
 
+  markdown: {
+    config: (md) => {
+      // Inline code like `{{ brand.brand_name }}` is minijinja syntax, not Vue.
+      const inline = md.renderer.rules.code_inline!
+      md.renderer.rules.code_inline = (tokens, idx, options, env, self) =>
+        inline(tokens, idx, options, env, self).replace('<code', '<code v-pre')
+    },
+  },
+
+  transformPageData(pageData) {
+    const features = pageData.frontmatter.features
+    if (pageData.relativePath === 'index.md' && Array.isArray(features)) {
+      for (const f of features) if (/Templates$/.test(f.title)) f.title = `${templateCount} Templates`
+    }
+  },
+
   head: [
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/logo/favicon.svg' }],
+    ['link', { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/logo/favicon-32.png' }],
+    ['link', { rel: 'apple-touch-icon', href: '/logo/apple-touch-icon.png' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:title', content: 'Cosy — Template-based Image Generation' }],
-    ['meta', { property: 'og:description', content: 'Generate social media images from JSON templates. CLI + HTTP API. Rust-powered. 148 templates.' }],
+    ['meta', { property: 'og:description', content: `Generate social media images from JSON templates. CLI + HTTP API. Rust-powered. ${templateCount} templates.` }],
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
   ],
 
   themeConfig: {
     siteTitle: 'Cosy',
+    logo: '/logo/logo-symbol.svg',
+    templateCount,
     socialLinks: [
       { icon: 'github', link: 'https://github.com/codecoradev/cosy' },
     ],
@@ -58,7 +85,7 @@ export default defineConfig({
         {
           text: 'Overview',
           items: [
-            { text: 'All Templates (148)', link: '/templates/' },
+            { text: `All Templates (${templateCount})`, link: '/templates/' },
           ],
         },
         {

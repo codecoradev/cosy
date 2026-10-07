@@ -142,7 +142,7 @@ The SVG file uses [minijinja](https://docs.rs/minijinja) templating syntax for d
 
 ### Accessing Data
 
-```svg
+```xml
 <!-- Brand fields -->
 {{ brand.brand_name }}
 {{ brand.bg_color }}
@@ -156,13 +156,13 @@ The SVG file uses [minijinja](https://docs.rs/minijinja) templating syntax for d
 
 Use the `default()` filter to provide fallback values:
 
-```svg
+```xml
 <stop offset="0%" stop-color="{{ brand.bg_color | default('#1e1e2e') }}"/>
 ```
 
 ### Conditionals
 
-```svg
+```xml
 {% if slide.source %}
   <text>{{ slide.source }}</text>
 {% endif %}
@@ -172,7 +172,7 @@ Use the `default()` filter to provide fallback values:
 
 When a text field has `wrap_width` set, Cosy pre-computes wrapped lines and provides them as `{field_name}_lines`:
 
-```svg
+```xml
 {% for line in stat_label_lines %}
   <tspan x="540" dy="{{ loop.cycle(0, 48) }}">{{ line }}</tspan>
 {% endfor %}
@@ -182,7 +182,7 @@ When a text field has `wrap_width` set, Cosy pre-computes wrapped lines and prov
 
 Most templates use a two-stop linear gradient for the background:
 
-```svg
+```xml
 <defs>
   <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
     <stop offset="0%" stop-color="{{ brand.bg_color | default('#1e1e2e') }}"/>
@@ -194,7 +194,7 @@ Most templates use a two-stop linear gradient for the background:
 
 ### Accent Gradient (for numbers, headings)
 
-```svg
+```xml
 <defs>
   <linearGradient id="acc-grad" x1="0%" y1="0%" x2="0%" y2="100%">
     <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}"/>
@@ -205,7 +205,7 @@ Most templates use a two-stop linear gradient for the background:
 
 ### Radial Glow Effect
 
-```svg
+```xml
 <defs>
   <radialGradient id="glow" cx="75%" cy="25%" r="55%">
     <stop offset="0%" stop-color="{{ brand.accent_color | default('#cba6f7') }}" stop-opacity="0.07"/>
@@ -217,7 +217,7 @@ Most templates use a two-stop linear gradient for the background:
 
 ### Dots Pattern (subtle texture)
 
-```svg
+```xml
 <defs>
   <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
     <circle cx="20" cy="20" r="1.5" fill="#ffffff" opacity="0.06"/>
@@ -228,7 +228,7 @@ Most templates use a two-stop linear gradient for the background:
 
 ### Decorative Circle (top-right accent)
 
-```svg
+```xml
 <circle cx="1000" cy="80" r="180" fill="{{ brand.accent_color | default('#cba6f7') }}" opacity="0.04"/>
 ```
 
@@ -263,7 +263,7 @@ A background texture or photo rendered behind the gradient overlay.
 
 **SVG pattern:**
 
-```svg
+```xml
 {% if bg_image_data_uri %}
 <image href="{{ bg_image_data_uri }}" width="{{ width }}" height="{{ height }}"
        preserveAspectRatio="xMidYMid slice"
@@ -300,7 +300,7 @@ A background texture or photo rendered behind the gradient overlay.
 
 Brand logo rendered at the bottom-right corner.
 
-```svg
+```xml
 {% if logo_data_uri %}
 <image href="{{ logo_data_uri }}" x="{{ width - 128 }}" y="{{ height - 128 }}"
        height="48" preserveAspectRatio="xMidYMid meet"/>
@@ -323,7 +323,7 @@ Cosy bundles these fonts (embedded at compile time — no system fonts required)
 
 **SVG usage:**
 
-```svg
+```xml
 font-family="Inter,sans-serif"
 font-family="Space Grotesk,sans-serif"
 font-family="JetBrains Mono,monospace"
@@ -366,7 +366,7 @@ mkdir templates/my-template
 
 ### 3. Write template.svg
 
-```svg
+```xml
 <svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
   <defs>
     <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -496,7 +496,7 @@ curl -o output.png -X POST http://localhost:3000/api/render \
 
 **Avoid arithmetic in `{% set %}` within loops** — it doesn't work reliably. Instead, use `loop.index`, `loop.first`, `loop.cycle()`:
 
-```svg
+```xml
 {# Good: use loop helpers #}
 {% for line in title_lines %}
   <tspan x="540" dy="{{ loop.cycle(0, 48) }}">{{ line }}</tspan>
@@ -535,7 +535,7 @@ The default Cosy color scheme:
 
 All templates must render the brand watermark with an identical spec:
 
-```svg
+```xml
 {% if brand.show_brand %}
 <text x="{width/2}" y="{height-30}" text-anchor="middle" font-family="Inter,sans-serif" font-size="20" font-weight="600" fill="#7f849c">{{ brand.brand_name | default('') }}</text>
 {% endif %}
@@ -575,7 +575,7 @@ Black, so `font-style="italic"` and `font-weight="800"` resolve to real faces.
 
 ## Hashtag Block Pattern
 
-```svg
+```xml
 {% if slide.hashtag %}
 <text x="{width/2}" y="{height-90}" text-anchor="middle" font-family="Inter,sans-serif"
       font-size="26" font-weight="700" fill="{{ brand.accent_color | default('#cba6f7') }}"
@@ -593,7 +593,7 @@ elements (`#f-title path`, `#f-stat_number`, …) — e.g. per-element
 animation in downstream pipelines. Grouping does not change painting,
 so PNG/WebP output is unaffected.
 
-```svg
+```xml
 <g id="bg">
   <rect width="{width}" height="{height}" fill="url(#bg-grad)"/>
 </g>

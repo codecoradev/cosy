@@ -100,6 +100,6 @@ curl -X POST http://localhost:3000/api/render \
 ## Next Steps
 
 - [CLI Reference](./cli) — All commands and flags
-- [Templates](/templates/) — Browse all 18 templates with examples
+- [Templates](/templates/) — Browse all 150+ templates with examples
 - [Template Authoring](./template-authoring) — Create your own templates
 - [HTTP Server](./server) — Full API server guide
