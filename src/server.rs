@@ -26,7 +26,9 @@ use tower_http::cors::CorsLayer;
 
 /// Shared server state — font DB built once at startup.
 struct AppState {
-    font_db: usvg::fontdb::Database,
+    font_db: Arc<usvg::fontdb::Database>,
+    /// Template count captured at startup (health checks must stay cheap).
+    template_count: usize,
     /// Bounds concurrent renders so a burst of requests cannot exhaust
     /// CPU/memory (each render allocates a full-size pixmap).
     render_slots: tokio::sync::Semaphore,
@@ -319,6 +321,7 @@ pub async fn run_on(
         .unwrap_or(2);
     let state = Arc::new(AppState {
         font_db,
+        template_count,
         render_slots: tokio::sync::Semaphore::new(max_concurrent),
         image_policy,
         api_key: api_key.clone(),
@@ -405,18 +408,21 @@ fn constant_time_eq(a: &[u8], b: &[u8]) -> bool {
 // ─── Handlers ──────────────────────────────────────────────────────
 
 async fn health(State(state): State<Arc<AppState>>) -> Json<HealthResponse> {
-    let templates = template::list_templates(std::path::Path::new("./templates"));
-    let _ = &state; // font_db ready
     Json(HealthResponse {
         status: "ok",
         version: env!("CARGO_PKG_VERSION"),
-        templates: templates.len(),
+        templates: state.template_count,
         auth_enabled: state.api_key.is_some(),
     })
 }
 
 async fn list_templates() -> Json<Vec<crate::schema::TemplateDef>> {
-    let templates = template::list_templates(std::path::Path::new("./templates"));
+    // Reads every schema.json from disk — keep it off the async workers.
+    let templates = tokio::task::spawn_blocking(|| {
+        template::list_templates(std::path::Path::new("./templates"))
+    })
+    .await
+    .unwrap_or_default();
     Json(templates)
 }
 
@@ -536,7 +542,7 @@ async fn render_handler(
 
     // Blocking work (template IO, resvg, possibly remote image fetches) runs
     // on the blocking thread pool so the async runtime is never blocked.
-    let font_db = state.font_db.clone();
+    let font_db = Arc::clone(&state.font_db);
     let image_policy = state.image_policy;
     let scale = req.scale;
     let data = req.data;
@@ -565,7 +571,7 @@ async fn render_handler(
                         &font_db,
                         image_policy,
                     )?;
-                    let bytes = image_format.encode(&png, out_w, out_h)?;
+                    let bytes = image_format.encode_owned(png, out_w, out_h)?;
                     Ok((i, bytes))
                 } else {
                     // SVG: vector path — scale does not apply.
@@ -740,7 +746,7 @@ async fn signed_render_handler(
     }
 
     // 6. Render first slide on the blocking pool
-    let font_db = state.font_db.clone();
+    let font_db = Arc::clone(&state.font_db);
     let image_policy = state.image_policy;
     let scale = 1.0_f32;
     let dims = tmpl.dimensions.clone();
@@ -761,7 +767,7 @@ async fn signed_render_handler(
         )?;
         let w = (dims.width as f32 * scale).round() as u32;
         let h = (dims.height as f32 * scale).round() as u32;
-        image_format.encode(&pixels, w, h)
+        image_format.encode_owned(pixels, w, h)
     })
     .await;
 

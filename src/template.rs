@@ -42,20 +42,44 @@ pub fn find_template_dir_for(name: &str) -> anyhow::Result<PathBuf> {
 }
 
 /// Load the raw SVG template string.
-pub fn load_svg(template_dir: &Path) -> anyhow::Result<String> {
+///
+/// Parsed sources are cached per path and invalidated by mtime, so batch
+/// renders and the server do not re-read the file for every slide while edits
+/// on disk are still picked up immediately.
+pub fn load_svg(template_dir: &Path) -> anyhow::Result<std::sync::Arc<String>> {
+    use std::collections::HashMap;
+    use std::sync::{Arc, Mutex, OnceLock};
+    use std::time::SystemTime;
+
+    type SvgCache = Mutex<HashMap<PathBuf, (SystemTime, Arc<String>)>>;
+    static CACHE: OnceLock<SvgCache> = OnceLock::new();
+
     // Prefer .svg.j2, fallback to .svg
     let j2 = template_dir.join("template.svg.j2");
     let svg = template_dir.join("template.svg");
-    let path = if j2.exists() { &j2 } else { &svg };
+    let path = if j2.exists() { j2 } else { svg };
 
-    if !path.exists() {
-        anyhow::bail!(
-            "No template file found in {}. Expected template.svg.j2 or template.svg",
-            template_dir.display()
-        );
+    let mtime = std::fs::metadata(&path)
+        .and_then(|m| m.modified())
+        .map_err(|_| {
+            anyhow::anyhow!(
+                "No template file found in {}. Expected template.svg.j2 or template.svg",
+                template_dir.display()
+            )
+        })?;
+
+    let cache = CACHE.get_or_init(Default::default);
+    if let Some((cached_at, src)) = cache.lock().unwrap().get(&path) {
+        if *cached_at == mtime {
+            return Ok(Arc::clone(src));
+        }
     }
-
-    Ok(std::fs::read_to_string(path)?)
+    let src = Arc::new(std::fs::read_to_string(&path)?);
+    cache
+        .lock()
+        .unwrap()
+        .insert(path, (mtime, Arc::clone(&src)));
+    Ok(src)
 }
 
 // ─── minijinja Processing ───────────────────────────────────────────
@@ -78,7 +102,7 @@ pub fn process_template(
 
     // Build minijinja environment with custom filters
     let mut env = minijinja::Environment::new();
-    env.add_template("slide", &svg_template)?;
+    env.add_template("slide", svg_template.as_str())?;
 
     // Register custom filters
     env.add_filter("wordwrap", filter_wordwrap);
@@ -734,6 +758,21 @@ mod filter_tests {
             }
             Err(_) => panic!("render with pre-existing entity must not fail"),
         }
+    }
+
+    #[test]
+    fn test_load_svg_cache_follows_file_changes() {
+        let dir = tempfile::tempdir().unwrap();
+        let file = dir.path().join("template.svg");
+        std::fs::write(&file, "<svg>one</svg>").unwrap();
+        assert_eq!(load_svg(dir.path()).unwrap().as_str(), "<svg>one</svg>");
+        // Same bytes served from cache; then an edit (new mtime) is picked up.
+        let first = load_svg(dir.path()).unwrap();
+        let second = load_svg(dir.path()).unwrap();
+        assert!(std::sync::Arc::ptr_eq(&first, &second));
+        std::thread::sleep(std::time::Duration::from_millis(1100));
+        std::fs::write(&file, "<svg>two</svg>").unwrap();
+        assert_eq!(load_svg(dir.path()).unwrap().as_str(), "<svg>two</svg>");
     }
 
     #[test]
