@@ -43,7 +43,7 @@ Renders an image from a template.
 |-------|------|----------|-------------|
 | `template` | string | Yes | Template name (e.g. `"stat-card"`) |
 | `data` | object | Yes | Template input data (brand + slides) |
-| `scale` | float | No | Scale factor (default: `1.0`) |
+| `scale` | float | No | Scale factor, `0.1`–`4.0` (default: `2.0`); out of range → `400` |
 | `slide_index` | int | No | Zero-based slide to render with the default `png` format (default: `0`) |
 | `response_format` | string | No | `"png"` (default, binary image) or `"json"` (all slides as base64 entries) |
 | `image_format` | string | No | `"png"` (default), `"webp"`, or `"svg"` — container for the rendered bytes, independent of `response_format` |

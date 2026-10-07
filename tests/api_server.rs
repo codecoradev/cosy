@@ -876,3 +876,108 @@ fn test_signed_get_bad_extension_400() {
     let resp = http_client().get(&signed).send().unwrap();
     assert_eq!(resp.status(), 400);
 }
+
+// ─── Hardening (#127) ───────────────────────────────────────────────
+
+fn render_body(extra: serde_json::Value) -> serde_json::Value {
+    let mut body = serde_json::json!({
+        "template": "stat-card",
+        "scale": 0.5,
+        "data": {
+            "brand": {"brand_name": "T"},
+            "slides": [{"stat_number": "1%", "stat_label": "x", "source": "x"}]
+        }
+    });
+    for (k, v) in extra.as_object().unwrap() {
+        body[k] = v.clone();
+    }
+    body
+}
+
+fn post_render(url: &str, body: &serde_json::Value) -> reqwest::blocking::Response {
+    http_client()
+        .post(format!("{}/api/render", url))
+        .json(body)
+        .send()
+        .unwrap()
+}
+
+#[test]
+fn test_render_scale_out_of_range_rejected() {
+    let url = start_server();
+    for scale in [0.0, -1.0, 0.01, 4.5, 12.0, 1e9] {
+        let resp = post_render(&url, &render_body(serde_json::json!({ "scale": scale })));
+        assert_eq!(resp.status(), 400, "scale {scale} must be rejected");
+    }
+    // 4.01 is just over the cap; the in-range path is covered by every
+    // other render test (a 4.0 render is too slow for a debug-build test).
+    let over = post_render(&url, &render_body(serde_json::json!({ "scale": 4.01 })));
+    assert_eq!(over.status(), 400);
+}
+
+#[test]
+fn test_render_path_template_rejected() {
+    let url = start_server();
+    for name in [
+        "./templates/stat-card",
+        "templates/stat-card",
+        "../cosy/templates/stat-card",
+        "/tmp",
+        ".",
+        "",
+    ] {
+        let resp = post_render(&url, &render_body(serde_json::json!({ "template": name })));
+        assert_eq!(resp.status(), 400, "template {name:?} must be rejected");
+    }
+}
+
+#[test]
+fn test_render_validates_input() {
+    let url = start_server();
+    let body = serde_json::json!({
+        "template": "stat-card",
+        "scale": 0.5,
+        "data": {"brand": {}, "slides": [{}]}
+    });
+    let resp = post_render(&url, &body);
+    assert_eq!(resp.status(), 400);
+    let json: serde_json::Value = resp.json().unwrap();
+    assert!(json["error"]
+        .as_str()
+        .unwrap()
+        .contains("validation failed"));
+}
+
+#[test]
+fn test_render_json_too_many_slides_413() {
+    let url = start_server();
+    let slide = serde_json::json!({"stat_number": "1%", "stat_label": "x", "source": "x"});
+    let slides: Vec<_> = (0..server::MAX_SLIDES_PER_REQUEST + 1)
+        .map(|_| slide.clone())
+        .collect();
+    let body = serde_json::json!({
+        "template": "stat-card",
+        "scale": 0.25,
+        "response_format": "json",
+        "data": {"brand": {"brand_name": "T"}, "slides": slides}
+    });
+    assert_eq!(post_render(&url, &body).status(), 413);
+}
+
+#[test]
+fn test_empty_api_key_means_auth_disabled() {
+    // docker-compose passes COSY_API_KEY="" when unset
+    let url = start_server_with_key(Some(String::new()));
+    let resp = http_client()
+        .get(format!("{}/api/templates", url))
+        .send()
+        .unwrap();
+    assert_eq!(resp.status(), 200);
+    let health: serde_json::Value = http_client()
+        .get(format!("{}/api/health", url))
+        .send()
+        .unwrap()
+        .json()
+        .unwrap();
+    assert_eq!(health["auth_enabled"], false);
+}
